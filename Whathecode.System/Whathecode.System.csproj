@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6FF11324-46A9-4AE3-A802-4CFD47C59BA6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Whathecode.System</RootNamespace>
+    <AssemblyName>Whathecode.System</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ActionHelper.cs" />
+    <Compile Include="Algorithm\Loop.LoopIteration.cs" />
+    <Compile Include="Arithmetic\Interpolation\CardinalSplineInterpolation.cs" />
+    <Compile Include="Arithmetic\Interpolation\KeyPoint\AbsoluteKeyPoint.cs" />
+    <Compile Include="Arithmetic\Interpolation\KeyPoint\AbsoluteKeyPointCollection.cs" />
+    <Compile Include="Arithmetic\Interpolation\KeyPoint\AbstractKeyPointCollection.cs" />
+    <Compile Include="Arithmetic\Interpolation\KeyPoint\CumulativeKeyPointCollection.cs" />
+    <Compile Include="Arithmetic\Interpolation\KeyPoint\CumulativeKeyPointCollection.Enumerator.cs" />
+    <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
+    <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
+    <Compile Include="Arithmetic\Range\IntervalEnumerator.cs" />
+    <Compile Include="Arithmetic\Range\SplitOption.cs" />
+    <Compile Include="Collections\Algorithm\BinarySearch.cs" />
+    <Compile Include="Collections\Algorithm\BinarySearchResult.cs" />
+    <Compile Include="Collections\Delegates\IndexerDelegates.cs" />
+    <Compile Include="Arithmetic\AbstractBasicArithmetic.cs" />
+    <Compile Include="Arithmetic\CalculatorFactory.cs" />
+    <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\PointInterpolationProvider.cs" />
+    <Compile Include="Collections\Generic\AbstractEnumerator.cs" />
+    <Compile Include="Extensions\Extensions.IEnumerable.cs" />
+    <Compile Include="Extensions\Extensions.IList.cs" />
+    <Compile Include="Linq\Extensions.IList.cs" />
+    <Compile Include="Collections\LazyOperationsList.cs" />
+    <Compile Include="Collections\Generic\CachedDictionary.cs" />
+    <Compile Include="Extensions\Extensions.SortedList.cs" />
+    <Compile Include="Collections\IntervalCollection.cs" />
+    <Compile Include="Collections\LazyOperationsList.Enumerator.cs" />
+    <Compile Include="ComponentModel\Property\Property.cs" />
+    <Compile Include="ComponentModel\Property\SetterCallbackOption.cs" />
+    <Compile Include="DelegateHelper.cs" />
+    <Compile Include="Diagnostics\StatisticsStopwatch.Measurement.cs" />
+    <Compile Include="Diagnostics\RunTime.cs" />
+    <Compile Include="Diagnostics\StatisticsStopwatch.cs" />
+    <Compile Include="Arithmetic\Interpolation\AbstractInterpolation.cs" />
+    <Compile Include="Arithmetic\Interpolation\TypeProvider\AbstractTypeInterpolationProvider.cs" />
+    <Compile Include="Arithmetic\Interpolation\LinearInterpolation.cs" />
+    <Compile Include="Arithmetic\Range\Interval.cs" />
+    <Compile Include="Algorithm\Loop.cs" />
+    <Compile Include="Algorithm\Loop.OperationHook.cs" />
+    <Compile Include="EnumHelper.cs" />
+    <Compile Include="Extensions\Extensions.IComparable.cs" />
+    <Compile Include="Linq\Extensions.IEnumerable.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Diagnostics\ProcessHelper.cs" />
+    <Compile Include="IdAttribute.cs" />
+    <Compile Include="Reflection\AbstractAttributeReflectionFactory.cs" />
+    <Compile Include="Reflection\AbstractEnumSpecifiedFactory.cs" />
+    <Compile Include="Reflection\Extensions\Extensions.MemberInfo.cs" />
+    <Compile Include="Reflection\Extensions\Extensions.object.cs" />
+    <Compile Include="Reflection\ReflectionHelper.cs" />
+    <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\AbstractCondition.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\AndCondition.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\OrCondition.cs" />
+    <Compile Include="Windows\Input\InputController\InputController.cs" />
+    <Compile Include="Windows\Input\InputController\Trigger\AbstractTrigger.cs" />
+    <Compile Include="Windows\Input\InputController\Trigger\EventTrigger.cs" />
+    <Compile Include="Extensions\Extensions.Point.cs" />
+    <Compile Include="Windows\Threading\DispatcherHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\Arithmetic\Arithmetic\Arithmetic.csproj">
+      <Project>{1C2129C6-6797-4892-8CEB-F2E99FDF1B03}</Project>
+      <Name>Arithmetic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

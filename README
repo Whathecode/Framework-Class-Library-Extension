@@ -10,7 +10,7 @@ Namespaces from the original FCL are followed as much as possible:
 - Linq extensions are located in Whathecode.System.Linq.
 - Extension methods are placed in an Extension namespace in the relevant namespace. E.g. general extension are located in Whathecode.System.Extensions, while extension methods when doing reflection are located in Whathecode.System.Reflection.Extensions.
 
-Since some of the implementations I blog about start to use a lot of code from this library, I decided to make it public so people can just access the entire library instead of small separate code samples. It was becoming a burden posting all depedant code for my code samples.
+Since some of the implementations I blog about start to use a lot of code from this library, I decided to make it public so people can just access the entire library instead of small separate code samples. It was becoming a burden posting all depedent code for my code samples.
 
 The library also contains unproven toy classes, which I still have to experiment with to judge their usefulness. Be aware for such encounters when browsing the library. :)
 

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9C755F97-8302-4415-AC95-FABFCDCE14B2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Whathecode.WPF</RootNamespace>
+    <AssemblyName>Whathecode.PresentationFramework</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\Media\Media3D\Vector3DInterpolationProvider.cs" />
+    <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\PointInterpolationProvider.cs" />
+    <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyAttribute.cs" />
+    <Compile Include="ComponentModel\NotifyPropertyFactory\NotifyPropertyFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\Data\AbstractBindingDecoratorExtension.cs" />
+    <Compile Include="Windows\Data\AdvancedBindingExtension.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyCallbackAttribute.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\DependencyPropertyAttribute.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\DependencyPropertyChangedAttribute.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\DependencyPropertyCoerceAttribute.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\DependencyPropertyValidateAttribute.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\DependencyPropertyFactory.cs" />
+    <Compile Include="Windows\Input\AbstractCommand.cs" />
+    <Compile Include="Windows\Input\AbstractDelegateCommand.cs" />
+    <Compile Include="Windows\Input\CommandFactory\Attributes\CommandCanExecuteAttribute.cs" />
+    <Compile Include="Windows\Input\CommandFactory\Attributes\CommandExecuteAttribute.cs" />
+    <Compile Include="Windows\Input\CommandFactory\CommandBindingExtension.cs" />
+    <Compile Include="Windows\Input\CommandFactory\CommandFactory.cs" />
+    <Compile Include="Windows\Input\DelegateCommand.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\KeyInputCondition.cs" />
+    <Compile Include="Windows\Markup\AbstractDataContextBindingExtension.cs" />
+    <Compile Include="Windows\Markup\AbstractDependencyPropertyBindingExtension.cs" />
+    <Compile Include="Windows\Markup\AbstractMarkupExtension.cs" />
+    <Compile Include="Windows\Media\Extensions\Extensions.TranslateTransform3D.cs" />
+    <Compile Include="Windows\Media\Extensions\Extensions.Vector3D.cs" />
+    <Compile Include="Windows\Media\Media3D\Matrix3DHelper.cs" />
+    <Compile Include="Windows\Media\Media3D\PitchRollYawRotation.cs" />
+    <Compile Include="Xaml\Behaviors\MouseBehavior.cs" />
+    <Compile Include="Xaml\PropertyObserver.cs" />
+    <Compile Include="Xaml\PropertyObservers.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Whathecode.System\Whathecode.System.csproj">
+      <Project>{6FF11324-46A9-4AE3-A802-4CFD47C59BA6}</Project>
+      <Name>Whathecode.System</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
