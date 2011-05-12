@@ -7,7 +7,7 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
     /// <summary>
     ///   A class which triggers events when certain input conditions are met.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public class EventTrigger : AbstractTrigger
     {
         /// <summary>

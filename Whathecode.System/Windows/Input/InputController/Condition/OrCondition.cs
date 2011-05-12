@@ -6,7 +6,7 @@ namespace Whathecode.System.Windows.Input.InputController.Condition
     /// <summary>
     ///   Condition which validates to true when any of it's added conditions validate to true.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public class OrCondition : AbstractCombineCondition
     {
         public OrCondition() {}

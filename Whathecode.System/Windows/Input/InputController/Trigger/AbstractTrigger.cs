@@ -7,7 +7,7 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
     /// <summary>
     ///   A class which triggers an action when a certain input condition is met.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public abstract class AbstractTrigger
     {
         /// <summary>

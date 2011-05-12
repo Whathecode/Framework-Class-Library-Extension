@@ -9,7 +9,7 @@ namespace Whathecode.System.Windows.Input.InputController
     ///   Add wanted InputTrigger's to this class and call Update() as much as possible.
     ///   The InputTrigger's will be triggered when needed.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public class InputController
     {
         readonly List<AbstractTrigger> _toRemove = new List<AbstractTrigger>();

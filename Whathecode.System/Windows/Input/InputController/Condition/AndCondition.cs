@@ -3,7 +3,7 @@
     /// <summary>
     ///   Condition which validates to true when any of it's added conditions validate to true.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public class AndCondition : AbstractCombineCondition
     {
         public AndCondition() {}

@@ -6,7 +6,7 @@ namespace Whathecode.System.Windows.Input.InputController.Condition
     /// <summary>
     ///   Condition which bases it's result based on a list of other conditions.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public abstract class AbstractCombineCondition : AbstractCondition
     {
         public List<AbstractCondition> Conditions { get; private set; }

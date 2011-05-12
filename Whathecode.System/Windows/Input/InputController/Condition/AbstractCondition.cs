@@ -6,7 +6,7 @@ namespace Whathecode.System.Windows.Input.InputController.Condition
     /// <summary>
     ///   A class which can check whether a certain input is done.
     /// </summary>
-    /// <author>Steven Jeuris <email>mailto:steven@aimproductions.be</email></author>
+    /// <author>Steven Jeuris</author>
     public abstract class AbstractCondition
     {
         /// <summary>
