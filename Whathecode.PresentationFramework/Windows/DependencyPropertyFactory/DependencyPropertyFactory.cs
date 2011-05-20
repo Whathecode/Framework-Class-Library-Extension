@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Whathecode.System.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
+using Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercion;
+using Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Validators;
 using Whathecode.System.Windows.Threading;
 
 
@@ -15,7 +18,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
     /// <summary>
     ///   A dependency property factory to simplify creating and managing dependency properties for a certain type.
     /// </summary>
-    /// <typeparam name = "T">An enum used to identify the dependency properties.</typeparam>
+    /// <typeparam name = "T">A flags enum used to identify the dependency properties.</typeparam>
     /// <author>Steven Jeuris</author>
     public class DependencyPropertyFactory<T> : AbstractEnumSpecifiedFactory<T>
     {
@@ -88,25 +91,44 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
         ///   See http://msdn.microsoft.com/en-us/library/bb613563.aspx.
         /// </param>
         public DependencyPropertyFactory( Type ownerType, bool enforceNamingConventions )
+            : this( ownerType, enforceNamingConventions, true )
+        {            
+        }
+
+        /// <summary>
+        ///   Create a new dependency property factory for a specific set of properties.
+        /// </summary>
+        /// <param name = "ownerType">The owner type of the dependency properties.</param>
+        /// <param name = "enforceNamingConventions">
+        ///   Whether or not to throw exceptions when the naming conventions aren't followed.
+        ///   See http://msdn.microsoft.com/en-us/library/bb613563.aspx.
+        /// </param>
+        /// <param name="checkForStatic">Whether or not to check whether the factory is static.</param>
+        protected DependencyPropertyFactory( Type ownerType, bool enforceNamingConventions, bool checkForStatic )
             : base( ownerType, true )
         {
+            Contract.Requires( typeof( T ).IsFlagsEnum() );
+
             Properties = new Dictionary<T, DependencyProperty>();
             _enforceWpfConvention = enforceNamingConventions;
 
             // Check whether the factory itself is defined as a static field.
             // TODO: Can part of this logic be moved to ReflectionHelper?
-            FieldInfo[] fields = OwnerType.GetFields(
-                BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
-                );
-            bool validFactory =
-                fields.Where(
-                    field => field.FieldType == typeof( DependencyPropertyFactory<T> ) ).Where(
-                        field => field.IsStatic ).Any();
-            if ( !validFactory )
+            if ( checkForStatic )
             {
-                throw new InvalidOperationException(
-                    "Incorrect usage of DependencyPropertyFactory in class '" + OwnerType.Name + "'. " +
-                    "A DependencyPropertyFactory needs to be created as a static field inside it's owner class." );
+                FieldInfo[] fields = OwnerType.GetFields(
+                    BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
+                    );
+                bool validFactory =
+                    fields.Where(
+                        field => field.FieldType == typeof( DependencyPropertyFactory<T> ) ).Where(
+                            field => field.IsStatic ).Any();
+                if ( !validFactory )
+                {
+                    throw new InvalidOperationException(
+                        "Incorrect usage of DependencyPropertyFactory in class '" + OwnerType.Name + "'. " +
+                        "A DependencyPropertyFactory needs to be created as a static field inside it's owner class." );
+                }
             }
 
             // TODO: Check whether callback attributes are applied to non-static functions. They should be static!
@@ -249,6 +271,47 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                 (CoerceValueCallback)CreateCallbackDelegate<DependencyPropertyCoerceAttribute>( info.Id );
             ValidateValueCallback validateValueCallback =
                 (ValidateValueCallback)CreateCallbackDelegate<DependencyPropertyValidateAttribute>( info.Id );
+
+            // Find specified handlers through the handler attributes when no callback found yet.
+            PropertyInfo property = OwnerType.GetProperty( info.Name );
+            if ( validateValueCallback == null )
+            {
+                ValidationHandlerAttribute handler = property.GetAttribute<ValidationHandlerAttribute>();
+                if ( handler != null )
+                {
+                    validateValueCallback = new ValidateValueCallback( handler.GenericValidation.IsValid );
+                }
+            }
+            if ( coerceCallback == null )
+            {
+                CoercionHandlerAttribute handler = property.GetAttribute<CoercionHandlerAttribute>();
+                if ( handler != null )
+                {
+                    coerceCallback = new CoerceValueCallback( handler.GenericCoercion.Coerce );
+                }
+            }
+
+            // Create a correct changed callback when no custom callback specified.
+            if ( changedCallback == null )
+            {
+                var dependentProperties = (from a in MatchingAttributes
+                                           let coercion = a.Key.GetAttribute<CoercionHandlerAttribute>()
+                                           where coercion != null
+                                           where EnumHelper<T>
+                                               .GetFlaggedValues( (T)coercion.GenericCoercion.DependentProperties )
+                                               .Contains( info.Id )  // Id of this property.
+                                           select (T)a.Key.GetAttribute<DependencyPropertyAttribute>().GetId()).ToArray();
+                if ( dependentProperties.Length > 0 )
+                {
+                    changedCallback = new PropertyChangedCallback( ( dependencyObject, changedArgs ) =>
+                    {
+                        foreach ( var p in dependentProperties )
+                        {
+                            dependencyObject.CoerceValue( Properties[ p ] );
+                        }
+                    } );
+                }
+            }
 
             // Create property.
             if ( info.ReadOnly )

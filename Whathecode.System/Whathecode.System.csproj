@@ -119,6 +119,26 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="ActionHelper.cs" />
     <Compile Include="Algorithm\Loop.LoopIteration.cs" />
@@ -139,8 +159,15 @@
     <Compile Include="Arithmetic\CalculatorFactory.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\PointInterpolationProvider.cs" />
     <Compile Include="Collections\Generic\AbstractEnumerator.cs" />
+    <Compile Include="ComponentModel\Coercion\AbstractCoercion.cs" />
+    <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyAttribute.cs" />
+    <Compile Include="ComponentModel\NotifyPropertyFactory\NotifyPropertyFactory.cs" />
+    <Compile Include="ComponentModel\Validation\AbstractValidation.cs" />
+    <Compile Include="ComponentModel\Validation\RegexValidation.cs" />
+    <Compile Include="Diagnostics\Extensions\Extensions.IEnumerable.cs" />
     <Compile Include="Extensions\Extensions.IEnumerable.cs" />
     <Compile Include="Extensions\Extensions.IList.cs" />
+    <Compile Include="AbstractGenericAttribute.cs" />
     <Compile Include="Linq\Extensions.IList.cs" />
     <Compile Include="Collections\LazyOperationsList.cs" />
     <Compile Include="Collections\Generic\CachedDictionary.cs" />
@@ -167,6 +194,7 @@
     <Compile Include="IdAttribute.cs" />
     <Compile Include="Reflection\AbstractAttributeReflectionFactory.cs" />
     <Compile Include="Reflection\AbstractEnumSpecifiedFactory.cs" />
+    <Compile Include="Reflection\Emit\EmitHelper.cs" />
     <Compile Include="Reflection\Extensions\Extensions.MemberInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.object.cs" />
     <Compile Include="Reflection\ReflectionHelper.cs" />
@@ -185,6 +213,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TriAxis.RunSharp">
+      <HintPath>..\Libraries\runsharp-0.1.2-pre-alpha-src\RunSharp\bin\Release\TriAxis.RunSharp.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>

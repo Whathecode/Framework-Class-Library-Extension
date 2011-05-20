@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using Whathecode.System.Arithmetic;
+using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System
@@ -10,7 +13,7 @@ namespace Whathecode.System
     /// </summary>
     /// <typeparam name = "T">The type of the enum.</typeparam>
     /// <author>Steven Jeuris</author>
-    public static class EnumHelper<T>
+    public class EnumHelper<T> : AbstractBasicArithmetic<T>
     {
         /// <summary>
         ///   Converts the string representation of the name or numeric value of one or more enumerated constants (seperated by comma)
@@ -41,6 +44,18 @@ namespace Whathecode.System
         {
             return from object value in Enum.GetValues( typeof( T ) )
                    select (T)value;
+        }
+
+        /// <summary>
+        ///   Retrieves an enumerator of all the flagged values in a flags enum.
+        /// </summary>
+        /// <param name="flags">The value specifying the flags.</param>
+        /// <returns>Enumerable which can be used to enumerate over all flagged values of the passed enum value.</returns>
+        public static IEnumerable<T> GetFlaggedValues( T flags )
+        {
+            Contract.Requires( typeof( T ).IsFlagsEnum() );
+
+            return GetValues().Where( flag => Enum.IsDefined( typeof( T ), flag ) );
         }
     }
 }

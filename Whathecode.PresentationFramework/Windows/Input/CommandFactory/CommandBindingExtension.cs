@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Markup;
@@ -51,8 +52,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 
             // Check whether the data context contains a CommandFactory<TCommands>.
             Type dataContextType = dataContext.GetType();
-            MemberInfo[] commandFactories =
-                dataContextType.GetMembers( typeof( CommandFactory<> ) );
+            MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<> ) ).ToArray();
 
             foreach ( var commandFactory in commandFactories )
             {

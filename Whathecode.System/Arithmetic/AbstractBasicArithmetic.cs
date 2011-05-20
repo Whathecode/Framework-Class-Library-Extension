@@ -22,8 +22,7 @@ namespace Whathecode.System.Arithmetic
         /// </summary>
         /// <exception cref = "NotSupportedException">Thrown when the factory can't create a calculator for the requested type.</exception>
         protected AbstractBasicArithmetic()
-            :
-                this( CalculatorFactory.CreateBasicCalculator<TMath>( CalculatorFactory.CheckedOption.Unchecked ) ) {}
+            : this( CalculatorFactory.CreateBasicCalculator<TMath>( CalculatorFactory.CheckedOption.Unchecked ) ) {}
 
         /// <summary>
         ///   Create a new arithmetic base class, using a specified custom calculator to do operations on the specified type.

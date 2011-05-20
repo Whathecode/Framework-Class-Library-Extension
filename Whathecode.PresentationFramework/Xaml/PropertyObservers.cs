@@ -26,6 +26,7 @@ namespace Whathecode.System.Xaml
     /// <author>Steven Jeuris</author>
     public static class PropertyObservers
     {
+        [Flags]
         enum Properties
         {
             Observers

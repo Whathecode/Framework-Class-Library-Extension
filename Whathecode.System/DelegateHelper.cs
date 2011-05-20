@@ -45,12 +45,14 @@ namespace Whathecode.System
 
         /// <summary>
         ///   Creates a delegate of a specified type that represents the specified static or instance method,
-        ///   with the specified first argument. Conversions are done when possible.
+        ///   with the specified first argument.
+        ///   Upcasts of parameter types to the correct types required for the method are done where necessary.
+        ///   Of course only valid casts will work.
         /// </summary>
         /// <typeparam name = "TDelegate">The type for the delegate.</typeparam>
         /// <param name = "instance">The object to which the delegate is bound, or null to treat method as static.</param>
         /// <param name = "method">The MethodInfo describing the static or instance method the delegate is to represent.</param>
-        public static TDelegate CreateCompatibleDelegate<TDelegate>( object instance, MethodInfo method )
+        public static TDelegate CreateUpcastingDelegate<TDelegate>( object instance, MethodInfo method )
         {
             MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
 
@@ -81,7 +83,7 @@ namespace Whathecode.System
         ///   Conversions are done when possible.
         /// </summary>
         /// <typeparam name="TDelegate">
-        ///   The type for the delegate. This delegate should have at least one type parameter denoting the type of the instance
+        ///   The type for the delegate. This delegate needs at least one (first) type parameter denoting the type of the instance
         ///   which will be passed.
         ///   E.g. Action&lt;ExampleObject, object&gt;,
         ///        where ExampleObject denotes the instance type and object denotes the desired type of the first parameter of the method.

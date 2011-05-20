@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Whathecode.System.Arithmetic.Range;
-using System.Diagnostics;
-using Whathecode.System.Diagnostics;
-using System.Linq;
-using Whathecode.System.Linq;
 
 
-namespace Whathecode.System.Tests.Arithmetic.Range
+namespace Whathecode.Tests.System.Arithmetic.Range
 {
     /// <summary>
     ///   Unit tests for Interval.

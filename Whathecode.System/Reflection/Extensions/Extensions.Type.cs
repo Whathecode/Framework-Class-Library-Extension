@@ -9,6 +9,30 @@ namespace Whathecode.System.Reflection.Extensions
     public static partial class Extensions
     {
         /// <summary>
+        ///   Searches for the specified method whose parameters match the specified argument types,
+        ///   using the specified binding constraints.
+        /// </summary>
+        /// <remarks>
+        ///   This is a simple overload which is missing in the original library.
+        /// </remarks>
+        /// <param name = "source">The source for this extension method.</param>
+        /// <param name = "name">The string containing the name of the public method to get.</param>
+        /// <param name = "flags"></param>
+        /// <param name = "types">
+        ///   An array of <see cref = "Type" /> objects representing the number, order, and type of the parameters for the method to get.
+        ///   -or-
+        ///   An empty array of <see cref = "Type" /> objects (as provided by the EmptyTypes field) to get a method that takes no parameters.
+        /// </param>
+        /// <returns>
+        ///   An object representing the method that matches the requirements
+        ///   and whose parameters match the specified argument types, if found; otherwise, null.
+        /// </returns>
+        public static MethodInfo GetMethod( this Type source, string name, BindingFlags flags, Type[] types )
+        {
+            return source.GetMethod( name, flags, Type.DefaultBinder, types, null );
+        }
+
+        /// <summary>
         ///   Get the first found matching generic type.
         ///   The type parameters of the generic type are optional.
         ///   E.g. Dictionary&lt;,&gt; or Dictionary&lt;string,&gt;
@@ -60,9 +84,8 @@ namespace Whathecode.System.Reflection.Extensions
 
         /// <summary>
         ///   Is a certain type of a given generic type or not.
-        ///   Also works for raw generic types, or (partially) specified generic types.
-        ///   E.g. Dictionary&lt,&gt, Dictionary&ltstring,&gt
-        ///   When full (generic) type is known (e.g. Dictionary&ltstring,string&gt),
+        ///   Also works for raw generic types. E.g. Dictionary&lt;,&gt;.
+        ///   When full (generic) type is known (e.g. Dictionary&lt;string,string&gt;),
         ///   the "is" operator is most likely more performant, but this function will still work correctly.
         /// </summary>
         /// <param name = "source">The source of this extension method.</param>
@@ -74,10 +97,20 @@ namespace Whathecode.System.Reflection.Extensions
         }
 
         /// <summary>
+        ///   Verify whether a given type is an enum with the <see cref = "FlagsAttribute" /> applied.
+        /// </summary>
+        /// <param name = "source">The source of this extension method.</param>
+        /// <returns>True when the given type is a flags enum, false otherwise.</returns>
+        public static bool IsFlagsEnum( this Type source )
+        {
+            return source.IsEnum && source.GetAttribute<FlagsAttribute>() != null;
+        }
+
+        /// <summary>
         ///   Does a certain type implement a given interface or not.
         /// </summary>
-        /// <param name="source">The source of this extension method.</param>
-        /// <param name="interfaceType">The interface type to check for.</param>
+        /// <param name = "source">The source of this extension method.</param>
+        /// <param name = "interfaceType">The interface type to check for.</param>
         /// <returns>True when the type implements the given interface, false otherwise.</returns>
         public static bool ImplementsInterface( this Type source, Type interfaceType )
         {
@@ -100,16 +133,14 @@ namespace Whathecode.System.Reflection.Extensions
         /// <param name = "source">The source of this extension method.</param>
         /// <param name = "type">The type to search for.</param>
         /// <returns>A list of all object members with the specific type.</returns>
-        public static MemberInfo[] GetMembers( this Type source, Type type )
+        public static IEnumerable<MemberInfo> GetMembers( this Type source, Type type )
         {
-            IEnumerable<MemberInfo> typeMembers = from m in source.GetMembers( ReflectionHelper.AllClassMembers )
-                                                  where (m is FieldInfo ||
-                                                         m is PropertyInfo ||
-                                                         m is EventInfo)
-                                                  where m.GetMemberType().IsOfGenericType( type )
-                                                  select m;
-
-            return typeMembers.ToArray();
+            return from m in source.GetMembers( ReflectionHelper.AllClassMembers )
+                   where (m is FieldInfo ||
+                          m is PropertyInfo ||
+                          m is EventInfo)
+                   where m.GetMemberType().IsOfGenericType( type )
+                   select m;
         }
     }
 }

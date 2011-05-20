@@ -5,10 +5,10 @@ using Whathecode.System.Arithmetic.Range;
 using Whathecode.System.Collections;
 
 
-namespace Whathecode.System.Tests.Collections
+namespace Whathecode.Tests.System.Collections
 {
     /// <summary>
-    ///   Unit tests for <see href="System.Collections.LazyOperationsList{T}">LazyOperationsList</see>.
+    ///   Unit tests for <see cref="LazyOperationsList{TObject}" />.
     /// </summary>
     /// <author>Steven Jeuris</author>
     [TestClass]

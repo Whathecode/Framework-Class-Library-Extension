@@ -120,7 +120,7 @@ namespace Whathecode.System.Arithmetic.Range
 
         /// <summary>
         ///   Get the value at a given percentage within the interval, or on it's borders. Rounding to nearest occurs when needed.
-        ///   TODO: Would it be cleaner not to use a double for percentage, but a Percentage&lt;TMath&gt; type?
+        ///   TODO: Would it be cleaner not to use a double for percentage, but a generic Percentage type?
         /// </summary>
         /// <param name = "percentage">The percentage in the range of which to return the value.</param>
         /// <returns>The value at the given percentage within the interval.</returns>

@@ -5,7 +5,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes
 {
     /// <summary>
     ///   When applied to the property of a type,
-    ///   specifies how the dependency property should be created by the DependencyPropertyFactory.
+    ///   specifies how the dependency property should be created by the <see cref="DependencyPropertyFactory" />.
     /// </summary>
     /// <author>Steven Jeuris</author>
     [AttributeUsage( AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false )]

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 
 namespace Whathecode.System.Reflection
@@ -11,14 +10,18 @@ namespace Whathecode.System.Reflection
     public static class ReflectionHelper
     {
         /// <summary>
-        ///   BindingFlags to return all members of a class.
+        ///   BindingFlags to return all instance members of a class.
         /// </summary>
-        public const BindingFlags AllClassMembers =
+        public const BindingFlags AllInstanceMembers =
             BindingFlags.FlattenHierarchy |
             BindingFlags.Instance |
             BindingFlags.NonPublic |
-            BindingFlags.Public |
-            BindingFlags.Static;
+            BindingFlags.Public;
+
+        /// <summary>
+        ///   BindingFlags to return all members of a class (static and instance).
+        /// </summary>
+        public const BindingFlags AllClassMembers = AllInstanceMembers | BindingFlags.Static;
 
         /// <summary>
         ///   BindingFlags to return all values of an enum type.

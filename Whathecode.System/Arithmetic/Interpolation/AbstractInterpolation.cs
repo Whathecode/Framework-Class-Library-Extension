@@ -57,7 +57,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 
         /// <summary>
         ///   Get interpolated data for a given percentage within the total range of the key points.
-        ///   TODO: Would it be cleaner not to use a double for percentage, but a Percentage&lt;TMath&gt; type?
+        ///   TODO: Would it be cleaner not to use a double for percentage, but a generic Percentage type?
         /// </summary>
         /// <param name = "percentage">The percentage in between the first and the last value to get interpolated data for.</param>
         /// <returns>The interpolated data.</returns>

@@ -76,7 +76,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
                         }
                         case 1:
                         {
-                            Action<object> compatibleExecute = DelegateHelper.CreateCompatibleDelegate<Action<object>>( _owner, method );
+                            Action<object> compatibleExecute = DelegateHelper.CreateUpcastingDelegate<Action<object>>( _owner, method );
                             command = new DelegateCommand<object>( compatibleExecute, canExecute );
                             break;
                         }

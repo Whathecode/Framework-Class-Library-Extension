@@ -20,7 +20,7 @@ namespace Whathecode.System.Linq
         /// <param name = "second">The second sequence to merge.</param>
         /// <param name = "third">The third sequence to merge.</param>
         /// <param name = "resultSelector">A function that specifies how to merge the elements from the three sequences.</param>
-        /// <returns>An <see cref = "IEnumerable{T}">IEnumerable&lt;T&gt;</see> that contains merged elements of three input sequences.</returns>
+        /// <returns>An <see cref = "IEnumerable{T}" /> that contains merged elements of three input sequences.</returns>
         public static IEnumerable<TResult> Zip<TFirst, TSecond, TThird, TResult>(
             this IEnumerable<TFirst> first,
             IEnumerable<TSecond> second,
