@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Windows;
 using Whathecode.System.Reflection.Emit;
 using Whathecode.System.Reflection.Extensions;
 
@@ -15,7 +14,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
     [AttributeUsage( AttributeTargets.Property )]
     public class CoercionHandlerAttribute : AbstractGenericAttribute
     {
-        public readonly AbstractControlCoercion<DependencyObject, object, object> GenericCoercion;
+        public readonly AbstractControlCoercion<object, object> GenericCoercion;
 
 
         /// <summary>
@@ -23,16 +22,31 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
         /// </summary>
         /// <param name="dynamicType">
         ///   The type of the coercion handler.
-        ///   Should extend from <see cref="AbstractControlCoercion{T, U, V}" />.</param>
+        ///   Should extend from <see cref="AbstractControlCoercion{T, U}" />.</param>
         /// <param name="constructorArguments">The arguments to pass to the constructor of the validation handler.</param>
         public CoercionHandlerAttribute( Type dynamicType, params object[] constructorArguments )
+            : this( dynamicType, constructorArguments, null )
+        {
+        }
+
+        /// <summary>
+        ///   Create a new attribute which hooks a coercion handler to a dependency property.
+        /// </summary>
+        /// <param name="dynamicType">
+        ///   The type of the coercion handler.
+        ///   Should extend from <see cref="AbstractControlCoercion{T, U}" />.</param>
+        /// <param name="constructorArguments">The arguments to pass to the constructor of the validation handler.</param>
+        /// <param name="baseArguments">
+        ///   The arguments which should be passed to the constructor of the base <see cref="AbstractControlCoercion{T, U}" /> constructor.
+        /// </param>
+        public CoercionHandlerAttribute( Type dynamicType, object[] constructorArguments, object[] baseArguments )
             : base( dynamicType, constructorArguments )
         {
-            Contract.Requires( dynamicType.IsOfGenericType( typeof( AbstractControlCoercion<,,> ) ) );
+            Contract.Requires( dynamicType.IsOfGenericType( typeof( AbstractControlCoercion<,> ) ) );
 
-            GenericCoercion = EmitHelper.CreateCompatibleGenericWrapper<AbstractControlCoercion<DependencyObject, object, object>>(
+            GenericCoercion = EmitHelper.CreateCompatibleGenericWrapper<AbstractControlCoercion<object, object>>(
                 DynamicInstance,
-                constructorArguments );
+                baseArguments );
         }
     }
 }

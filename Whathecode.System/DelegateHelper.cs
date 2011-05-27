@@ -59,13 +59,13 @@ namespace Whathecode.System
             // Create delegate original and converted arguments.
             var delegateTypes = delegateInfo.GetParameters().Select( d => d.ParameterType );
             var methodTypes = method.GetParameters().Select( m => m.ParameterType );
-            var delegateExpressions = CreateDelegateExpressions( delegateTypes, methodTypes );
+            var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
 
             // Create method call.
             Expression methodCall = Expression.Call(
                 instance == null ? null : Expression.Constant( instance ),
                 method,
-                delegateExpressions.ConvertedArguments );
+                delegateArgumentExpressions.ConvertedArguments );
 
             // Convert return type when necessary.
             Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
@@ -74,7 +74,7 @@ namespace Whathecode.System
 
             return Expression.Lambda<TDelegate>(
                 convertedMethodCall,
-                delegateExpressions.OriginalArguments
+                delegateArgumentExpressions.OriginalArguments
                 ).Compile();
         }
 
@@ -105,13 +105,13 @@ namespace Whathecode.System
             // Create delegate original and converted arguments.
             var delegateTypes = delegateParameters.Select( d => d.ParameterType ).Skip( 1 );
             var methodTypes = method.GetParameters().Select( m => m.ParameterType );
-            var delegateExpressions = CreateDelegateExpressions( delegateTypes, methodTypes );
+            var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
 
             // Create method call.
             Expression methodCall = Expression.Call(
                 convertedInstance,
                 method,
-                delegateExpressions.ConvertedArguments );
+                delegateArgumentExpressions.ConvertedArguments );
 
             // Convert return type when necessary.
             Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
@@ -120,7 +120,7 @@ namespace Whathecode.System
 
             return Expression.Lambda<TDelegate>(
                 convertedMethodCall,
-                new[] { instance }.Concat( delegateExpressions.OriginalArguments )
+                new[] { instance }.Concat( delegateArgumentExpressions.OriginalArguments )
                 ).Compile();
         }
 
@@ -131,7 +131,7 @@ namespace Whathecode.System
         /// <param name = "delegateTypes">The types of the delegate parameters.</param>
         /// <param name = "methodTypes">The required types of the method parameters.</param>
         /// <returns>An object containing the delegate expressions.</returns>
-        static DelegateArgumentExpressions CreateDelegateExpressions(
+        static DelegateArgumentExpressions CreateDelegateArgumentExpressions(
             IEnumerable<Type> delegateTypes,
             IEnumerable<Type> methodTypes )
         {

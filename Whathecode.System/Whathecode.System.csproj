@@ -160,6 +160,7 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\PointInterpolationProvider.cs" />
     <Compile Include="Collections\Generic\AbstractEnumerator.cs" />
     <Compile Include="ComponentModel\Coercion\AbstractCoercion.cs" />
+    <Compile Include="ComponentModel\Coercion\RangeCoercion.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyAttribute.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\NotifyPropertyFactory.cs" />
     <Compile Include="ComponentModel\Validation\AbstractValidation.cs" />

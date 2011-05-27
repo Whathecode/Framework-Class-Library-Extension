@@ -2,7 +2,6 @@
 using System.Diagnostics.Contracts;
 using System.Windows;
 using Whathecode.System.ComponentModel.Validation;
-using Whathecode.System.Windows.DependencyPropertyFactory;
 using Whathecode.System.Windows.DependencyPropertyFactory.Aspects;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercion;
@@ -57,7 +56,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Aspects
             }
         }
 
-        private class CoerceValidation : AbstractControlCoercion<TestControl, Property, int>
+        private class CoerceValidation : AbstractControlCoercion<Property, int>
         {
             public CoerceValidation( Property dependentProperties )
                 : base( dependentProperties ) { }

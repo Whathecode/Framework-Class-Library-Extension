@@ -273,21 +273,25 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                 (ValidateValueCallback)CreateCallbackDelegate<DependencyPropertyValidateAttribute>( info.Id );
 
             // Find specified handlers through the handler attributes when no callback found yet.
-            PropertyInfo property = OwnerType.GetProperty( info.Name );
-            if ( validateValueCallback == null )
+            // TODO: At the moment no handlers for attached properties are implemented.
+            if ( !info.IsAttached )
             {
-                ValidationHandlerAttribute handler = property.GetAttribute<ValidationHandlerAttribute>();
-                if ( handler != null )
+                PropertyInfo property = OwnerType.GetProperty(info.Name);
+                if ( validateValueCallback == null )
                 {
-                    validateValueCallback = new ValidateValueCallback( handler.GenericValidation.IsValid );
+                    ValidationHandlerAttribute handler = property.GetAttribute<ValidationHandlerAttribute>();
+                    if ( handler != null )
+                    {
+                        validateValueCallback = new ValidateValueCallback( handler.GenericValidation.IsValid );
+                    }
                 }
-            }
-            if ( coerceCallback == null )
-            {
-                CoercionHandlerAttribute handler = property.GetAttribute<CoercionHandlerAttribute>();
-                if ( handler != null )
+                if ( coerceCallback == null )
                 {
-                    coerceCallback = new CoerceValueCallback( handler.GenericCoercion.Coerce );
+                    CoercionHandlerAttribute handler = property.GetAttribute<CoercionHandlerAttribute>();
+                    if ( handler != null )
+                    {
+                        coerceCallback = new CoerceValueCallback( handler.GenericCoercion.Coerce );
+                    }
                 }
             }
 

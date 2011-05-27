@@ -7,17 +7,15 @@ using Whathecode.System.ComponentModel.Coercion;
 using Whathecode.System.Reflection.Extensions;
 
 
-namespace Whathecode.System.Windows.DependencyPropertyFactory
+namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercion
 {
     /// <summary>
     ///   Abstract class which can coerce a given type within a given control.
     /// </summary>
-    /// <typeparam name = "TContext">The context in which to coerce the value.</typeparam>
     /// <typeparam name = "TEnum">An enum used to identify the dependency properties.</typeparam>
     /// <typeparam name = "TValue">The type of the value to coerce.</typeparam>
     /// <author>Steven Jeuris</author>
-    public abstract class AbstractControlCoercion<TContext, TEnum, TValue> : AbstractCoercion<TContext, TValue>
-        where TContext : DependencyObject
+    public abstract class AbstractControlCoercion<TEnum, TValue> : AbstractCoercion<object, TValue>
     {
         public TEnum DependentProperties { get; private set; }
 
@@ -32,13 +30,13 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
         protected abstract TValue Coerce( Dictionary<TEnum, object> dependentValues, TValue value );
 
-        public override TValue Coerce( TContext context, TValue value )
+        public override TValue Coerce( object context, TValue value )
         {
             // Initialize property getters the first time.
             if ( Factory == null )
             {
                 // Get the dependency property factory.
-                Type controlType = typeof( TContext );
+                Type controlType = context.GetType();
                 MemberInfo propertyFactory = controlType.GetMembers( typeof( DependencyPropertyFactory<TEnum> ) ).FirstOrDefault();                
 
                 if ( propertyFactory != null )
@@ -66,7 +64,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
             // Pass the value of each dependent property.
             var dependentValues = EnumHelper<TEnum>.GetFlaggedValues( DependentProperties )
-                .ToDictionary( p => p, p => Factory.GetValue( context, p ) );
+                .ToDictionary( p => p, p => Factory.GetValue( context as DependencyObject, p ) );
 
             return Coerce( dependentValues, value );
         }

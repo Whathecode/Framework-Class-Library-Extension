@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 
@@ -49,6 +50,43 @@ namespace Whathecode.System.Reflection.Extensions
             }
 
             return value;
+        }
+
+        /// <summary>
+        ///   Do a bitwise or on two enum values of which the underlying type is unknown.
+        /// </summary>
+        /// <returns>The bitwise or of both enum values.</returns>
+        public static object EnumOr( this object firstEnumValue, object secondEnumValue )
+        {
+            Type firstType = firstEnumValue.GetType();
+            Type secondType = secondEnumValue.GetType();
+
+            if ( !firstType.IsEnum || !secondType.IsEnum )
+            {
+                throw new ArgumentException( "Only enum values are valid for this function." );
+            }
+            if ( !(firstType == secondType) )
+            {
+                throw new ArgumentException( "Both enum values should be of the same type." );
+            }
+             
+            // Cast to long so no bits are lost during the or operation.
+            ulong bits = Convert.ToUInt64( firstEnumValue ) | Convert.ToUInt64( secondEnumValue );
+
+            // Cast back to underlying type, followed by cast to the enum type.
+            object underlyingValue = Convert.ChangeType( bits, firstType.GetEnumUnderlyingType() );
+            return underlyingValue.Cast( firstType );
+        }
+
+        /// <summary>
+        ///   Cast a given object to a desired type.
+        /// </summary>
+        /// <param name = "source">The source of this extension method.</param>
+        /// <param name = "type">The type to cast to.</param>
+        /// <returns>The object, cast to the desired type.</returns>
+        public static object Cast( this object source, Type type )
+        {
+            return ReflectionHelper.Cast( source, type );
         }
     }
 }

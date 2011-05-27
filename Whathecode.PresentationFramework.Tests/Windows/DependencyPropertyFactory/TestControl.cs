@@ -86,7 +86,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
             }
         }
 
-        private class CoerceValidation : AbstractControlCoercion<TestControl, Property, int>
+        private class CoerceValidation : AbstractControlCoercion<Property, int>
         {
             public CoerceValidation( Property dependentProperties )
                 : base( dependentProperties ) {}

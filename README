@@ -9,6 +9,8 @@ Namespaces from the original FCL are followed as much as possible:
 - Whole reuseable helper APIs are located in the relevant namespace. E.g. An abstract input controller is located in Whathecode.System.Windows.Input.InputController.
 - Linq extensions are located in Whathecode.System.Linq.
 - Extension methods are placed in an Extension namespace in the relevant namespace. E.g. general extension are located in Whathecode.System.Extensions, while extension methods when doing reflection are located in Whathecode.System.Reflection.Extensions.
+- Unit tests are placed in a Tests namespace in the relevant namespace. MSTest is used. These tests also serve as examples.
+- Aspects are placed in an Aspects namespace in the relevant namespace. In order to use them PostSharp is required, but no other code is dependent on those projects.
 
 Since some of the implementations I blog about start to use a lot of code from this library, I decided to make it public so people can just access the entire library instead of small separate code samples. It was becoming a burden posting all dependent code for my code samples.
 

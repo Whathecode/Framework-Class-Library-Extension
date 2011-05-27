@@ -8,7 +8,7 @@ namespace Whathecode.System.Arithmetic.Range
 {
     /// <summary>
     ///   Class specifying an interval from a value, to a value. Borders may be included or excluded.
-    ///   TODO: Implement GetHashCode(), make struct?
+    ///   TODO: Implement GetHashCode(), make struct? Make immutable?
     /// </summary>
     /// <typeparam name = "TMath">The type used to specify the interval, and used for the calculations.</typeparam>
     /// <author>Steven Jeuris</author>

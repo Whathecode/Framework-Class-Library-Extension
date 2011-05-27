@@ -36,7 +36,12 @@ namespace Whathecode.Tests.System
         private class Bulldog : Dog { }
         private class Cat : AbstractAnimal { }
 
-        private class Pet<T>
+        private interface IPet<out T>
+        {
+            T RunAway();
+        }
+
+        private class Pet<T> : IPet<T>
             where T : AbstractAnimal, new()
         {
             readonly T _animal;
@@ -68,16 +73,12 @@ namespace Whathecode.Tests.System
         }        
 
 
-        Pet<Dog> _plainDog;
-        Pet<Bulldog> _bulldog;
-        Pet<Cat> _cat;
+        Pet<Dog> _dog;
 
         [TestInitialize]
         public void InitializeTest()
         {
-            _plainDog = Pet<Dog>.Domesticate( new Dog() );
-            _bulldog = Pet<Bulldog>.Domesticate( new Bulldog() );
-            _cat = Pet<Cat>.Domesticate( new Cat() );
+            _dog = Pet<Dog>.Domesticate( new Dog() );
         }
 
         #endregion  // Common Test Members
@@ -86,69 +87,73 @@ namespace Whathecode.Tests.System
         [TestMethod]
         public void WithoutReflectionDelegateTest()
         {
+            IPet<Dog> test = Pet<Dog>.Domesticate( new Dog() );
+            IPet<AbstractAnimal> animal = test;
+
             // Covarience for generic parameters in .NET 4.0
-            Func<Bulldog> looseBulldog = _bulldog.RunAway;
-            Func<Dog> anyDog = looseBulldog; // After all, a bulldog which isn't a pet is just a dog as well.
-            Func<Dog> oldFunc = () => looseBulldog();   // Prior to .NET 4.0
-            anyDog();
+            Func<Dog> looseDog = _dog.RunAway;
+            Func<AbstractAnimal> anyAnimal = looseDog; // After all, a dog which isn't a pet anymore is not just a dog, but also an animal.
+            Func<AbstractAnimal> oldFunc = () => looseDog();   // Prior to .NET 4.0
+            anyAnimal();
             oldFunc();
 
             // Contravariance for generic parameters in .NET 4.0
-            Action<Dog> play = _plainDog.PlayWith;
+            Action<Dog> play = _dog.PlayWith;
             Action<Bulldog> bullDogPlay = play; // After all, if dogs can get along, bulldogs can get along as well.
             Action<Bulldog> oldAction = friend => play( friend );    // Prior to .NET 4.0
             bullDogPlay( new Bulldog() );
             oldAction( new Bulldog() );
 
             // Upcasting, so the specific type is known. Force contravariance for one type.
-            Func<Bulldog> assumeBulldog = () => (Bulldog)anyDog();
-            assumeBulldog();
-            assumeBulldog = () => (Bulldog)new Dog();
-            AssertHelper.ThrowsException<InvalidCastException>( () => assumeBulldog() );
+            Func<Dog> assumeDog = () => (Dog)anyAnimal();
+            assumeDog();
+            assumeDog = () => (Dog)(AbstractAnimal)new Cat();
+            AssertHelper.ThrowsException<InvalidCastException>( () => assumeDog() );
 
             // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
-            Action<Dog> assumeBulldogAction = b => bullDogPlay( (Bulldog)b );
-            assumeBulldogAction( new Bulldog() );
-            AssertHelper.ThrowsException<InvalidCastException>( () => assumeBulldogAction( new Dog() ) );
+            Action<AbstractAnimal> assumeDogAction = d => play( (Dog)d );
+            assumeDogAction( new Dog() );
+            AssertHelper.ThrowsException<InvalidCastException>( () => assumeDogAction( new Cat() ) );
         }
 
         [TestMethod]
         public void OrdinaryCreateDelegateTest()
         {
             // Action, no template arguments, so no problem.
-            MethodInfo feedMethod = _plainDog.GetType().GetMethod( FeedMethodName );
-            Action feed = (Action)Delegate.CreateDelegate( typeof( Action ), _plainDog, feedMethod );
+            MethodInfo feedMethod = _dog.GetType().GetMethod( FeedMethodName );
+            Action feed = (Action)Delegate.CreateDelegate( typeof( Action ), _dog, feedMethod );
             feed();
 
             // Func<T> with known type, and covariance.
-            MethodInfo runAwayMethod = _bulldog.GetType().GetMethod( RunAwayMethodName );
-            Func<Bulldog> runAway = (Func<Bulldog>)Delegate.CreateDelegate( typeof( Func<Bulldog> ), _bulldog, runAwayMethod );
-            Func<Dog> covariant = (Func<Dog>)Delegate.CreateDelegate( typeof( Func<Dog> ), _bulldog, runAwayMethod );
+            MethodInfo runAwayMethod = _dog.GetType().GetMethod( RunAwayMethodName );
+            Func<Dog> runAway = (Func<Dog>)Delegate.CreateDelegate( typeof( Func<Dog> ), _dog, runAwayMethod );
+            Func<AbstractAnimal> covariant
+                = (Func<AbstractAnimal>)Delegate.CreateDelegate( typeof( Func<AbstractAnimal> ), _dog, runAwayMethod );
             runAway();
             covariant();
 
             // Action<T> with known type, and contraviance.
-            MethodInfo playMethod = _plainDog.GetType().GetMethod( PlayWithMethodName );
-            Action<Dog> playWithDog = (Action<Dog>)Delegate.CreateDelegate( typeof( Action<Dog> ), _plainDog, playMethod );
-            Action<Bulldog> playWithBulldog = (Action<Bulldog>)Delegate.CreateDelegate( typeof( Action<Bulldog> ), _plainDog, playMethod );
+            MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
+            Action<Dog> playWithDog = (Action<Dog>)Delegate.CreateDelegate( typeof( Action<Dog> ), _dog, playMethod );
+            Action<Bulldog> playWithBulldog = (Action<Bulldog>)Delegate.CreateDelegate( typeof( Action<Bulldog> ), _dog, playMethod );
             playWithDog( new Dog() );
             playWithBulldog( new Bulldog() );
 
             // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
-            MethodInfo bulldogPlayMethod = _bulldog.GetType().GetMethod( PlayWithMethodName );
-            AssertHelper.ThrowsException<ArgumentException>( () => Delegate.CreateDelegate( typeof( Action<Dog> ), _bulldog, playMethod ) );
+            AssertHelper.ThrowsException<ArgumentException>(
+                () => Delegate.CreateDelegate( typeof( Action<AbstractAnimal> ), _dog, playMethod ) );
         }
 
         [TestMethod]
         public void CreateUpcastingDelegateTest()
         {
             // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
-            MethodInfo playMethod = _bulldog.GetType().GetMethod( PlayWithMethodName );
-            Action<Dog> play = DelegateHelper.CreateUpcastingDelegate<Action<Dog>>( _bulldog, playMethod );
+            MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
+            Action<AbstractAnimal> play = DelegateHelper.CreateUpcastingDelegate<Action<AbstractAnimal>>( _dog, playMethod );
 
             // No need to know about the exact type during reflection! As long as you are sure it is the right object.
-            play( new Bulldog() );
-            AssertHelper.ThrowsException<InvalidCastException>( () => play( new Dog() ) );
+            play( new Dog() );
+            AssertHelper.ThrowsException<InvalidCastException>( () => play( new Cat() ) );
         }
     }
 }
