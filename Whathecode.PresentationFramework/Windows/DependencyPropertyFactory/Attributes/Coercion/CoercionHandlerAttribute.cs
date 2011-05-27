@@ -25,7 +25,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
         ///   Should extend from <see cref="AbstractControlCoercion{T, U}" />.</param>
         /// <param name="constructorArguments">The arguments to pass to the constructor of the validation handler.</param>
         public CoercionHandlerAttribute( Type dynamicType, params object[] constructorArguments )
-            : this( dynamicType, constructorArguments, null )
+            : this( dynamicType, constructorArguments, constructorArguments )
         {
         }
 
