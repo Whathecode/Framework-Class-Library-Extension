@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows;
 using PostSharp.Aspects;
 using PostSharp.Reflection;
+using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
@@ -49,7 +50,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
             if ( _getter == null )
             {
                 MethodInfo getter = Factory.GetType().GetMethod( FactoryGetValueMethod );
-                _getter = DelegateHelper.CreateUpcastingDelegate<Func<DependencyObject, object, object>>( Factory, getter );
+                _getter = getter.CreateDelegate<Func<DependencyObject, object, object>>( Factory, DelegateHelper.CreateOptions.Upcasting );
             }           
            
             args.Value = _getter( args.Instance as DependencyObject, _property );
@@ -60,7 +61,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
             if ( _setter == null )
             {
                 MethodInfo setter = Factory.GetType().GetMethod( FactorySetValueMethod );
-                _setter = DelegateHelper.CreateUpcastingDelegate<Action<DependencyObject, object, object>>( Factory, setter );
+                _setter = setter.CreateDelegate<Action<DependencyObject, object, object>>( Factory, DelegateHelper.CreateOptions.Upcasting );
             }
 
             _setter( args.Instance as DependencyObject, _property, args.Value );

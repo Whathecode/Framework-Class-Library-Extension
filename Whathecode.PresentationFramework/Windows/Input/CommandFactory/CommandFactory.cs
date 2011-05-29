@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Input;
 using Whathecode.System.Reflection;
+using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.Input.CommandFactory.Attributes;
 
 
@@ -70,13 +71,14 @@ namespace Whathecode.System.Windows.Input.CommandFactory
                     {
                         case 0:
                         {
-                            Action execute = (Action)Delegate.CreateDelegate( typeof( Action ), _owner, method );
+                            Action execute = method.CreateDelegate<Action>( _owner );
                             command = new DelegateCommand( execute, canExecute );
                             break;
                         }
                         case 1:
                         {
-                            Action<object> compatibleExecute = DelegateHelper.CreateUpcastingDelegate<Action<object>>( _owner, method );
+                            Action<object> compatibleExecute 
+                                = method.CreateDelegate<Action<object>>( _owner, DelegateHelper.CreateOptions.Upcasting );
                             command = new DelegateCommand<object>( compatibleExecute, canExecute );
                             break;
                         }

@@ -17,6 +17,20 @@ namespace Whathecode.System
     public static class DelegateHelper
     {
         /// <summary>
+        ///   Options which specify what type of delegate should be created.
+        /// </summary>
+        [Flags]
+        public enum CreateOptions
+        {
+            None,
+            /// <summary>
+            ///   Upcasts of delegate parameter types to the correct types required for the method are done where necessary.
+            ///   Of course only valid casts will work.
+            /// </summary>
+            Upcasting
+        }
+
+        /// <summary>
         ///   A struct which holds the expressions for the arguments when creating delegates.
         /// </summary>
         struct DelegateArgumentExpressions
@@ -46,82 +60,111 @@ namespace Whathecode.System
         /// <summary>
         ///   Creates a delegate of a specified type that represents the specified static or instance method,
         ///   with the specified first argument.
-        ///   Upcasts of parameter types to the correct types required for the method are done where necessary.
-        ///   Of course only valid casts will work.
         /// </summary>
         /// <typeparam name = "TDelegate">The type for the delegate.</typeparam>
-        /// <param name = "instance">The object to which the delegate is bound, or null to treat method as static.</param>
         /// <param name = "method">The MethodInfo describing the static or instance method the delegate is to represent.</param>
-        public static TDelegate CreateUpcastingDelegate<TDelegate>( object instance, MethodInfo method )
-        {
-            MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
+        /// <param name = "instance">When method is an instance method, the instance to call this method on.</param>
+        /// <param name = "options">Options which specify what type of delegate should be created.</param>        
+        public static TDelegate CreateDelegate<TDelegate>(
+            MethodInfo method,   
+            object instance = null,
+            CreateOptions options = CreateOptions.None )
+            where TDelegate : class
+        {            
+            switch ( options )
+            {
+                case CreateOptions.None:
+                    // Ordinary delegate creation, maintaining variance safety.
+                    return Delegate.CreateDelegate( typeof( TDelegate ), instance, method ) as TDelegate;
 
-            // Create delegate original and converted arguments.
-            var delegateTypes = delegateInfo.GetParameters().Select( d => d.ParameterType );
-            var methodTypes = method.GetParameters().Select( m => m.ParameterType );
-            var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
+                default:
+                {
+                    MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
 
-            // Create method call.
-            Expression methodCall = Expression.Call(
-                instance == null ? null : Expression.Constant( instance ),
-                method,
-                delegateArgumentExpressions.ConvertedArguments );
+                    // Create delegate original and converted arguments.
+                    var delegateTypes = delegateInfo.GetParameters().Select( d => d.ParameterType );
+                    var methodTypes = method.GetParameters().Select( m => m.ParameterType );
+                    var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
 
-            // Convert return type when necessary.
-            Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
-                                                 ? methodCall
-                                                 : Expression.Convert( methodCall, delegateInfo.ReturnType );
+                    // Create method call.
+                    Expression methodCall = Expression.Call(
+                        instance == null ? null : Expression.Constant( instance ),
+                        method,
+                        delegateArgumentExpressions.ConvertedArguments );
 
-            return Expression.Lambda<TDelegate>(
-                convertedMethodCall,
-                delegateArgumentExpressions.OriginalArguments
-                ).Compile();
+                    // Convert return type when necessary.
+                    Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
+                                                         ? methodCall
+                                                         : Expression.Convert( methodCall, delegateInfo.ReturnType );
+
+                    return Expression.Lambda<TDelegate>(
+                        convertedMethodCall,
+                        delegateArgumentExpressions.OriginalArguments
+                        ).Compile();
+                }
+            }
         }
 
         /// <summary>
         ///   Creates a delegate of a specified type that represents a method which can be executed on an instance passed as parameter.
-        ///   Conversions are done when possible.
         /// </summary>
-        /// <typeparam name="TDelegate">
+        /// <typeparam name = "TDelegate">
         ///   The type for the delegate. This delegate needs at least one (first) type parameter denoting the type of the instance
         ///   which will be passed.
         ///   E.g. Action&lt;ExampleObject, object&gt;,
         ///        where ExampleObject denotes the instance type and object denotes the desired type of the first parameter of the method.
         /// </typeparam>
-        /// <param name="method">>The MethodInfo describing the method of the instance type.</param>
-        public static TDelegate CreateDynamicInstanceDelegate<TDelegate>( MethodInfo method )
+        /// <param name = "method">>The MethodInfo describing the method of the instance type.</param>
+        /// <param name = "options">Options which specify what type of delegate should be created.</param>        
+        public static TDelegate CreateDynamicInstanceDelegate<TDelegate>(
+            MethodInfo method,
+            CreateOptions options = CreateOptions.None )
+            where TDelegate : class
         {
-            MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
-            var delegateParameters = delegateInfo.GetParameters();
+            Contract.Requires( !method.IsStatic );
+            
+            switch ( options )
+            {
+                case CreateOptions.None:
+                    // Ordinary delegate creation, maintaining variance safety.
+                    return Delegate.CreateDelegate( typeof( TDelegate ), method ) as TDelegate;
 
-            // Convert instance type when necessary.
-            Type delegateInstanceType = delegateParameters.Select( p => p.ParameterType ).First();
-            Type methodInstanceType = method.DeclaringType;
-            ParameterExpression instance = Expression.Parameter( delegateInstanceType );
-            Expression convertedInstance = delegateInstanceType == methodInstanceType
-                                               ? (Expression)instance
-                                               : Expression.Convert( instance, delegateInstanceType );
+                default:
+                {
 
-            // Create delegate original and converted arguments.
-            var delegateTypes = delegateParameters.Select( d => d.ParameterType ).Skip( 1 );
-            var methodTypes = method.GetParameters().Select( m => m.ParameterType );
-            var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
+                    MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
+                    var delegateParameters = delegateInfo.GetParameters();
 
-            // Create method call.
-            Expression methodCall = Expression.Call(
-                convertedInstance,
-                method,
-                delegateArgumentExpressions.ConvertedArguments );
+                    // Convert instance type when necessary.
+                    Type delegateInstanceType = delegateParameters.Select( p => p.ParameterType ).First();
+                    Type methodInstanceType = method.DeclaringType;
+                    ParameterExpression instance = Expression.Parameter( delegateInstanceType );
+                    Expression convertedInstance = delegateInstanceType == methodInstanceType
+                                                       ? (Expression)instance
+                                                       : Expression.Convert( instance, methodInstanceType );
 
-            // Convert return type when necessary.
-            Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
-                                                 ? methodCall
-                                                 : Expression.Convert( methodCall, delegateInfo.ReturnType );
+                    // Create delegate original and converted arguments.
+                    var delegateTypes = delegateParameters.Select( d => d.ParameterType ).Skip( 1 );
+                    var methodTypes = method.GetParameters().Select( m => m.ParameterType );
+                    var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
 
-            return Expression.Lambda<TDelegate>(
-                convertedMethodCall,
-                new[] { instance }.Concat( delegateArgumentExpressions.OriginalArguments )
-                ).Compile();
+                    // Create method call.
+                    Expression methodCall = Expression.Call(
+                        convertedInstance,
+                        method,
+                        delegateArgumentExpressions.ConvertedArguments );
+
+                    // Convert return type when necessary.
+                    Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
+                                                         ? methodCall
+                                                         : Expression.Convert( methodCall, delegateInfo.ReturnType );
+
+                    return Expression.Lambda<TDelegate>(
+                        convertedMethodCall,
+                        new[] { instance }.Concat( delegateArgumentExpressions.OriginalArguments )
+                        ).Compile();
+                }
+            }
         }
 
         /// <summary>

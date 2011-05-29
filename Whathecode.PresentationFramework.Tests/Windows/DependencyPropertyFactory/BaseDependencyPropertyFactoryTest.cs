@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting;
 using Whathecode.System;
+using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 
@@ -102,12 +103,12 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
             // Create getters and setters for the CLR properties.
             _propertyGetters = _propertyAttributes.ToDictionary(
                 p => (Property)p.Value.GetId(),
-                p => DelegateHelper.CreateUpcastingDelegate<Func<object>>( _test, p.Key.GetGetMethod() ) );
+                p => p.Key.GetGetMethod().CreateDelegate<Func<object>>( _test, DelegateHelper.CreateOptions.Upcasting ) );
             _propertySetters = _propertyAttributes
                 .Where( p => p.Key.GetSetMethod() != null )
                 .ToDictionary(
                     p => (Property)p.Value.GetId(),
-                    p => DelegateHelper.CreateUpcastingDelegate<Action<object>>( _test, p.Key.GetSetMethod() ) );
+                    p => p.Key.GetSetMethod().CreateDelegate<Action<object>>( _test, DelegateHelper.CreateOptions.Upcasting ) );
 
             // Verify whether correct amount of read only properties where created.
             Assert.IsTrue( _propertySetters.Count == _propertyDescriptors.Where( d => !d.Value.IsReadOnly ).Count() );

@@ -149,11 +149,47 @@ namespace Whathecode.Tests.System
         {
             // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
             MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
-            Action<AbstractAnimal> play = DelegateHelper.CreateUpcastingDelegate<Action<AbstractAnimal>>( _dog, playMethod );
+            Action<AbstractAnimal> play = DelegateHelper.CreateDelegate<Action<AbstractAnimal>>(
+                playMethod, _dog, DelegateHelper.CreateOptions.Upcasting );
 
             // No need to know about the exact type during reflection! As long as you are sure it is the right object.
             play( new Dog() );
             AssertHelper.ThrowsException<InvalidCastException>( () => play( new Cat() ) );
+        }
+
+        [TestMethod]
+        public void OrdinaryDynamicInstanceCreateDelegateTest()
+        {
+            // Action
+            Action<Pet<Dog>> feed = (Action<Pet<Dog>>)Delegate.CreateDelegate(
+                typeof( Action<Pet<Dog>> ),
+                _dog.GetType().GetMethod( FeedMethodName ) );
+            feed( _dog );
+
+            // Action<T>
+            Action<Pet<Dog>, Dog> playWith = (Action<Pet<Dog>, Dog>)Delegate.CreateDelegate(
+                typeof( Action<Pet<Dog>, Dog> ),
+                _dog.GetType().GetMethod( PlayWithMethodName ) );
+            playWith( _dog, new Dog() );
+
+            // Func<T>
+            Func<Pet<Dog>, Dog> runAway = (Func<Pet<Dog>, Dog>)Delegate.CreateDelegate(
+                typeof( Func<Pet<Dog>, Dog> ),
+                _dog.GetType().GetMethod( RunAwayMethodName ) );
+            runAway( _dog );
+        }
+
+        [TestMethod]
+        public void CreateUpcastingDynamicInstanceDelegateTest()
+        {
+            // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
+            MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
+            Action<object, AbstractAnimal> play = DelegateHelper.CreateDynamicInstanceDelegate<Action<object, AbstractAnimal>>(
+                playMethod, DelegateHelper.CreateOptions.Upcasting );
+
+            // No need to know about the exact type during reflection! As long as you are sure it is the right object.
+            play( _dog, new Dog() );
+            AssertHelper.ThrowsException<InvalidCastException>( () => play( _dog, new Cat() ) );
         }
     }
 }
