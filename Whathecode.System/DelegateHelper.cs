@@ -63,7 +63,7 @@ namespace Whathecode.System
         /// </summary>
         /// <typeparam name = "TDelegate">The type for the delegate.</typeparam>
         /// <param name = "method">The MethodInfo describing the static or instance method the delegate is to represent.</param>
-        /// <param name = "instance">When method is an instance method, the instance to call this method on.</param>
+        /// <param name = "instance">When method is an instance method, the instance to call this method on. Null for static methods.</param>
         /// <param name = "options">Options which specify what type of delegate should be created.</param>        
         public static TDelegate CreateDelegate<TDelegate>(
             MethodInfo method,   
@@ -116,7 +116,7 @@ namespace Whathecode.System
         /// </typeparam>
         /// <param name = "method">>The MethodInfo describing the method of the instance type.</param>
         /// <param name = "options">Options which specify what type of delegate should be created.</param>        
-        public static TDelegate CreateDynamicInstanceDelegate<TDelegate>(
+        public static TDelegate CreateOpenInstanceDelegate<TDelegate>(
             MethodInfo method,
             CreateOptions options = CreateOptions.None )
             where TDelegate : class

@@ -11,7 +11,7 @@ namespace Whathecode.System.Reflection.Extensions
         /// </summary>
         /// <typeparam name = "TDelegate">The type of the delegate to create.</typeparam>
         /// <param name = "source">The source of this extension method.</param>
-        /// <param name = "instance">When an instance method, the instance to call this method on.</param>
+        /// <param name = "instance">When an instance method, the instance to call this method on. Null for static methods.</param>
         /// <param name = "options">Options which specify what type of delegate should be created.</param>         
         /// <returns>The delegate representing this method.</returns>
         public static TDelegate CreateDelegate<TDelegate>(
@@ -35,14 +35,14 @@ namespace Whathecode.System.Reflection.Extensions
         /// <param name = "source">The source of this extension method.</param>
         /// <param name = "options">Options which specify what type of delegate should be created.</param> 
         /// <returns>The delegate representing this method, with as first argument the instance to call this method on.</returns>
-        public static TDelegate CreateDynamicInstanceDelegate<TDelegate>(
+        public static TDelegate CreateOpenInstanceDelegate<TDelegate>(
             this MethodInfo source,
             DelegateHelper.CreateOptions options = DelegateHelper.CreateOptions.None )
             where TDelegate : class
         {
             Contract.Requires( !source.IsStatic );
 
-            return DelegateHelper.CreateDynamicInstanceDelegate<TDelegate>( source, options );
+            return DelegateHelper.CreateOpenInstanceDelegate<TDelegate>( source, options );
         }
     }
 }

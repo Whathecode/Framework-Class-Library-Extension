@@ -28,7 +28,7 @@ namespace Whathecode.Tests.System.Reflection.Extensions
         [TestMethod]
         public void CreateDynamicInstanceDelegateTest()
         {
-            Func<string, string> toUpper = _toUpperMethod.CreateDynamicInstanceDelegate<Func<string, string>>();
+            Func<string, string> toUpper = _toUpperMethod.CreateOpenInstanceDelegate<Func<string, string>>();
             Assert.AreEqual( TestString.ToUpper(), toUpper( TestString ) );
         }
     }

@@ -184,7 +184,7 @@ namespace Whathecode.Tests.System
         {
             // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
             MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
-            Action<object, AbstractAnimal> play = DelegateHelper.CreateDynamicInstanceDelegate<Action<object, AbstractAnimal>>(
+            Action<object, AbstractAnimal> play = DelegateHelper.CreateOpenInstanceDelegate<Action<object, AbstractAnimal>>(
                 playMethod, DelegateHelper.CreateOptions.Upcasting );
 
             // No need to know about the exact type during reflection! As long as you are sure it is the right object.
