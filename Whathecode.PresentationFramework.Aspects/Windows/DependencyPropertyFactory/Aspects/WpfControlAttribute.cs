@@ -11,7 +11,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
     /// </summary>
     [Serializable]
     [AttributeUsage( AttributeTargets.Class )]
-    public class WpfControlAttribute : Attribute, IAspectProvider, IAspect
+    public class WpfControlAttribute : Attribute, IAspectProvider
     {
         readonly Type _propertiesEnumType;
 
@@ -28,14 +28,14 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 
             // TODO: Once PostSharp is fixed, the following generic aspect should work properly.
             // Meanwhile the more complex non generic aspect can be used which uses reflection.
-            Type genericAspect = typeof( WpfControlAspect<> ).MakeGenericType( _propertiesEnumType );
+            /*Type genericAspect = typeof( WpfControlAspect<> ).MakeGenericType( _propertiesEnumType );
 
-            yield return new AspectInstance( targetType, Activator.CreateInstance( genericAspect ) as IAspect );
+            yield return new AspectInstance( targetType, Activator.CreateInstance( genericAspect ) as IAspect );*/
 
             // HACK: Non generic version required until fixed in PostSharp.
-            /*yield return new AspectInstance(
+            yield return new AspectInstance(
                 targetType,
-                Activator.CreateInstance( typeof( WpfControlAspect ), _propertiesEnumType ) as IAspect );*/
+                Activator.CreateInstance( typeof( WpfControlAspect ), _propertiesEnumType ) as IAspect );
         }
     }
 }

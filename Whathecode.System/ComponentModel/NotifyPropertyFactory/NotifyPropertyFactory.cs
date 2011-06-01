@@ -88,7 +88,7 @@ namespace Whathecode.System.ComponentModel.NotifyPropertyFactory
         /// <param name = "value">The value for the property.</param>
         public void SetValue( TEnum property, object value )
         {
-            if ( _properties[ property ] != value )
+            if ( !_properties[ property ].Equals( value ) )
             {
                 _properties[ property ] = value;
 
