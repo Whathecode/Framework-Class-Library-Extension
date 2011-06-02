@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using Whathecode.System.ComponentModel.NotifyPropertyFactory.Attributes;
+using Whathecode.System.Extensions;
 using Whathecode.System.Reflection;
 using Whathecode.System.Reflection.Extensions;
 
@@ -88,7 +89,7 @@ namespace Whathecode.System.ComponentModel.NotifyPropertyFactory
         /// <param name = "value">The value for the property.</param>
         public void SetValue( TEnum property, object value )
         {
-            if ( !_properties[ property ].Equals( value ) )
+            if ( !_properties[ property ].ReferenceOrBoxedValueEquals( value ) )
             {
                 _properties[ property ] = value;
 

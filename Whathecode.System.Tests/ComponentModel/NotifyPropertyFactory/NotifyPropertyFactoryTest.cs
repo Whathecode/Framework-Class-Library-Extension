@@ -11,6 +11,9 @@ namespace Whathecode.Tests.System.ComponentModel.NotifyPropertyFactory
     {
         #region Common test members
 
+        class DummyObject {}
+
+
         class Test : INotifyPropertyChanged
         {
             enum Properties

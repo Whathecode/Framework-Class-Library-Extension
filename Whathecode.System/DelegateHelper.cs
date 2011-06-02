@@ -114,7 +114,7 @@ namespace Whathecode.System
         ///   E.g. Action&lt;ExampleObject, object&gt;,
         ///        where ExampleObject denotes the instance type and object denotes the desired type of the first parameter of the method.
         /// </typeparam>
-        /// <param name = "method">>The MethodInfo describing the method of the instance type.</param>
+        /// <param name = "method">The MethodInfo describing the method of the instance type.</param>
         /// <param name = "options">Options which specify what type of delegate should be created.</param>        
         public static TDelegate CreateOpenInstanceDelegate<TDelegate>(
             MethodInfo method,
