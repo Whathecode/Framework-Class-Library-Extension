@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lambda.Generic.Arithmetic;
+using Whathecode.System.Reflection.Emit;
 
 
 namespace Whathecode.System.Arithmetic
@@ -28,7 +29,7 @@ namespace Whathecode.System.Arithmetic
         }
 
 
-        static readonly Dictionary<Type, CreateCalculatorDelegate> IntegralCalculators = new Dictionary<Type, CreateCalculatorDelegate>
+        static readonly Dictionary<Type, CreateCalculatorDelegate> IntegerCalculators = new Dictionary<Type, CreateCalculatorDelegate>
         {
             // Unsigned math.
             { typeof( Byte ), () => new ByteMath() },
@@ -42,7 +43,7 @@ namespace Whathecode.System.Arithmetic
             { typeof( Int64 ), () => new LongMath() },
         };
 
-        static readonly Dictionary<Type, CreateCalculatorDelegate> IntegralCheckedCalculators = new Dictionary<Type, CreateCalculatorDelegate>
+        static readonly Dictionary<Type, CreateCalculatorDelegate> IntegerCheckedCalculators = new Dictionary<Type, CreateCalculatorDelegate>
         {
             // Unsigned math.
             { typeof( Byte ), () => new CheckedByteMath() },
@@ -69,31 +70,18 @@ namespace Whathecode.System.Arithmetic
         /// </summary>
         /// <typeparam name = "TMath">The type for which to create a calculator.</typeparam>
         /// <param name = "checkedOption">Use checked math or not for integral types.</param>
-        /// <returns></returns>
+        /// <returns>A calculator for the given type.</returns>
         public static IMath<TMath> CreateBasicCalculator<TMath>( CheckedOption checkedOption )
         {
             // TODO: Support fuzzy logic calculators?
 
-            Dictionary<Type, CreateCalculatorDelegate> integralCalculators;
-
-            // Depending on whether to use checked math or not, initialize integral calculators list with the correct list of calculators.             
-            switch ( checkedOption )
-            {
-                case CheckedOption.Checked:
-                    integralCalculators = IntegralCalculators;
-                    break;
-                case CheckedOption.Unchecked:
-                    integralCalculators = IntegralCheckedCalculators;
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+            Dictionary<Type, CreateCalculatorDelegate> integerCalculators = GetIntegerCalculators( checkedOption );
 
             // Based on the type, get a correct calculator.
-            Type mathType = typeof( TMath );
-            if ( integralCalculators.ContainsKey( mathType ) )
+            Type mathType = GetMathType<TMath>();
+            if ( integerCalculators.ContainsKey( mathType ) )
             {
-                return integralCalculators[ mathType ]() as IMath<TMath>;
+                return integerCalculators[ mathType ]() as IMath<TMath>;
             }
             if ( RationalCalculators.ContainsKey( mathType ) )
             {
@@ -102,6 +90,57 @@ namespace Whathecode.System.Arithmetic
             throw new NotSupportedException(
                 "The factory can't create a calculator for type \"" + mathType + " (" + checkedOption + ")\"."
                 );
+        }
+
+        /// <summary>
+        ///   Create an integral calculator for a given type.
+        /// </summary>
+        /// <typeparam name = "TMath">The type for which to create a calculator.</typeparam>
+        /// <param name = "checkedOption">Use checked math or not for integral types.</param>
+        /// <returns>A calculator for the given type.</returns>
+        public static IIntegerMath<TMath> CreateIntegerCalculator<TMath>( CheckedOption checkedOption )
+        {
+            Dictionary<Type, CreateCalculatorDelegate> integerCalculators = GetIntegerCalculators( checkedOption );
+
+            // Based on the type, get a correct calculator.
+            Type mathType = GetMathType<TMath>();
+            if ( integerCalculators.ContainsKey( mathType ) )
+            {
+                object calculator = integerCalculators[ mathType ]();
+                return EmitHelper.CreateCompatibleGenericWrapper<IIntegerMath<TMath>>( calculator );
+            }
+            throw new NotSupportedException(
+                "The factory can't create a calculator for type \"" + mathType + " (" + checkedOption + ")\"."
+                );
+        }
+
+        /// <summary>
+        ///   Depending on whether to use checked math or not, return correct list of integer calculators.  
+        /// </summary>
+        /// <param name = "checkedOption">Use checked math or not for integral types.</param>
+        /// <returns>The correct calculator initializer dictionary based on the specified option.</returns>
+        static Dictionary<Type, CreateCalculatorDelegate> GetIntegerCalculators( CheckedOption checkedOption )
+        {
+            switch ( checkedOption )
+            {
+                case CheckedOption.Checked:
+                    return IntegerCalculators;
+                case CheckedOption.Unchecked:
+                    return IntegerCheckedCalculators;
+                default:
+                    throw new NotSupportedException();
+            }            
+        }
+
+        /// <summary>
+        ///   Get the math type for the specified type. Underlying type is used for enums.
+        /// </summary>
+        /// <typeparam name="T">The type to get the math type for.</typeparam>
+        static Type GetMathType<T>()
+        {
+            Type type = typeof( T );
+
+            return type.IsEnum ? type.GetEnumUnderlyingType() : type;
         }
     }
 }

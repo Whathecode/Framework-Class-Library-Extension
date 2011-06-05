@@ -22,17 +22,21 @@ namespace Whathecode.System.Reflection.Emit
             Type typeToCreateGeneric = typeToCreate.GetGenericTypeDefinition();
             Type innerType = o.GetType();
             Type innerMatchingType = innerType.GetMatchingGenericType( typeToCreateGeneric );
+            bool isInterface = typeToCreate.IsInterface;
 
             // Extend from passed type and redirect all public calls to inner instance.
             AssemblyGen assembly = new AssemblyGen( "Whathecode.System.RunSharp" );
-            TypeGen type = assembly.Public.Class( typeToCreate.Name, typeToCreate );
+            TypeGen type = isInterface
+                               ? assembly.Public.Class( typeToCreate.Name, typeof( object ), typeToCreate )
+                               : assembly.Public.Class( typeToCreate.Name, typeToCreate );
             {
                 const string inner = "inner";
 
                 FieldGen innerInstance = type.Private.Field( innerType, "_innerInstance" );
 
                 // Create constructors.
-                foreach ( var toCreateConstructor in typeToCreate.GetConstructors( ReflectionHelper.AllInstanceMembers ) )
+                var toCreateConstructors = typeToCreate.GetConstructors( ReflectionHelper.AllInstanceMembers );
+                foreach ( var toCreateConstructor in toCreateConstructors )
                 {
                     ConstructorGen constructor = type.Public.Constructor();
                     {
@@ -55,46 +59,67 @@ namespace Whathecode.System.Reflection.Emit
                     }
                 }
 
+                // Enforce at least one constructor.
+                if ( toCreateConstructors.Count() == 0 )
+                {
+                    ConstructorGen emptyConstructor = type.Public.Constructor();
+                    {
+                        // Always add an extra first parameter, passing the instance, followed by the normal constructor arguments.                        
+                        emptyConstructor.Parameter( innerType, inner );
+
+                        CodeGen code = emptyConstructor.GetCode();
+                        {
+                            code.Assign( innerInstance, code.Arg( inner ) );
+                        }
+                    }
+                }
+
                 // Create methods.
-                foreach ( var methods in innerMatchingType.GetMethods( ReflectionHelper.AllInstanceMembers )
-                    .Zip( typeToCreate.GetMethods( ReflectionHelper.AllInstanceMembers ),
+                MethodInfo[] innerMethods 
+                    = isInterface ? innerMatchingType.GetFlattenedInterfaceMethods( ReflectionHelper.AllInstanceMembers ).ToArray()
+                                  : innerMatchingType.GetMethods( ReflectionHelper.AllInstanceMembers );
+                MethodInfo[] toCreateMethods 
+                    = isInterface ? typeToCreate.GetFlattenedInterfaceMethods( ReflectionHelper.AllInstanceMembers ).ToArray()
+                                  : typeToCreate.GetMethods( ReflectionHelper.AllInstanceMembers );
+                foreach ( var method in innerMethods
+                    .Zip( toCreateMethods,
                           ( matching, toCreate ) => new
                           {
                               Matching = matching,
-                              ToCreate = toCreate                        
+                              ToCreate = toCreate
                           } )
                     .Where( z => z.Matching.IsPublic || z.Matching.IsFamily ) )
                 {
-                    MethodGen method = type.Public.Override.Method( methods.ToCreate.ReturnType, methods.ToCreate.Name );
+                    MethodGen methodGen = type.Public.Override.Method( method.ToCreate.ReturnType, method.ToCreate.Name );
                     {
-                        ParameterInfo[] toCreateParameters = methods.ToCreate.GetParameters();
+                        ParameterInfo[] toCreateParameters = method.ToCreate.GetParameters();
                         var parameters = toCreateParameters
                             .Select( p =>
                             {
-                                var info = method.BeginParameter( p.ParameterType, p.Name );
+                                var info = methodGen.BeginParameter( p.ParameterType, p.Name );
                                 info.End();
                                 return info;
                             } ).ToArray();
 
-                        CodeGen code = method.GetCode();
+                        CodeGen code = methodGen.GetCode();
                         {
                             // Cast arguments to the type of the inner instance.
                             Operand[] args = parameters.Select( p => code.Arg( p.Name ) ).ToArray();
                             Operand[] castArgs = new Operand[] { };
                             if ( args.Length > 0 )
                             {
-                                Type[] parameterTypes = methods.Matching.GetParameters().Select( p => p.ParameterType ).ToArray();
-                                MethodInfo methodToCall 
-                                    = innerType.GetMethod( methods.ToCreate.Name, ReflectionHelper.AllInstanceMembers, parameterTypes );
+                                Type[] parameterTypes = method.Matching.GetParameters().Select( p => p.ParameterType ).ToArray();
+                                MethodInfo methodToCall
+                                    = innerType.GetMethod( method.ToCreate.Name, ReflectionHelper.AllInstanceMembers, parameterTypes );
                                 castArgs = methodToCall.GetParameters()
                                     .Select( ( p, index ) => args[ index ].Cast( typeof( object ) ).Cast( p.ParameterType ) ).ToArray();
                             }
 
                             // Call inner instance and return value when needed.
-                            Operand result = innerInstance.Cast( innerType ).Invoke( methods.ToCreate.Name, castArgs );
-                            if ( methods.ToCreate.ReturnType != typeof( void ) )
+                            Operand result = innerInstance.Invoke( method.ToCreate.Name, castArgs );
+                            if ( method.ToCreate.ReturnType != typeof( void ) )
                             {
-                                code.Return( result );
+                                code.Return( result.Cast( method.ToCreate.ReturnType ) );
                             }
                         }
                     }

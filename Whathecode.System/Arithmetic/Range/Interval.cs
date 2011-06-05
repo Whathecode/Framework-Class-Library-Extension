@@ -196,6 +196,7 @@ namespace Whathecode.System.Arithmetic.Range
         /// </summary>
         /// <param name = "value">The value to check for.</param>
         /// <returns>True when the value lies within the interval, false otherwise.</returns>
+        [Pure]
         public bool LiesInInterval( TMath value )
         {
             int startCompare = Calculator.Compare( value, Start );

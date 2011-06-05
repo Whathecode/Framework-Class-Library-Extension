@@ -47,39 +47,59 @@ namespace Whathecode.System.Reflection.Extensions
             Type[] genericArguments = type.GetGenericArguments();
             Type rawType = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
-            // Traverse across the type, and all it's base types.
-            while ( source != null && source != typeof( object ) )
+            // Used to compare type arguments and see whether they match.
+            Func<Type[], bool> argumentsMatch = arguments =>
             {
-                Type rawCurrent = source.IsGenericType ? source.GetGenericTypeDefinition() : source;
-                if ( rawType == rawCurrent )
+                if ( genericArguments.Length != arguments.Length )
                 {
-                    // Same raw generic type, compare type arguments.
-                    Type[] arguments = source.GetGenericArguments();
-                    if ( arguments.Length == genericArguments.Length )
-                    {
-                        bool argumentsMatch = true;
-                        for ( int i = 0; i < genericArguments.Length; ++i )
-                        {
-                            Type genericArgument = genericArguments[ i ];
-                            Type argument = arguments[ i ];
-                            if ( !genericArgument.IsGenericParameter && // No type specified.
-                                 genericArgument != argument )
-                            {
-                                argumentsMatch = false;
-                                break;
-                            }
-                        }
+                    return false;
+                }
 
-                        if ( argumentsMatch )
-                        {
-                            return source;
-                        }
+                bool matches = true;
+                for ( int i = 0; i < genericArguments.Length; ++i )
+                {
+                    Type genericArgument = genericArguments[ i ];
+                    Type argument = arguments[ i ];
+                    if ( !genericArgument.IsGenericParameter && // No type specified.
+                         genericArgument != argument )
+                    {
+                        matches = false;
+                        break;
                     }
                 }
-                source = source.BaseType;
+                return matches;
+            };
+
+            Type matchingType = null;
+            if ( type.IsInterface )
+            {
+                // Traverse across all interfaces to find a matching interface.
+                matchingType = (from t in source.GetInterfaces()
+                                let rawInterface = t.IsGenericType ? t.GetGenericTypeDefinition() : t
+                                where rawInterface == rawType && argumentsMatch( t.GetGenericArguments() )
+                                select t).FirstOrDefault();
+            }
+            else
+            {
+                // Traverse across the type, and all it's base types.
+                Type baseType = source;
+                while ( baseType != null && baseType != typeof( object ) )
+                {
+                    Type rawCurrent = baseType.IsGenericType ? baseType.GetGenericTypeDefinition() : baseType;
+                    if ( rawType == rawCurrent )
+                    {
+                        // Same raw generic type, compare type arguments.
+                        if ( argumentsMatch( baseType.GetGenericArguments() ) )
+                        {
+                            matchingType = baseType;
+                            break;
+                        }
+                    }
+                    baseType = baseType.BaseType;
+                }
             }
 
-            return null;
+            return matchingType;
         }
 
         /// <summary>
@@ -141,6 +161,46 @@ namespace Whathecode.System.Reflection.Extensions
                           m is EventInfo)
                    where m.GetMemberType().IsOfGenericType( type )
                    select m;
+        }
+
+        /// <summary>
+        ///   Returns all members which have a specified attribute annotated to them.
+        /// </summary>
+        /// <param name = "source">The source of this extension method.</param>
+        /// <param name = "memberTypes">The type of members to search in.</param>
+        /// <param name = "inherit">Specifies whether to search this member's inheritance chain to find the attributes.</param>
+        /// <param name = "bindingFlags">
+        ///   A bitmask comprised of one or more <see cref = "BindingFlags" /> that specify how the search is conducted.
+        ///   -or-
+        ///   Zero, to return null.
+        /// </param>
+        /// <typeparam name = "TAttribute">The type of the attributes to search for.</typeparam>
+        /// <returns>A dictionary containing all members with their attached attributes.</returns>
+        public static Dictionary<MemberInfo, TAttribute[]> GetAttributedMembers<TAttribute>(
+            this Type source,
+            MemberTypes memberTypes = MemberTypes.All,
+            bool inherit = false,
+            BindingFlags bindingFlags = ReflectionHelper.AllClassMembers )
+            where TAttribute : Attribute
+        {
+            return (from member in source.GetMembers( bindingFlags )
+                    from attribute in (Attribute[])member.GetCustomAttributes( typeof( TAttribute ), inherit )
+                    where member.MemberType.HasFlag( memberTypes )
+                    group attribute by member).ToDictionary( g => g.Key, g => g.Cast<TAttribute>().ToArray() );
+        }
+
+        public static IEnumerable<MethodInfo> GetFlattenedInterfaceMethods( this Type source, BindingFlags bindingFlags )
+        {
+            foreach ( var info in source.GetMethods( bindingFlags ) )
+            {
+                yield return info;
+            }
+
+            var flattened = source.GetInterfaces().SelectMany( interfaceType => GetFlattenedInterfaceMethods( interfaceType, bindingFlags ) );
+            foreach ( var info in flattened )
+            {
+                yield return info;
+            }
         }
     }
 }

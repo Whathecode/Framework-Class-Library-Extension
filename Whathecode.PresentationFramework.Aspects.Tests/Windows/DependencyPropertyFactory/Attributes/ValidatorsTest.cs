@@ -17,10 +17,10 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Attributes
         ValidationControl _control;
 
         [WpfControl( typeof( Property ) )]
-        private class ValidationControl : DependencyObject
+        public class ValidationControl : DependencyObject
         {
             [Flags]
-            enum Property
+            public enum Property
             {
                 RegexValidation
             }

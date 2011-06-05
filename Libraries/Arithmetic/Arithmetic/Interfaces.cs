@@ -225,13 +225,18 @@ namespace Lambda.Generic.Arithmetic
     }
 
     /// <summary>
+    /// Use this interface for integer (whole number) types such a int,uint,byte.
+    /// </summary>
+    public interface IIntegerMath<T> : IMath<T>, IBinaryMath<T>
+    {        
+    }
+
+    /// <summary>
     /// Use this interface for unsigned types such as byte,ushort,uint,ulong.
     /// Unsigned types have no subtraction or inverse. I have added ISubtracter
     /// anyway since it might be useful in many situations.
     /// </summary>
-    public interface IUnsignedMath<T> :
-        IMath<T>,
-        IBinaryMath<T>
+    public interface IUnsignedMath<T> : IIntegerMath<T>
     {
     }
 
@@ -244,8 +249,7 @@ namespace Lambda.Generic.Arithmetic
     /// to support IHasRoot, just throw a NotImplementedException.
     /// </summary>
     public interface ISignedMath<T> :
-        IMath<T>,
-        IBinaryMath<T>,
+        IIntegerMath<T>,
         IRing<T>
     {
     }

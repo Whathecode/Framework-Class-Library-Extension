@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Whathecode.System.Arithmetic;
 using Whathecode.System.Reflection.Extensions;
+using Lambda.Generic.Arithmetic;
 
 
 namespace Whathecode.System
@@ -13,8 +14,23 @@ namespace Whathecode.System
     /// </summary>
     /// <typeparam name = "T">The type of the enum.</typeparam>
     /// <author>Steven Jeuris</author>
-    public class EnumHelper<T> : AbstractBasicArithmetic<T>
+    public class EnumHelper<T>
     {
+        /// <summary>
+        ///   Backing field for Calculator which does lazy loading since the calculator is only needed when doing flag operations.
+        /// </summary>
+        private static readonly Lazy<IBinaryMath<T>> CalculatorLazy = new Lazy<IBinaryMath<T>>(
+            () => (IBinaryMath<T>)CalculatorFactory.CreateIntegerCalculator<T>( CalculatorFactory.CheckedOption.Checked ) );
+
+        /// <summary>
+        ///   Calculator which is required to be able to do flag operations.
+        /// </summary>
+        static IBinaryMath<T> Calculator
+        {
+            get { return CalculatorLazy.Value; }
+        }
+
+
         /// <summary>
         ///   Converts the string representation of the name or numeric value of one or more enumerated constants (seperated by comma)
         ///   to an equivalent enumerated object. Case-sensitive operation.
@@ -55,7 +71,7 @@ namespace Whathecode.System
         {
             Contract.Requires( typeof( T ).IsFlagsEnum() );
 
-            return GetValues().Where( flag => Enum.IsDefined( typeof( T ), flag ) );
+            return GetValues().Where( flag => Calculator.And( flag, flags ).Equals( flag ) );
         }
     }
 }

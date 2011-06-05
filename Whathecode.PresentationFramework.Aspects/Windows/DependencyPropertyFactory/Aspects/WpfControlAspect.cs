@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Windows;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Reflection;
+using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
-using ReflectionHelper = Whathecode.System.Reflection.ReflectionHelper;
 
 
 namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
@@ -24,8 +23,6 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
     [Serializable]
     public class WpfControlAspect : ITypeLevelAspect, IAspectProvider, ISerializable
     {
-        static readonly Type AttributeType = typeof( DependencyPropertyAttribute );        
-
         static readonly Dictionary<Type, object> PropertyFactories = new Dictionary<Type, object>();
         const string AspectsMemberName = "_propertyAspects";
         readonly List<DependencyPropertyAspect> _propertyAspects = new List<DependencyPropertyAspect>();
@@ -85,14 +82,12 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
         {
             Type targetType = (Type)targetElement;
 
-            var attributedMembers = (from member in targetType.GetMembers( ReflectionHelper.AllClassMembers )
-                                     from attribute in (Attribute[])member.GetCustomAttributes( AttributeType, false )
-                                     where member is PropertyInfo
-                                     group attribute by member).ToDictionary( g => g.Key, g => g.ToArray() );
+            Dictionary<MemberInfo, DependencyPropertyAttribute[]> attributedMembers
+                = targetType.GetAttributedMembers<DependencyPropertyAttribute>( MemberTypes.Property );
 
             foreach ( var member in attributedMembers )
             {
-                var attribute = (DependencyPropertyAttribute)member.Value[ 0 ];
+                var attribute = member.Value[ 0 ];
                 var propertyAspect = new DependencyPropertyAspect( attribute.GetId() );
                 _propertyAspects.Add( propertyAspect );
 
@@ -177,14 +172,12 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
         {
             Type targetType = (Type)targetElement;
 
-            var attributedMembers = (from member in targetType.GetMembers( ReflectionHelper.AllClassMembers )
-                                     from attribute in (Attribute[])member.GetCustomAttributes( AttributeType, false )
-                                     where member is PropertyInfo
-                                     group attribute by member).ToDictionary( g => g.Key, g => g.ToArray() );
+            Dictionary<MemberInfo, DependencyPropertyAttribute[]> attributedMembers
+                = targetType.GetAttributedMembers<DependencyPropertyAttribute>( MemberTypes.Property );
 
             foreach ( var member in attributedMembers )
             {
-                var attribute = (DependencyPropertyAttribute)member.Value[ 0 ];
+                var attribute = member.Value[ 0 ];
                 var propertyAspect = new DependencyPropertyAspect<T>( (T)attribute.GetId() );
                 _propertyAspects.Add( propertyAspect );
 

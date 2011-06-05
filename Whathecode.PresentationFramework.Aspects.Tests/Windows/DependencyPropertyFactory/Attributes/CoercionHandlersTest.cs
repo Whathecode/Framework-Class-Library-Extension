@@ -16,10 +16,10 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Attributes
         CoercionControl _control;
 
         [WpfControl( typeof( Property ) )]
-        private class CoercionControl : DependencyObject
+        public class CoercionControl : DependencyObject
         {
             [Flags]
-            enum Property
+            public enum Property
             {
                 StartRange,
                 EndRange,

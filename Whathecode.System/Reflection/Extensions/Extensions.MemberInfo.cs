@@ -41,7 +41,7 @@ namespace Whathecode.System.Reflection.Extensions
 
             if ( memberType == null )
             {
-                throw new NotImplementedException( "Can't return type of the given member of type \"" + member.GetType() + "\"" );
+                throw new NotSupportedException( "Can't return type of the given member of type \"" + member.GetType() + "\"" );
             }
 
             return memberType;
