@@ -50,7 +50,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
             if ( _getter == null )
             {
                 MethodInfo getter = Factory.GetType().GetMethod( FactoryGetValueMethod );
-                _getter = getter.CreateDelegate<Func<DependencyObject, object, object>>( Factory, DelegateHelper.CreateOptions.Upcasting );
+                _getter = getter.CreateDelegate<Func<DependencyObject, object, object>>( Factory, DelegateHelper.CreateOptions.Downcasting );
             }           
            
             args.Value = _getter( args.Instance as DependencyObject, _property );
@@ -61,7 +61,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
             if ( _setter == null )
             {
                 MethodInfo setter = Factory.GetType().GetMethod( FactorySetValueMethod );
-                _setter = setter.CreateDelegate<Action<DependencyObject, object, object>>( Factory, DelegateHelper.CreateOptions.Upcasting );
+                _setter = setter.CreateDelegate<Action<DependencyObject, object, object>>( Factory, DelegateHelper.CreateOptions.Downcasting );
             }
 
             _setter( args.Instance as DependencyObject, _property, args.Value );

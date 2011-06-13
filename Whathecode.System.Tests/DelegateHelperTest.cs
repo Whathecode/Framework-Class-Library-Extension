@@ -147,10 +147,10 @@ namespace Whathecode.Tests.System
         [TestMethod]
         public void CreateUpcastingDelegateTest()
         {
-            // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
+            // Downcasting, so the specific type doesn't need to be known. Force covariance for one type.
             MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
             Action<AbstractAnimal> play = DelegateHelper.CreateDelegate<Action<AbstractAnimal>>(
-                playMethod, _dog, DelegateHelper.CreateOptions.Upcasting );
+                playMethod, _dog, DelegateHelper.CreateOptions.Downcasting );
 
             // No need to know about the exact type during reflection! As long as you are sure it is the right object.
             play( new Dog() );
@@ -182,10 +182,10 @@ namespace Whathecode.Tests.System
         [TestMethod]
         public void CreateUpcastingDynamicInstanceDelegateTest()
         {
-            // Upcasting, so the specific type doesn't need to be known. Force covariance for one type.
+            // Downcasting, so the specific type doesn't need to be known. Force covariance for one type.
             MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
             Action<object, AbstractAnimal> play = DelegateHelper.CreateOpenInstanceDelegate<Action<object, AbstractAnimal>>(
-                playMethod, DelegateHelper.CreateOptions.Upcasting );
+                playMethod, DelegateHelper.CreateOptions.Downcasting );
 
             // No need to know about the exact type during reflection! As long as you are sure it is the right object.
             play( _dog, new Dog() );

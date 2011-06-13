@@ -24,10 +24,10 @@ namespace Whathecode.System
         {
             None,
             /// <summary>
-            ///   Upcasts of delegate parameter types to the correct types required for the method are done where necessary.
+            ///   Downcasts of delegate parameter types to the correct types required for the method are done where necessary.
             ///   Of course only valid casts will work.
             /// </summary>
-            Upcasting
+            Downcasting
         }
 
         /// <summary>

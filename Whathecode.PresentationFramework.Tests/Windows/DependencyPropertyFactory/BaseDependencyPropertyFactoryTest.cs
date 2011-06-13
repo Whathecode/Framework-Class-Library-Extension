@@ -103,12 +103,12 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
             // Create getters and setters for the CLR properties.
             _propertyGetters = _propertyAttributes.ToDictionary(
                 p => (Property)p.Value.GetId(),
-                p => p.Key.GetGetMethod().CreateDelegate<Func<object>>( _test, DelegateHelper.CreateOptions.Upcasting ) );
+                p => p.Key.GetGetMethod().CreateDelegate<Func<object>>( _test, DelegateHelper.CreateOptions.Downcasting ) );
             _propertySetters = _propertyAttributes
                 .Where( p => p.Key.GetSetMethod() != null )
                 .ToDictionary(
                     p => (Property)p.Value.GetId(),
-                    p => p.Key.GetSetMethod().CreateDelegate<Action<object>>( _test, DelegateHelper.CreateOptions.Upcasting ) );
+                    p => p.Key.GetSetMethod().CreateDelegate<Action<object>>( _test, DelegateHelper.CreateOptions.Downcasting ) );
 
             // Verify whether correct amount of read only properties where created.
             Assert.IsTrue( _propertySetters.Count == _propertyDescriptors.Where( d => !d.Value.IsReadOnly ).Count() );

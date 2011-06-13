@@ -72,7 +72,7 @@ namespace Whathecode.Tests.System.Windows.Input.CommandFactory
             // Command without parameter.
             ICommand noParameters = _model.Commands[ ViewModel.Command.NoParameter ];
             noParameters.Execute( null );
-            Assert.AreEqual( true, _model.NoParametersCalled );
+            Assert.IsTrue( _model.NoParametersCalled );
 
             // Command with parameter.
             ICommand parameter = _model.Commands[ ViewModel.Command.Parameter ];

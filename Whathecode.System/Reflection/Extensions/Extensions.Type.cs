@@ -48,27 +48,11 @@ namespace Whathecode.System.Reflection.Extensions
             Type rawType = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
             // Used to compare type arguments and see whether they match.
-            Func<Type[], bool> argumentsMatch = arguments =>
-            {
-                if ( genericArguments.Length != arguments.Length )
-                {
-                    return false;
-                }
-
-                bool matches = true;
-                for ( int i = 0; i < genericArguments.Length; ++i )
-                {
-                    Type genericArgument = genericArguments[ i ];
-                    Type argument = arguments[ i ];
-                    if ( !genericArgument.IsGenericParameter && // No type specified.
-                         genericArgument != argument )
-                    {
-                        matches = false;
-                        break;
-                    }
-                }
-                return matches;
-            };
+            Func<Type[], bool> argumentsMatch
+                = arguments => genericArguments
+                                   .Zip( arguments, Tuple.Create )
+                                   .All( t => t.Item1.IsGenericParameter || // No type specified.
+                                              t.Item1 == t.Item2 );
 
             Type matchingType = null;
             if ( type.IsInterface )

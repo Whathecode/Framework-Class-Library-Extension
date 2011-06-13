@@ -203,6 +203,7 @@
     <Compile Include="Reflection\Extensions\Extensions.object.cs" />
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
+    <Compile Include="Private.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AndCondition.cs" />
