@@ -21,12 +21,6 @@ namespace Whathecode.Tests.System.Reflection.Extensions
         readonly Type _incompleteBaseType = typeof( One<> );
         readonly Type _extendingType = typeof( ExtendingOne<int> );
 
-
-        [TestInitialize]
-        public void Initialize()
-        {            
-        }
-
         #endregion // Common test members
 
 

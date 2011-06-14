@@ -53,6 +53,35 @@ namespace Whathecode.System.Reflection.Extensions
         }
 
         /// <summary>
+        ///   Returns the value of the object at the given location inside this object.
+        /// </summary>
+        /// <param name = "source">The source of this extension method.</param>
+        /// <param name = "path">
+        ///   The path in the object to find the value for.
+        ///   The dot operator can be used to access composed members as you would ordinarily use it.
+        ///   E.g. Member.SubMember.SubSubMember
+        /// </param>
+        /// <returns>The object at the given path.</returns>
+        public static object GetValue( this object source, string path )
+        {                                    
+            string[] paths = path.Split( '.' );
+            object currentObject = source;
+
+            foreach ( string subPath in paths )
+            {
+                Type type = currentObject.GetType();
+                MemberInfo[] matchingMembers = type.GetMember( subPath );
+                if ( matchingMembers.Length != 1 )
+                {
+                    throw new ArgumentException( "Invalid path \"" + path + "\" for object of type \"" + source.GetType() + "\".", "path" );
+                }
+                currentObject = currentObject.GetValue( matchingMembers[ 0 ] );
+            }
+
+            return currentObject;
+        }
+
+        /// <summary>
         ///   Do a bitwise or on two enum values of which the underlying type is unknown.
         /// </summary>
         /// <returns>The bitwise or of both enum values.</returns>

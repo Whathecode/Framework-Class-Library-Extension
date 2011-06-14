@@ -14,6 +14,7 @@ namespace Whathecode.Tests.System
 // ReSharper restore MemberCanBeMadeStatic.Local
             {
                 Private<int> test = Private<int>.Static( () => 0 );
+
                 int before = test.Value;
                 test.Value = setValue;
                 return before;
@@ -22,6 +23,7 @@ namespace Whathecode.Tests.System
             public int InstanceTest( int setValue )
             {
                 Private<int> test = Private<int>.Instance( () => 0, this );
+
                 int before = test.Value;
                 test.Value = setValue;
                 return before;
@@ -29,7 +31,7 @@ namespace Whathecode.Tests.System
         }
 
         [TestMethod]
-        public void LocalStaticTest()
+        public void PrivateStaticTest()
         {
             PrivateTestClass instance1 = new PrivateTestClass();
             PrivateTestClass instance2 = new PrivateTestClass();
@@ -40,7 +42,7 @@ namespace Whathecode.Tests.System
         }
 
         [TestMethod]
-        public void LocalInstanceTest()
+        public void PrivateInstanceTest()
         {
             PrivateTestClass instance1 = new PrivateTestClass();
             PrivateTestClass instance2 = new PrivateTestClass();

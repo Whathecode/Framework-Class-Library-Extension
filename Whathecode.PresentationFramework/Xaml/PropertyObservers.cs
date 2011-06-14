@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows;
 using Whathecode.System.Windows.DependencyPropertyFactory;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
+using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System.Xaml
@@ -17,7 +18,7 @@ namespace Whathecode.System.Xaml
     /// 
     ///     <SomeControl>
     ///         <Xaml:PropertyObservers.Observers>
-    ///             <Xaml:PropertyObserver PropertyName="ActualWidth"
+    ///             <Xaml:PropertyObserver PropertyPath="ActualWidth"
     ///                                    Observer="{Binding Width, Mode=OneWayToSource}" />
     ///         </Xaml:PropertyObservers.Observers>
     ///     </SomeControl>
@@ -71,24 +72,27 @@ namespace Whathecode.System.Xaml
                 List<PropertyObserver> observers = GetObservers( element );
                 foreach ( var o in observers )
                 {
-                    // Find property to observe.
-                    if ( !(o.PropertyName is string) )
+                    // Follow path.
+                    object selectedObject = sender;
+                    if ( o.Path != null )
                     {
-                        throw new ArgumentException( "PropertyName should be a string representing the name of a property to observe." );
+                        selectedObject = selectedObject.GetValue( o.Path );
                     }
-                    string propertyName = (string)o.PropertyName;
-                    Type senderType = sender.GetType();
-                    DependencyPropertyDescriptor property = DependencyPropertyDescriptor.FromName( propertyName, senderType, senderType );
+
+                    // Find property to observe.
+                    string propertyName = o.PropertyName;
+                    Type type = selectedObject.GetType();
+                    DependencyPropertyDescriptor property = DependencyPropertyDescriptor.FromName( propertyName, type, type );
                     if ( property == null )
                     {
-                        throw new ArgumentException( "Property \"" + propertyName + "\" not defined in type \"" + senderType + "\"." );
+                        throw new ArgumentException( "Property \"" + propertyName + "\" not defined in type \"" + type + "\"." );
                     }
 
                     // Listen to changes of the specified dependency property and forward to observer.
                     PropertyObserver observer = o;
-                    property.AddValueChanged(sender, delegate
+                    property.AddValueChanged( selectedObject, delegate
                     {
-                        observer.Observer = property.GetValue( sender );
+                        observer.Observer = property.GetValue( selectedObject );
                     });
 
                     // Set data context so binding works.
