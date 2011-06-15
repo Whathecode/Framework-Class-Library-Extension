@@ -15,7 +15,6 @@ namespace Whathecode.System.Xaml
         private enum Properties
         {
             Path,
-            PropertyName,
             Observer
         }
 
@@ -23,22 +22,14 @@ namespace Whathecode.System.Xaml
         static readonly DependencyPropertyFactory<Properties> PropertyFactory = new DependencyPropertyFactory<Properties>();
 
         public static readonly DependencyProperty PathProperty = PropertyFactory[ Properties.Path ];
-        public static readonly DependencyProperty PropertyNameProperty = PropertyFactory[ Properties.PropertyName ];
         public static readonly DependencyProperty ObserverProperty = PropertyFactory[ Properties.Observer ];
 
 
         [DependencyProperty( Properties.Path )]
-        public string Path
+        public PropertyPath Path
         {
-            get { return PropertyFactory.GetValue( this, Properties.Path ) as string; }
+            get { return PropertyFactory.GetValue( this, Properties.Path ) as PropertyPath; }
             set { PropertyFactory.SetValue( this, Properties.Path, value ); }
-        }
-
-        [DependencyProperty( Properties.PropertyName )]
-        public string PropertyName
-        {
-            get { return PropertyFactory.GetValue( this, Properties.PropertyName ) as string; }
-            set { PropertyFactory.SetValue( this, Properties.PropertyName, value ); }
         }
 
         [DependencyProperty( Properties.Observer )]

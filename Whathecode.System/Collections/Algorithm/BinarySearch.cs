@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Whathecode.System.Arithmetic;
 using Whathecode.System.Arithmetic.Range;
 using Whathecode.System.Collections.Delegates;
 

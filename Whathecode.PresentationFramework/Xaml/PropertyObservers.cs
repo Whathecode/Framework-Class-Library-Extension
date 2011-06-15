@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using Whathecode.System.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 using Whathecode.System.Reflection.Extensions;
@@ -73,19 +75,22 @@ namespace Whathecode.System.Xaml
                 foreach ( var o in observers )
                 {
                     // Follow path.
+                    int lastDotOperator = o.Path.Path.LastIndexOf( '.' );
                     object selectedObject = sender;
-                    if ( o.Path != null )
+                    string propertyPath = o.Path.Path;
+                    if ( lastDotOperator != -1 )
                     {
-                        selectedObject = selectedObject.GetValue( o.Path );
+                        string[] splitPath = propertyPath.SplitAt( lastDotOperator );
+                        selectedObject = selectedObject.GetValue( splitPath[ 0 ] );
+                        propertyPath = splitPath[ 1 ];
                     }
 
-                    // Find property to observe.
-                    string propertyName = o.PropertyName;
+                    // Find property to observe.                    
                     Type type = selectedObject.GetType();
-                    DependencyPropertyDescriptor property = DependencyPropertyDescriptor.FromName( propertyName, type, type );
+                    DependencyPropertyDescriptor property = DependencyPropertyDescriptor.FromName( propertyPath, type, type );
                     if ( property == null )
                     {
-                        throw new ArgumentException( "Property \"" + propertyName + "\" not defined in type \"" + type + "\"." );
+                        throw new ArgumentException( "Property \"" + propertyPath + "\" not defined in type \"" + type + "\"." );
                     }
 
                     // Listen to changes of the specified dependency property and forward to observer.

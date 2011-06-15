@@ -54,6 +54,7 @@ namespace Whathecode.System.Reflection.Extensions
 
         /// <summary>
         ///   Returns the value of the object at the given location inside this object.
+        ///   TODO: Support more advanced property paths. (e.g. indexers) Create custom PropertyPath class?
         /// </summary>
         /// <param name = "source">The source of this extension method.</param>
         /// <param name = "path">
@@ -116,6 +117,11 @@ namespace Whathecode.System.Reflection.Extensions
         public static object Cast( this object source, Type type )
         {
             return ReflectionHelper.Cast( source, type );
+        }
+
+        public static bool EqualsAny( this object source, params object[] toCompare )
+        {
+            return toCompare.Any( o => o.Equals( source ) );
         }
     }
 }

@@ -152,7 +152,7 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Range\IntervalEnumerator.cs" />
-    <Compile Include="Arithmetic\Range\SplitOption.cs" />
+    <Compile Include="Arithmetic\SplitOption.cs" />
     <Compile Include="Collections\Algorithm\BinarySearch.cs" />
     <Compile Include="Collections\Algorithm\BinarySearchResult.cs" />
     <Compile Include="Collections\Delegates\IndexerDelegates.cs" />
@@ -171,6 +171,7 @@
     <Compile Include="Extensions\Extensions.IList.cs" />
     <Compile Include="AbstractGenericAttribute.cs" />
     <Compile Include="Extensions\Extensions.object.cs" />
+    <Compile Include="Extensions\Extensions.string.cs" />
     <Compile Include="Linq\Extensions.IList.cs" />
     <Compile Include="Collections\LazyOperationsList.cs" />
     <Compile Include="Collections\Generic\CachedDictionary.cs" />
