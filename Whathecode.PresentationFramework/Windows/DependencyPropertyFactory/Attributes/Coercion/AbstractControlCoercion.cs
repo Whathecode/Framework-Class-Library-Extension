@@ -45,20 +45,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
                 }
                 else
                 {
-                    // HACK: When using aspects to create the dependency property factory, it is added as type of object.
-                    //       This is due to a bug in PostSharp.
-                    //       In a generic aspect which introduces generic types into a non-generic class, the added member contains
-                    //       invalid type parameters.
-                    //       http://www.sharpcrafters.com/forum/Topic6504-19-1.aspx
-                    PropertyInfo factoryProperty = controlType.GetProperty( "PropertyFactory", BindingFlags.Instance | BindingFlags.NonPublic );
-                    if ( factoryProperty != null )
-                    {
-                        Factory = (DependencyPropertyFactory<TEnum>)context.GetValue( factoryProperty );
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException( "No dependency property factory found in type: \"" + controlType + "\"");
-                    }
+                    throw new InvalidImplementationException( "No dependency property factory found in type: \"" + controlType + "\"");
                 }
             }
 

@@ -125,7 +125,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                             field => field.IsStatic ).Any();
                 if ( !validFactory )
                 {
-                    throw new InvalidOperationException(
+                    throw new InvalidImplementationException(
                         "Incorrect usage of DependencyPropertyFactory in class '" + OwnerType.Name + "'. " +
                         "A DependencyPropertyFactory needs to be created as a static field inside it's owner class." );
                 }
@@ -139,8 +139,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                              select item;
             foreach ( var item in properties )
             {
-                DependencyPropertyAttribute attribute = ConvertAttribute( item.Value[ 0 ] );
-
+                DependencyPropertyAttribute attribute = (DependencyPropertyAttribute)item.Value[ 0 ];
                 CreateDependencyProperty( GetDependencyPropertyInfo( item.Key as PropertyInfo, attribute ) );
             }
 
@@ -183,22 +182,11 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
                 if ( !valid )
                 {
-                    throw new InvalidOperationException(
+                    throw new InvalidImplementationException(
                         "Invalid usage of the attribute " + typeof( DependencyPropertyAttribute ) + ". " +
                         "To create an attached property, apply it to a correctly named get and optionally corresponding set method. " );
                 }
             }
-        }
-
-        static DependencyPropertyAttribute ConvertAttribute( IdAttribute attribute )
-        {
-            DependencyPropertyAttribute dp = attribute as DependencyPropertyAttribute;
-            if ( attribute == null )
-            {
-                throw new InvalidOperationException( "Unexpected attribute for DependencyPropertyFactory." );
-            }
-
-            return dp;
         }
 
         DependencyPropertyInfo GetDependencyPropertyInfo( PropertyInfo property, DependencyPropertyAttribute attribute )
@@ -211,7 +199,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                 FieldInfo identifier = OwnerType.GetField( identifierField, identifierModifiers );
                 if ( identifier == null || (identifier.FieldType != typeof( DependencyProperty )) )
                 {
-                    throw new InvalidOperationException(
+                    throw new InvalidImplementationException(
                         ConventionEnabledError +
                         "There is no public static dependency property field identifier \"" + identifierField +
                         "\" available in the class \"" + OwnerType.Name + "\"." );
@@ -220,7 +208,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                 // Verify name when set.                    
                 if ( attribute.Name != null && property.Name != attribute.Name )
                 {
-                    throw new InvalidOperationException(
+                    throw new InvalidImplementationException(
                         ConventionEnabledError + "The CLR property wrapper '" + property.Name +
                         "' doesn't match the name of the dependency property." );
                 }
@@ -279,7 +267,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                 PropertyInfo property = OwnerType.GetProperty(info.Name);
                 if ( validateValueCallback == null )
                 {
-                    ValidationHandlerAttribute handler = property.GetAttribute<ValidationHandlerAttribute>();
+                    ValidationHandlerAttribute handler = property.GetAttributes<ValidationHandlerAttribute>().FirstOrDefault();
                     if ( handler != null )
                     {
                         validateValueCallback = new ValidateValueCallback( handler.GenericValidation.IsValid );
@@ -287,7 +275,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
                 }
                 if ( coerceCallback == null )
                 {
-                    CoercionHandlerAttribute handler = property.GetAttribute<CoercionHandlerAttribute>();
+                    CoercionHandlerAttribute handler = property.GetAttributes<CoercionHandlerAttribute>().FirstOrDefault();
                     if ( handler != null )
                     {
                         coerceCallback = new CoerceValueCallback( handler.GenericCoercion.Coerce );
@@ -299,12 +287,12 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
             if ( changedCallback == null )
             {
                 var dependentProperties = (from a in MatchingAttributes
-                                           let coercion = a.Key.GetAttribute<CoercionHandlerAttribute>()
+                                           let coercion = a.Key.GetAttributes<CoercionHandlerAttribute>().FirstOrDefault()
                                            where coercion != null
                                            where EnumHelper<T>
                                                .GetFlaggedValues( (T)coercion.GenericCoercion.DependentProperties )
                                                .Contains( info.Id )  // Id of this property.
-                                           select (T)a.Key.GetAttribute<DependencyPropertyAttribute>().GetId()).ToArray();
+                                           select (T)a.Key.GetAttributes<DependencyPropertyAttribute>().First().GetId()).ToArray();
                 if ( dependentProperties.Length > 0 )
                 {
                     changedCallback = new PropertyChangedCallback( ( dependencyObject, changedArgs ) =>

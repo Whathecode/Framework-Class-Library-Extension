@@ -17,7 +17,11 @@ namespace Whathecode.System.Reflection.Extensions
         /// </remarks>
         /// <param name = "source">The source for this extension method.</param>
         /// <param name = "name">The string containing the name of the public method to get.</param>
-        /// <param name = "flags"></param>
+        /// <param name = "flags">
+        ///   A bitmask comprised of one or more <see cref = "BindingFlags" /> that specify how the search is conducted.
+        ///   -or-
+        ///   Zero, to return null.
+        /// </param>
         /// <param name = "types">
         ///   An array of <see cref = "Type" /> objects representing the number, order, and type of the parameters for the method to get.
         ///   -or-
@@ -107,7 +111,7 @@ namespace Whathecode.System.Reflection.Extensions
         /// <returns>True when the given type is a flags enum, false otherwise.</returns>
         public static bool IsFlagsEnum( this Type source )
         {
-            return source.IsEnum && source.GetAttribute<FlagsAttribute>() != null;
+            return source.IsEnum && source.GetAttributes<FlagsAttribute>().Length != 0;
         }
 
         /// <summary>
@@ -173,6 +177,16 @@ namespace Whathecode.System.Reflection.Extensions
                     group attribute by member).ToDictionary( g => g.Key, g => g.Cast<TAttribute>().ToArray() );
         }
 
+        /// <summary>
+        ///   Searches for all methods defined in an interface and its inherited interfaces.
+        /// </summary>
+        /// <param name = "source">The source of this extension method.</param>
+        /// <param name = "bindingFlags">
+        ///   A bitmask comprised of one or more <see cref = "BindingFlags" /> that specify how the search is conducted.
+        ///   -or-
+        ///   Zero, to return null.
+        /// </param>
+        /// <returns>A list of all found methods.</returns>
         public static IEnumerable<MethodInfo> GetFlattenedInterfaceMethods( this Type source, BindingFlags bindingFlags )
         {
             foreach ( var info in source.GetMethods( bindingFlags ) )

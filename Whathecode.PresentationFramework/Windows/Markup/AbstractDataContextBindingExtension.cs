@@ -35,7 +35,7 @@ namespace Whathecode.System.Windows.Markup
             _frameworkElement = dependencyObject as FrameworkElement;
             if ( _frameworkElement == null )
             {
-                throw new InvalidOperationException( "The DataContextBinding may only be used on framework elements." );
+                throw new InvalidImplementationException( "The DataContextBinding may only be used on framework elements." );
             }
 
             if ( !_dataContextChangedHooked )

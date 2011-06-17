@@ -67,10 +67,6 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 
                 // Correct type, get factory.
                 object factory = dataContext.GetValue( commandFactory );
-                if ( factory == null )
-                {
-                    throw new InvalidOperationException( "Expected factory field or property." );
-                }
 
                 // Get dictionary containing commands from command factory.
                 IDictionary dictionary = factory.GetPropertyValue( CommandsProperty ) as IDictionary;
@@ -87,7 +83,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
             }
 
             // No useful factory available.
-            throw new InvalidOperationException(
+            throw new InvalidImplementationException(
                 "No CommandFactory for ID type \"" + Command.GetType() +
                 "\" in type \"" + dataContextType + "\" found."
                 );

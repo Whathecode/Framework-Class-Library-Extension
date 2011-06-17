@@ -277,7 +277,7 @@ namespace Whathecode.System.Windows.Data
             FrameworkElement element = dependencyObject as FrameworkElement;
             if ( element == null )
             {
-                throw new InvalidOperationException( "The BindingDecoratorExtension may only be used on framework elements." );
+                throw new InvalidImplementationException( "The BindingDecoratorExtension may only be used on framework elements." );
             }
 
             if ( !_dataContextHooked )

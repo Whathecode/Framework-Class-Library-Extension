@@ -34,7 +34,7 @@ namespace Whathecode.System.Windows.Markup
 
             if ( DependencyObject == null || DependencyProperty == null )
             {
-                throw new InvalidOperationException(
+                throw new InvalidImplementationException(
                     "To use DependencyPropertyBindingExtension, the target object should be a DependencyObject, " +
                     "and the target property should be a DependencyProperty."
                     );

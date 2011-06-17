@@ -36,12 +36,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 
             foreach ( var attribute in MatchingAttributes )
             {
-                MethodInfo method = attribute.Key as MethodInfo;
-
-                if ( method == null )
-                {
-                    throw new InvalidOperationException( "A MethodInfo object was expected." );
-                }
+                MethodInfo method = (MethodInfo)attribute.Key;
 
                 foreach ( var id in attribute.Value )
                 {
@@ -52,7 +47,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
                     {
                         if ( matches.Count > 1 )
                         {
-                            throw new InvalidOperationException(
+                            throw new InvalidImplementationException(
                                 "Only one method for one ID can be attributed with a " +
                                     typeof( CommandCanExecuteAttribute ) + "." );
                         }
