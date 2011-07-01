@@ -107,7 +107,7 @@ namespace Whathecode.System.Arithmetic
             if ( integerCalculators.ContainsKey( mathType ) )
             {
                 object calculator = integerCalculators[ mathType ]();
-                return EmitHelper.CreateCompatibleGenericWrapper<IIntegerMath<TMath>>( calculator );
+                return Proxy.CreateGenericInterfaceWrapper<IIntegerMath<TMath>>( calculator );
             }
             throw new NotSupportedException(
                 "The factory can't create a calculator for type \"" + mathType + " (" + checkedOption + ")\"."

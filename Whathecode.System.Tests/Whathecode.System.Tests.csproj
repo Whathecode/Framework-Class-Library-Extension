@@ -115,6 +115,7 @@
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="PrivateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\Emit\ProxyTest.cs" />
     <Compile Include="Reflection\Extensions\MethodInfoExtensionsTest.cs" />
     <Compile Include="Reflection\Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Reflection\Extensions\TypeExtensionsTest.cs" />

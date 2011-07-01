@@ -15,7 +15,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
     /// <typeparam name = "TEnum">An enum used to identify the dependency properties.</typeparam>
     /// <typeparam name = "TValue">The type of the value to coerce.</typeparam>
     /// <author>Steven Jeuris</author>
-    public abstract class AbstractControlCoercion<TEnum, TValue> : AbstractCoercion<object, TValue>
+    public abstract class AbstractControlCoercion<TEnum, TValue> : AbstractCoercion<object, TValue>, IControlCoercion<TEnum, TValue>
     {
         public TEnum DependentProperties { get; private set; }
 

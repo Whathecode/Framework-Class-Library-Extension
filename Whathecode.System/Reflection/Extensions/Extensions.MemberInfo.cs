@@ -50,14 +50,15 @@ namespace Whathecode.System.Reflection.Extensions
         /// <summary>
         ///   Get the attributes of the specified type.
         /// </summary>
-        /// <typeparam name="T">The type of the attributes to find.</typeparam>
-        /// <param name="member">The member on which to look for attributes.</param>
+        /// <typeparam name = "T">The type of the attributes to find.</typeparam>
+        /// <param name = "member">The member on which to look for attributes.</param>
+        /// <param name = "inherit">Specifies whether to search this member's inheritance chain to find the attributes.</param>
         /// <returns>The found attributes.</returns>
-        public static T[] GetAttributes<T>( this MemberInfo member )
+        public static T[] GetAttributes<T>( this MemberInfo member, bool inherit = false )
         {
             Contract.Requires( typeof( T ).IsSubclassOf( typeof( Attribute ) ) );
 
-            return member.GetCustomAttributes( typeof( T ), false ).Cast<T>().ToArray();
+            return member.GetCustomAttributes( typeof( T ), inherit ).Cast<T>().ToArray();
         }
     }
 }

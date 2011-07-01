@@ -165,8 +165,10 @@
     <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyAttribute.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\NotifyPropertyFactory.cs" />
     <Compile Include="ComponentModel\Validation\AbstractValidation.cs" />
+    <Compile Include="ComponentModel\Validation\IValidation.cs" />
     <Compile Include="ComponentModel\Validation\RegexValidation.cs" />
     <Compile Include="Diagnostics\Extensions\Extensions.IEnumerable.cs" />
+    <Compile Include="Extensions\Extensions.DirectoryInfo.cs" />
     <Compile Include="Extensions\Extensions.IEnumerable.cs" />
     <Compile Include="Extensions\Extensions.IList.cs" />
     <Compile Include="AbstractGenericAttribute.cs" />
@@ -199,7 +201,7 @@
     <Compile Include="IdAttribute.cs" />
     <Compile Include="Reflection\AbstractAttributeReflectionFactory.cs" />
     <Compile Include="Reflection\AbstractEnumSpecifiedFactory.cs" />
-    <Compile Include="Reflection\Emit\EmitHelper.cs" />
+    <Compile Include="Reflection\Emit\Proxy.cs" />
     <Compile Include="Reflection\Extensions\Extensions.MemberInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.MethodInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.object.cs" />

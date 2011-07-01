@@ -15,7 +15,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Validat
     [AttributeUsage( AttributeTargets.Property )]
     public class ValidationHandlerAttribute : AbstractGenericAttribute
     {
-        public readonly AbstractValidation<object> GenericValidation;
+        public readonly IValidation<object> GenericValidation;
 
 
         /// <summary>
@@ -28,9 +28,9 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Validat
         public ValidationHandlerAttribute( Type dynamicType, params object[] constructorArguments )
             : base( dynamicType, constructorArguments )
         {
-            Contract.Requires( dynamicType.IsOfGenericType( typeof( AbstractValidation<> ) ) );
+            Contract.Requires( dynamicType.IsOfGenericType( typeof( IValidation<> ) ) );
 
-            GenericValidation = EmitHelper.CreateCompatibleGenericWrapper<AbstractValidation<object>>( DynamicInstance );
+            GenericValidation = Proxy.CreateGenericInterfaceWrapper<IValidation<object>>( DynamicInstance );
         }
     }
 }
