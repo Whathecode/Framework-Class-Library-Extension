@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
 using Whathecode.System.Arithmetic;
-using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System.Extensions
@@ -20,7 +19,7 @@ namespace Whathecode.System.Extensions
 
             return new[]
             {
-                source.Substring( 0, index + (splitOption.EqualsAny( SplitOption.Left, SplitOption.Both) ? 1 : 0) ),
+                source.Substring( 0, index + (splitOption.EqualsAny( SplitOption.Left, SplitOption.Both ) ? 1 : 0) ),
                 source.Substring( index + (splitOption.EqualsAny( SplitOption.Right, SplitOption.Both ) ? 0 : 1) )
             };
         }

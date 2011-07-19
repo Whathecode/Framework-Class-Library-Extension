@@ -118,10 +118,5 @@ namespace Whathecode.System.Reflection.Extensions
         {
             return ReflectionHelper.Cast( source, type );
         }
-
-        public static bool EqualsAny( this object source, params object[] toCompare )
-        {
-            return toCompare.Any( o => o.Equals( source ) );
-        }
     }
 }
