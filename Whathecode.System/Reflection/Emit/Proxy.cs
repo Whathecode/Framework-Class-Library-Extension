@@ -37,7 +37,7 @@ namespace Whathecode.System.Reflection.Emit
             Type innerType = o.GetType();
             Type innerMatchingType = innerType.GetMatchingGenericType( typeToCreateGeneric );
 
-            // Extend from passed type and redirect all public calls to inner instance.
+            // Implement passed type and redirect all public calls to inner instance.
             AssemblyGen assembly = new AssemblyGen( "Whathecode.System.RunSharp" );
             TypeGen type = assembly.Public.Class( "Wrapped" + typeToCreate.Name, typeof( object ), typeToCreate );
             {
@@ -72,7 +72,7 @@ namespace Whathecode.System.Reflection.Emit
                     //       but this seems to work.
                     MethodInfo toCreate = method.ToCreate;
                     MethodGen methodGen = toCreate.DeclaringType == typeToCreate
-                                              ? type.MethodImplementation( toCreate.DeclaringType, toCreate.ReturnType, toCreate.Name )
+                                              ? type.MethodImplementation( typeToCreate, toCreate.ReturnType, toCreate.Name )
                                               : type.Public.Override.Method( toCreate.ReturnType, toCreate.Name );
                     {
                         ParameterInfo[] toCreateParameters = method.ToCreate.GetParameters();

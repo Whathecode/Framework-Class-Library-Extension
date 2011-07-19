@@ -8,8 +8,7 @@ namespace Whathecode.System
     ///   Allows creating an attribute which behavior is implemented in another class of any possible type.
     /// </summary>
     /// <remarks>
-    ///   Since attributes don't allow generic template arguments and only allow constant arguments
-    ///   it is difficult to group behavior in one attribute.
+    ///   Attributes don't allow generic template arguments.
     ///   By passing a type argument and arguments for its constructor, it is possible to instantiate any desired type,
     ///   overcoming some of these limitations.
     /// </remarks>

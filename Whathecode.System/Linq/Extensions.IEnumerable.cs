@@ -84,5 +84,20 @@ namespace Whathecode.System.Linq
                                  .Combinations( select - 1, repetition )
                                  .Select( c => new[] { element }.Concat( c ) ) );
         }
+
+        /// <summary>
+        ///   Returns whether the sequence contains a certain amount of elements.
+        /// </summary>
+        /// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+        /// <param name = "source">The source for this extension method.</param>
+        /// <param name = "count">The amount of elements the sequence should contain.</param>
+        /// <returns>True when the sequence contains the specified amount of elements, false otherwise.</returns>
+        public static bool CountOf<T>( this IEnumerable<T> source, int count )
+        {
+            Contract.Requires( source != null );
+            Contract.Requires( count >= 0 );
+
+            return source.Take( count ).Count() == count && !source.Skip( count ).Any();
+        }
     }
 }

@@ -113,6 +113,7 @@
     <Compile Include="DelegateHelperTest.cs" />
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
+    <Compile Include="Linq\IEnumerableExtensionsTest.cs" />
     <Compile Include="PrivateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\Emit\ProxyTest.cs" />
