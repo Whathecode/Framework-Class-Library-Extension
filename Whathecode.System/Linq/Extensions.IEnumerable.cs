@@ -97,7 +97,7 @@ namespace Whathecode.System.Linq
             Contract.Requires( source != null );
             Contract.Requires( count >= 0 );
 
-            return source.Take( count ).Count() == count && !source.Skip( count ).Any();
+        	return source.Take( count + 1 ).Count() == count;
         }
     }
 }
