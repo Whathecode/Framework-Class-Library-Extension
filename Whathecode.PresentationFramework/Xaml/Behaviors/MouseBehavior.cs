@@ -1,291 +1,288 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using Whathecode.System.Arithmetic.Range;
+using Whathecode.System.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 
 
 namespace Whathecode.System.Xaml.Behaviors
 {
-    /// <summary>
-    ///   Properties which can be attached to a <see cref = "FrameworkElement">FrameworkElement</see> to detect mouse behavior.
-    /// </summary>
-    /// <author>Steven Jeuris</author>
-    public static class MouseBehavior
-    {
-        public struct MouseState
-        {
-            public MousePosition Position;
+	/// <summary>
+	///   Properties which can be attached to a <see cref = "FrameworkElement">FrameworkElement</see> to detect mouse behavior.
+	/// </summary>
+	/// <author>Steven Jeuris</author>
+	public static class MouseBehavior
+	{
+		public struct MouseState
+		{
+			public MousePosition Position;
 
-            public bool IsLeftButtonDown;
-            public bool IsRightButtonDown;
-        }
-
-
-        public struct MousePosition
-        {
-            /// <summary>
-            ///   Specifies the relative mouse position to the element.
-            /// </summary>
-            public Point Relative;
-
-            /// <summary>
-            ///   Percentage inside the element.
-            /// </summary>
-            public Point Percentage;
-        }
+			public bool IsLeftButtonDown;
+			public bool IsRightButtonDown;
+		}
 
 
-        public struct ClickDragInfo
-        {
-            public MouseState Mouse;
-            public ClickDragState State;
-            public MousePosition StartPosition;
-        }
+		public struct MousePosition
+		{
+			/// <summary>
+			///   Specifies the relative mouse position to the element.
+			/// </summary>
+			public Point Relative;
+
+			/// <summary>
+			///   Percentage inside the element.
+			/// </summary>
+			public Point Percentage;
+		}
 
 
-        public enum ClickDragState
-        {
-            Start,
-            Moving,
-            Stop
-        }
+		public struct ClickDragInfo
+		{
+			public MouseState Mouse;
+			public ClickDragState State;
+			public MousePosition StartPosition;
+		}
 
 
-        enum Properties
-        {
-            MovedCommand,
-            LeftClickDragCommand,
-            RightClickDragCommand
-        }
+		public enum ClickDragState
+		{
+			Start,
+			Moving,
+			Stop
+		}
 
 
-        static readonly DependencyPropertyFactory<Properties> DependencyProperties = new DependencyPropertyFactory<Properties>();
-
-        public static DependencyProperty MovedCommandProperty = DependencyProperties[ Properties.MovedCommand ];
-        public static DependencyProperty LeftClickDragCommand = DependencyProperties[ Properties.LeftClickDragCommand ];
-        public static DependencyProperty RightClickDragCommand = DependencyProperties[ Properties.RightClickDragCommand ];
-
-        static readonly Dictionary<object, ClickDragInfo> LeftClickDragInfo = new Dictionary<object, ClickDragInfo>();
-        static readonly Dictionary<object, ClickDragInfo> RightClickDragInfo = new Dictionary<object, ClickDragInfo>();
+		enum Properties
+		{
+			MovedCommand,
+			LeftClickDragCommand,
+			RightClickDragCommand
+		}
 
 
-        #region Moved Command
+		static readonly DependencyPropertyFactory<Properties> DependencyProperties = new DependencyPropertyFactory<Properties>();
 
-        [DependencyProperty( Properties.MovedCommand )]
-        public static ICommand GetMovedCommand( FrameworkElement target )
-        {
-            return DependencyProperties.GetValue( target, Properties.MovedCommand ) as ICommand;
-        }
+		public static DependencyProperty MovedCommandProperty = DependencyProperties[ Properties.MovedCommand ];
+		public static DependencyProperty LeftClickDragCommand = DependencyProperties[ Properties.LeftClickDragCommand ];
+		public static DependencyProperty RightClickDragCommand = DependencyProperties[ Properties.RightClickDragCommand ];
 
-        [DependencyProperty( Properties.MovedCommand )]
-        public static void SetMovedCommand( FrameworkElement target, ICommand value )
-        {
-            DependencyProperties.SetValue( target, Properties.MovedCommand, value );
-        }
-
-        [DependencyPropertyChanged( Properties.MovedCommand )]
-        static void OnMovedCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            IInputElement element = d as IInputElement;
-
-            if ( element != null )
-            {
-                HookMouseMoved( element );
-            }
-        }
-
-        #endregion  // Moved Command
+		static readonly Dictionary<object, ClickDragInfo> LeftClickDragInfo = new Dictionary<object, ClickDragInfo>();
+		static readonly Dictionary<object, ClickDragInfo> RightClickDragInfo = new Dictionary<object, ClickDragInfo>();
 
 
-        #region LeftClickDrag Command
+		#region Moved Command
 
-        [DependencyProperty( Properties.LeftClickDragCommand )]
-        public static ICommand GetLeftClickDragCommand( FrameworkElement target )
-        {
-            return DependencyProperties.GetValue( target, Properties.LeftClickDragCommand ) as ICommand;
-        }
+		[DependencyProperty( Properties.MovedCommand )]
+		public static ICommand GetMovedCommand( FrameworkElement target )
+		{
+			return DependencyProperties.GetValue( target, Properties.MovedCommand ) as ICommand;
+		}
 
-        [DependencyProperty( Properties.LeftClickDragCommand )]
-        public static void SetLeftClickDragCommand( FrameworkElement target, ICommand value )
-        {
-            DependencyProperties.SetValue( target, Properties.LeftClickDragCommand, value );
-        }
+		[DependencyProperty( Properties.MovedCommand )]
+		public static void SetMovedCommand( FrameworkElement target, ICommand value )
+		{
+			DependencyProperties.SetValue( target, Properties.MovedCommand, value );
+		}
 
-        [DependencyPropertyChanged( Properties.LeftClickDragCommand )]
-        static void OnLeftClickDragCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            IInputElement element = d as IInputElement;
+		[DependencyPropertyChanged( Properties.MovedCommand )]
+		static void OnMovedCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+		{
+			IInputElement element = d as IInputElement;
 
-            if ( element != null )
-            {
-                HookMouseMoved( element );
-                element.MouseLeftButtonDown += MouseButtonDown;
-                element.MouseLeftButtonUp += MouseButtonUp;
-            }
-        }
+			if ( element != null )
+			{
+				HookMouseMoved( element );
+			}
+		}
 
-        #endregion  // LeftClickDrag Command
+		#endregion  // Moved Command
 
 
-        #region RightClickDrag Command
+		#region LeftClickDrag Command
 
-        [DependencyProperty( Properties.RightClickDragCommand )]
-        public static ICommand GetRightClickDragCommand( FrameworkElement target )
-        {
-            return DependencyProperties.GetValue( target, Properties.RightClickDragCommand ) as ICommand;
-        }
+		[DependencyProperty( Properties.LeftClickDragCommand )]
+		public static ICommand GetLeftClickDragCommand( FrameworkElement target )
+		{
+			return DependencyProperties.GetValue( target, Properties.LeftClickDragCommand ) as ICommand;
+		}
 
-        [DependencyProperty( Properties.RightClickDragCommand )]
-        public static void SetRightClickDragCommand( FrameworkElement target, ICommand value )
-        {
-            DependencyProperties.SetValue( target, Properties.RightClickDragCommand, value );
-        }
+		[DependencyProperty( Properties.LeftClickDragCommand )]
+		public static void SetLeftClickDragCommand( FrameworkElement target, ICommand value )
+		{
+			DependencyProperties.SetValue( target, Properties.LeftClickDragCommand, value );
+		}
 
-        [DependencyPropertyChanged( Properties.RightClickDragCommand )]
-        static void OnRightClickDragCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            IInputElement element = d as IInputElement;
+		[DependencyPropertyChanged( Properties.LeftClickDragCommand )]
+		static void OnLeftClickDragCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+		{
+			IInputElement element = d as IInputElement;
 
-            if ( element != null )
-            {
-                HookMouseMoved( element );
-                element.MouseRightButtonDown += MouseButtonDown;
-                element.MouseRightButtonUp += MouseButtonUp;
-            }
-        }
+			if ( element != null )
+			{
+				HookMouseMoved( element );
+				element.MouseLeftButtonDown += MouseButtonDown;
+				element.MouseLeftButtonUp += MouseButtonUp;
+			}
+		}
 
-        #endregion  // RightClickDrag Command
+		#endregion  // LeftClickDrag Command
 
 
-        static void HookMouseMoved( IInputElement element )
-        {
-            // Make sure to only hook event once.
-            element.MouseMove -= OnMouseMoved;
-            element.MouseMove += OnMouseMoved;
-        }
+		#region RightClickDrag Command
 
-        static void OnMouseMoved( object sender, MouseEventArgs e )
-        {
-            FrameworkElement element = (FrameworkElement)sender;
+		[DependencyProperty( Properties.RightClickDragCommand )]
+		public static ICommand GetRightClickDragCommand( FrameworkElement target )
+		{
+			return DependencyProperties.GetValue( target, Properties.RightClickDragCommand ) as ICommand;
+		}
 
-            MouseState mouseState = GetMouseState( e, element );
+		[DependencyProperty( Properties.RightClickDragCommand )]
+		public static void SetRightClickDragCommand( FrameworkElement target, ICommand value )
+		{
+			DependencyProperties.SetValue( target, Properties.RightClickDragCommand, value );
+		}
 
-            // Trigger MovedCommand.
-            ICommand movedCommand = GetMovedCommand( element );
-            if ( movedCommand != null )
-            {
-                movedCommand.Execute( mouseState );
-            }
+		[DependencyPropertyChanged( Properties.RightClickDragCommand )]
+		static void OnRightClickDragCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+		{
+			IInputElement element = d as IInputElement;
 
-            // Trigger click drag commands
-            ICommand leftClickDragCommand = GetLeftClickDragCommand( element );
-            if ( leftClickDragCommand != null && LeftClickDragInfo.ContainsKey( sender ) )
-            {
-                ClickDragInfo info = LeftClickDragInfo[ sender ];
-                if ( info.State != ClickDragState.Stop && mouseState.IsLeftButtonDown )
-                {
-                    info.Mouse = mouseState;
-                    info.State = ClickDragState.Moving;  
-                    leftClickDragCommand.Execute( info );
-                }
-            }
-            ICommand rightClickDragCommand = GetRightClickDragCommand( element );
-            if ( rightClickDragCommand != null && RightClickDragInfo.ContainsKey( sender ) )
-            {
-                ClickDragInfo info = RightClickDragInfo[ sender ];
-                if ( info.State != ClickDragState.Stop && mouseState.IsRightButtonDown )
-                {
-                    info.Mouse = mouseState;
-                    info.State = ClickDragState.Moving;        
-                    rightClickDragCommand.Execute( info );
-                }
-            }
-        }
+			if ( element != null )
+			{
+				HookMouseMoved( element );
+				element.MouseRightButtonDown += MouseButtonDown;
+				element.MouseRightButtonUp += MouseButtonUp;
+			}
+		}
 
-        static MouseState GetMouseState( MouseEventArgs e, FrameworkElement element )
-        {
-            Point position = e.GetPosition( element );
-            Point percentage = new Point(
-                new Interval<double>( 0, element.ActualWidth ).GetPercentageFor( position.X ),
-                new Interval<double>( 0, element.ActualHeight ).GetPercentageFor( position.Y )
-                );
-            return new MouseState
-            {
-                Position = new MousePosition
-                {
-                    Relative = position,
-                    Percentage = percentage
-                },
-                IsLeftButtonDown = e.LeftButton == MouseButtonState.Pressed,
-                IsRightButtonDown = e.RightButton == MouseButtonState.Pressed
-            };
-        }
+		#endregion  // RightClickDrag Command
 
-        static void MouseButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            FrameworkElement element = (FrameworkElement)sender;
 
-            MouseState mouseState = GetMouseState( e, element );
+		static void HookMouseMoved( IInputElement element )
+		{
+			// Make sure to only hook event once.
+			element.MouseMove -= OnMouseMoved;
+			element.MouseMove += OnMouseMoved;
+		}
 
-            // Trigger click drag commands.
-            ICommand clickDragCommand = e.ChangedButton == MouseButton.Left
-                                            ? GetLeftClickDragCommand( element )
-                                            : GetRightClickDragCommand( element );
-            Dictionary<object, ClickDragInfo> dragInfo = e.ChangedButton == MouseButton.Left
-                                                             ? LeftClickDragInfo
-                                                             : RightClickDragInfo;
-            if ( clickDragCommand != null )
-            {
-                ClickDragInfo info = new ClickDragInfo
-                {
-                    Mouse = mouseState,
-                    State = ClickDragState.Start,
-                    StartPosition = mouseState.Position
-                };                
-                clickDragCommand.Execute( info );
+		static void OnMouseMoved( object sender, MouseEventArgs e )
+		{
+			FrameworkElement element = (FrameworkElement)sender;
 
-                if ( !dragInfo.ContainsKey( sender ) )
-                {
-                    dragInfo.Add( sender, info );
-                }
-            }                
-        }
+			MouseState mouseState = GetMouseState( e, element );
 
-        static void MouseButtonUp( object sender, MouseButtonEventArgs e )
-        {
-            FrameworkElement element = (FrameworkElement)sender;
+			// Trigger MovedCommand.
+			ICommand movedCommand = GetMovedCommand( element );
+			if ( movedCommand != null )
+			{
+				movedCommand.Execute( mouseState );
+			}
 
-            MouseState mouseState = GetMouseState( e, element );
+			// Trigger click drag commands.
+			Action<ClickDragInfo, ICommand> executeCommand = ( info, command ) =>
+			{
+				if ( command != null && info.State != ClickDragState.Stop )
+				{
+					info.Mouse = mouseState;
+					info.State = ClickDragState.Moving;
+					command.Execute( info );
+				}
+			};
+			if ( mouseState.IsLeftButtonDown )
+			{
+				LeftClickDragInfo.TryUseValue( sender, info => executeCommand( info, GetLeftClickDragCommand( element ) ) );
+			}
+			if ( mouseState.IsRightButtonDown )
+			{
+				RightClickDragInfo.TryUseValue( sender, info => executeCommand( info, GetRightClickDragCommand( element ) ) );
+			}
+		}
 
-            // Trigger click drag commands
-            ICommand leftClickDragCommand = GetLeftClickDragCommand( element );
-            if ( leftClickDragCommand != null && LeftClickDragInfo.ContainsKey( sender ) )
-            {
-                ClickDragInfo info = LeftClickDragInfo[ sender ];
-                if ( mouseState.IsLeftButtonDown )
-                {
-                    info.Mouse = mouseState;
-                    info.State = ClickDragState.Stop;
-                    leftClickDragCommand.Execute( info );
-                }
+		static MouseState GetMouseState( MouseEventArgs e, FrameworkElement element )
+		{
+			Point position = e.GetPosition( element );
+			Point percentage = new Point(
+				new Interval<double>( 0, element.ActualWidth ).GetPercentageFor( position.X ),
+				new Interval<double>( 0, element.ActualHeight ).GetPercentageFor( position.Y )
+				);
+			return new MouseState
+			{
+				Position = new MousePosition
+				{
+					Relative = position,
+					Percentage = percentage
+				},
+				IsLeftButtonDown = e.LeftButton == MouseButtonState.Pressed,
+				IsRightButtonDown = e.RightButton == MouseButtonState.Pressed
+			};
+		}
 
-                LeftClickDragInfo.Remove( sender );
-            }
-            ICommand rightClickDragCommand = GetRightClickDragCommand( element );
-            if ( rightClickDragCommand != null && RightClickDragInfo.ContainsKey( sender ) )
-            {
-                ClickDragInfo info = RightClickDragInfo[ sender ];
-                if ( mouseState.IsRightButtonDown )
-                {
-                    info.Mouse = mouseState;
-                    info.State = ClickDragState.Stop;
-                    rightClickDragCommand.Execute( info );
-                }
+		static void MouseButtonDown( object sender, MouseButtonEventArgs e )
+		{
+			FrameworkElement element = (FrameworkElement)sender;
 
-                RightClickDragInfo.Remove( sender );
-            }  
-        }
-    }
+			MouseState mouseState = GetMouseState( e, element );
+
+			// Trigger click drag commands.
+			ICommand clickDragCommand = e.ChangedButton == MouseButton.Left
+				? GetLeftClickDragCommand( element )
+				: GetRightClickDragCommand( element );
+			Dictionary<object, ClickDragInfo> dragInfo = e.ChangedButton == MouseButton.Left
+				? LeftClickDragInfo
+				: RightClickDragInfo;
+			if ( clickDragCommand != null )
+			{
+				ClickDragInfo info = new ClickDragInfo
+				{
+					Mouse = mouseState,
+					State = ClickDragState.Start,
+					StartPosition = mouseState.Position
+				};
+				clickDragCommand.Execute( info );
+
+				if ( !dragInfo.ContainsKey( sender ) )
+				{
+					dragInfo.Add( sender, info );
+				}
+			}
+		}
+
+		static void MouseButtonUp( object sender, MouseButtonEventArgs e )
+		{
+			FrameworkElement element = (FrameworkElement)sender;
+
+			MouseState mouseState = GetMouseState( e, element );
+
+			// Trigger click drag commands
+			ICommand leftClickDragCommand = GetLeftClickDragCommand( element );
+			ClickDragInfo leftInfo;
+			if ( leftClickDragCommand != null && LeftClickDragInfo.TryGetValue( sender, out leftInfo ) )
+			{
+				if ( mouseState.IsLeftButtonDown )
+				{
+					leftInfo.Mouse = mouseState;
+					leftInfo.State = ClickDragState.Stop;
+					leftClickDragCommand.Execute( leftInfo );
+				}
+
+				LeftClickDragInfo.Remove( sender );
+			}
+			ICommand rightClickDragCommand = GetRightClickDragCommand( element );
+			ClickDragInfo rightInfo;
+			if ( rightClickDragCommand != null && RightClickDragInfo.TryGetValue( sender, out rightInfo ) )
+			{
+				if ( mouseState.IsRightButtonDown )
+				{
+					rightInfo.Mouse = mouseState;
+					rightInfo.State = ClickDragState.Stop;
+					rightClickDragCommand.Execute( rightInfo );
+				}
+
+				RightClickDragInfo.Remove( sender );
+			}
+		}
+	}
 }

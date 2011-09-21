@@ -5,307 +5,307 @@ using Whathecode.System.Arithmetic.Range;
 
 namespace Whathecode.Tests.System.Arithmetic.Range
 {
-    /// <summary>
-    ///   Unit tests for Interval.
-    /// </summary>
-    /// <author>Steven Jeuris</author>
-    [TestClass]
-    public class IntervalTest
-    {
-        #region LiesInInterval Tests
+	/// <summary>
+	///   Unit tests for Interval.
+	/// </summary>
+	/// <author>Steven Jeuris</author>
+	[TestClass]
+	public class IntervalTest
+	{
+		#region LiesInInterval Tests
 
-        [TestMethod]
-        public void LiesInIntervalTest()
-        {
-            Interval<int> single = new Interval<int>( 0, 0 );
-            LiesInInterval( single, 0, true );
-            LiesInInterval( single, 1, false );
+		[TestMethod]
+		public void LiesInIntervalTest()
+		{
+			Interval<int> single = new Interval<int>( 0, 0 );
+			LiesInInterval( single, 0, true );
+			LiesInInterval( single, 1, false );
 
-            LiesInIntervalTestHelper( 0, 10, 5, 11 );
-            LiesInIntervalTestHelper( 0.5, 10.5, 5, 12 );
-        }
+			LiesInIntervalTestHelper( 0, 10, 5, 11 );
+			LiesInIntervalTestHelper( 0.5, 10.5, 5, 12 );
+		}
 
-        static void LiesInIntervalTestHelper<TMath>( TMath start, TMath end, TMath inside, TMath outside )
-        {
-            Interval<TMath> included = new Interval<TMath>( start, end );
-            LiesInInterval( included, inside, true );
-            LiesInInterval( included, start, true ); // On edge.
-            LiesInInterval( included, outside, false ); // Outside.
+		static void LiesInIntervalTestHelper<TMath>( TMath start, TMath end, TMath inside, TMath outside )
+		{
+			Interval<TMath> included = new Interval<TMath>( start, end );
+			LiesInInterval( included, inside, true );
+			LiesInInterval( included, start, true ); // On edge.
+			LiesInInterval( included, outside, false ); // Outside.
 
-            Interval<TMath> excluded = new Interval<TMath>( start, false, end, false );
-            LiesInInterval( excluded, start, false ); // Left edge.
-            LiesInInterval( excluded, end, false ); // Right edge.
-        }
+			Interval<TMath> excluded = new Interval<TMath>( start, false, end, false );
+			LiesInInterval( excluded, start, false ); // Left edge.
+			LiesInInterval( excluded, end, false ); // Right edge.
+		}
 
-        static void LiesInInterval<TMath>( Interval<TMath> interval, TMath value, bool expected )
-        {
-            bool insideInterval = interval.LiesInInterval( value );
+		static void LiesInInterval<TMath>( Interval<TMath> interval, TMath value, bool expected )
+		{
+			bool insideInterval = interval.LiesInInterval( value );
 
-            Assert.AreEqual( expected, insideInterval );
-        }
+			Assert.AreEqual( expected, insideInterval );
+		}
 
-        #endregion  // LiesInInterval Tests
-
-
-        #region Intersects Tests
-
-        [TestMethod]
-        public void IntersectsTest()
-        {
-            IntersectsTestHelper( 0, 5, 10, 20, 100 );
-            IntersectsTestHelper( 0.5, 10.0, 20.5, 50.6, 100.9 );
-        }
-
-        /// <summary>
-        ///   Test intersecting intervals with given parameters from small to bigger.
-        /// </summary>
-        static void IntersectsTestHelper<TMath>( TMath a, TMath b, TMath c, TMath d, TMath e )
-        {
-            // Create required intervals.
-            Interval<TMath> ab = new Interval<TMath>( a, b );
-            Interval<TMath> bc = new Interval<TMath>( b, c );
-            Interval<TMath> cd = new Interval<TMath>( c, d );
-            Interval<TMath> de = new Interval<TMath>( d, e );
-            Interval<TMath> ad = new Interval<TMath>( a, d );
-            Interval<TMath> ac = new Interval<TMath>( a, c );
-            Interval<TMath> bd = new Interval<TMath>( b, d );
-            Interval<TMath> bcExcluded = new Interval<TMath>( b, false, c, false );
-
-            // None overlapping intervals.
-            Intersects( ab, de, false ); // Left.
-            Intersects( de, ab, false ); // Right.
-
-            // Neighboring intervals.
-            Intersects( ab, bc, true ); // Left.
-            Intersects( bc, ab, true ); // Right.
-            Intersects( ab, bcExcluded, false ); // Left.
-            Intersects( bcExcluded, cd, false ); // Right.
-
-            // Entirely overlapping intervals.
-            Intersects( ab, ab, true ); // Identical.
-            Intersects( bc, ad, true ); // Inside.
-            Intersects( ad, bc, true ); // Outside.
-            Intersects( ab, ac, true ); // Left.
-            Intersects( bc, ac, true ); // Right.
-
-            // Partly overlapping intervals.
-            Intersects( ac, bd, true ); // Right overlap.
-            Intersects( bd, ac, true ); // Left overlap.
-        }
-
-        static void Intersects<TMath>( Interval<TMath> a, Interval<TMath> b, bool expected )
-        {
-            bool intersects = a.Intersects( b );
-
-            Assert.AreEqual( expected, intersects );
-        }
-
-        #endregion  // Intersects Tests
+		#endregion  // LiesInInterval Tests
 
 
-        #region Subtract Tests
+		#region Intersects Tests
 
-        [TestMethod]
-        public void SubtractTest()
-        {
-            SubtractTestHelper( 0, 5, 10, 20, 100 );
-            SubtractTestHelper( 0.5, 10.0, 20.5, 50.6, 100.9 );
-        }
+		[TestMethod]
+		public void IntersectsTest()
+		{
+			IntersectsTestHelper( 0, 5, 10, 20, 100 );
+			IntersectsTestHelper( 0.5, 10.0, 20.5, 50.6, 100.9 );
+		}
 
-        /// <summary>
-        ///   Test intersecting intervals with given parameters from small to bigger.
-        /// </summary>
-        static void SubtractTestHelper<TMath>( TMath a, TMath b, TMath c, TMath d, TMath e )
-        {
-            // Create required intervals.
-            Interval<TMath> ab = new Interval<TMath>( a, b );
-            Interval<TMath> bc = new Interval<TMath>( b, c );
-            Interval<TMath> cd = new Interval<TMath>( c, d );
-            Interval<TMath> de = new Interval<TMath>( d, e );
-            Interval<TMath> ad = new Interval<TMath>( a, d );
-            Interval<TMath> ac = new Interval<TMath>( a, c );
-            Interval<TMath> bd = new Interval<TMath>( b, d );
-            Interval<TMath> bcExcluded = new Interval<TMath>( b, false, c, false );
+		/// <summary>
+		///   Test intersecting intervals with given parameters from small to bigger.
+		/// </summary>
+		static void IntersectsTestHelper<TMath>( TMath a, TMath b, TMath c, TMath d, TMath e )
+		{
+			// Create required intervals.
+			Interval<TMath> ab = new Interval<TMath>( a, b );
+			Interval<TMath> bc = new Interval<TMath>( b, c );
+			Interval<TMath> cd = new Interval<TMath>( c, d );
+			Interval<TMath> de = new Interval<TMath>( d, e );
+			Interval<TMath> ad = new Interval<TMath>( a, d );
+			Interval<TMath> ac = new Interval<TMath>( a, c );
+			Interval<TMath> bd = new Interval<TMath>( b, d );
+			Interval<TMath> bcExcluded = new Interval<TMath>( b, false, c, false );
 
-            // None overlapping intervals.
-            Subtract( ab, de, ab ); // Left.
-            Subtract( de, ab, de ); // Right.
+			// None overlapping intervals.
+			Intersects( ab, de, false ); // Left.
+			Intersects( de, ab, false ); // Right.
 
-            // Neighboring intervals.
-            Subtract( ab, bc, new Interval<TMath>( a, true, b, false ) ); // Left.
-            Subtract( bc, ab, new Interval<TMath>( b, false, c, true ) ); // Right.
-            Subtract( ab, bcExcluded, ab ); // Left.
-            Subtract( bcExcluded, cd, bcExcluded ); // Right.
+			// Neighboring intervals.
+			Intersects( ab, bc, true ); // Left.
+			Intersects( bc, ab, true ); // Right.
+			Intersects( ab, bcExcluded, false ); // Left.
+			Intersects( bcExcluded, cd, false ); // Right.
 
-            // Entirely overlapping intervals.
-            Subtract( ab, ab, new List<Interval<TMath>>() ); // Identical. 
-            Subtract( bc, bcExcluded,
-                      new List<Interval<TMath>>
-                      {
-                          new Interval<TMath>( b, true, b, true ),
-                          new Interval<TMath>( c, true, c, true )
-                      }
-                ); // Identical except borders.           
-            Subtract( bc, ad, new List<Interval<TMath>>() ); // Inside.
-            Subtract( ad, bc,
-                      new List<Interval<TMath>>
-                      {
-                          new Interval<TMath>( a, true, b, false ),
-                          new Interval<TMath>( c, false, d, true )
-                      }
-                ); // Outside.
-            Subtract( ab, ac, new List<Interval<TMath>>() ); // Left.
-            Subtract( bc, ac, new List<Interval<TMath>>() ); // Right.            
+			// Entirely overlapping intervals.
+			Intersects( ab, ab, true ); // Identical.
+			Intersects( bc, ad, true ); // Inside.
+			Intersects( ad, bc, true ); // Outside.
+			Intersects( ab, ac, true ); // Left.
+			Intersects( bc, ac, true ); // Right.
 
-            // Partly overlapping intervals.
-            Subtract( ac, bd, new Interval<TMath>( a, true, b, false ) ); // Right overlap.
-            Subtract( bd, ac, new Interval<TMath>( c, false, d, true ) ); // Left overlap.
-        }
+			// Partly overlapping intervals.
+			Intersects( ac, bd, true ); // Right overlap.
+			Intersects( bd, ac, true ); // Left overlap.
+		}
 
-        static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, Interval<TMath> result )
-        {
-            List<Interval<TMath>> results = from.Subtract( subtract );
+		static void Intersects<TMath>( Interval<TMath> a, Interval<TMath> b, bool expected )
+		{
+			bool intersects = a.Intersects( b );
 
-            Assert.IsTrue( results.Count == 1 );
-            Assert.IsTrue( results[ 0 ].Equals( result ) );
-        }
+			Assert.AreEqual( expected, intersects );
+		}
 
-        static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, List<Interval<TMath>> results )
-        {
-            List<Interval<TMath>> subtracted = from.Subtract( subtract );
-
-            Assert.IsTrue( results.Count == subtracted.Count );
-            for ( int i = 0; i < results.Count; ++i )
-            {
-                Interval<TMath> result = results[ i ];
-                Interval<TMath> subtractResult = subtracted[ i ];
-                Assert.IsTrue( result.Equals( subtractResult ) );
-            }
-        }
-
-        #endregion  // Subtract Tests
+		#endregion  // Intersects Tests
 
 
-        #region GetPercentageFor Tests
+		#region Subtract Tests
 
-        [TestMethod]
-        public void GetPercentageForTest()
-        {
-            GetPercentageForHelper( 0, 5, 10 );
-            GetPercentageForHelper( 0.0, 5.0, 10.0 );
-        }
+		[TestMethod]
+		public void SubtractTest()
+		{
+			SubtractTestHelper( 0, 5, 10, 20, 100 );
+			SubtractTestHelper( 0.5, 10.0, 20.5, 50.6, 100.9 );
+		}
 
-        static void GetPercentageForHelper<TMath>( TMath aMinusA, TMath a, TMath aPlusA )
-        {
-            // Single range.
-            Interval<TMath> single = new Interval<TMath>( a, a );
-            Assert.AreEqual( 1.0, single.GetPercentageFor( a ) );
-            Assert.AreEqual( 0.0, single.GetPercentageFor( aMinusA ) );
+		/// <summary>
+		///   Test intersecting intervals with given parameters from small to bigger.
+		/// </summary>
+		static void SubtractTestHelper<TMath>( TMath a, TMath b, TMath c, TMath d, TMath e )
+		{
+			// Create required intervals.
+			Interval<TMath> ab = new Interval<TMath>( a, b );
+			Interval<TMath> bc = new Interval<TMath>( b, c );
+			Interval<TMath> cd = new Interval<TMath>( c, d );
+			Interval<TMath> de = new Interval<TMath>( d, e );
+			Interval<TMath> ad = new Interval<TMath>( a, d );
+			Interval<TMath> ac = new Interval<TMath>( a, c );
+			Interval<TMath> bd = new Interval<TMath>( b, d );
+			Interval<TMath> bcExcluded = new Interval<TMath>( b, false, c, false );
 
+			// None overlapping intervals.
+			Subtract( ab, de, ab ); // Left.
+			Subtract( de, ab, de ); // Right.
 
-            // Normal ranges. ( start < end )
-            Interval<TMath> right = new Interval<TMath>( a, aPlusA );
-            Interval<TMath> left = new Interval<TMath>( aMinusA, a );
-            Interval<TMath> big = new Interval<TMath>( aMinusA, aPlusA );
+			// Neighboring intervals.
+			Subtract( ab, bc, new Interval<TMath>( a, true, b, false ) ); // Left.
+			Subtract( bc, ab, new Interval<TMath>( b, false, c, true ) ); // Right.
+			Subtract( ab, bcExcluded, ab ); // Left.
+			Subtract( bcExcluded, cd, bcExcluded ); // Right.
 
-            // Reversed ranges. ( end < start )
-            Interval<TMath> reversedRight = new Interval<TMath>( aPlusA, a );
-            Interval<TMath> reversedLeft = new Interval<TMath>( a, aMinusA );
-            Interval<TMath> reversedBig = new Interval<TMath>( aPlusA, aMinusA );
+			// Entirely overlapping intervals.
+			Subtract( ab, ab, new List<Interval<TMath>>() ); // Identical. 
+			Subtract( bc, bcExcluded,
+				new List<Interval<TMath>>
+				{
+					new Interval<TMath>( b, true, b, true ),
+					new Interval<TMath>( c, true, c, true )
+				}
+				); // Identical except borders.           
+			Subtract( bc, ad, new List<Interval<TMath>>() ); // Inside.
+			Subtract( ad, bc,
+				new List<Interval<TMath>>
+				{
+					new Interval<TMath>( a, true, b, false ),
+					new Interval<TMath>( c, false, d, true )
+				}
+				); // Outside.
+			Subtract( ab, ac, new List<Interval<TMath>>() ); // Left.
+			Subtract( bc, ac, new List<Interval<TMath>>() ); // Right.            
 
+			// Partly overlapping intervals.
+			Subtract( ac, bd, new Interval<TMath>( a, true, b, false ) ); // Right overlap.
+			Subtract( bd, ac, new Interval<TMath>( c, false, d, true ) ); // Left overlap.
+		}
 
-            // Should lie at start.
-            Assert.AreEqual( 0.0, right.GetPercentageFor( a ) );
-            Assert.AreEqual( 0.0, reversedRight.GetPercentageFor( aPlusA ) );
+		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, Interval<TMath> result )
+		{
+			List<Interval<TMath>> results = from.Subtract( subtract );
 
-            // Should lie in middle.
-            Assert.AreEqual( 0.5, big.GetPercentageFor( a ) );
-            Assert.AreEqual( 0.5, reversedBig.GetPercentageFor( a ) );
+			Assert.IsTrue( results.Count == 1 );
+			Assert.IsTrue( results[ 0 ].Equals( result ) );
+		}
 
-            // Should lie at end.
-            Assert.AreEqual( 1.0, left.GetPercentageFor( a ) );
-            Assert.AreEqual( 1.0, reversedLeft.GetPercentageFor( aMinusA ) );
+		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, List<Interval<TMath>> results )
+		{
+			List<Interval<TMath>> subtracted = from.Subtract( subtract );
 
-            // Should lie before.
-            Assert.AreEqual( -1.0, right.GetPercentageFor( aMinusA ) );
-            Assert.AreEqual( -1.0, reversedLeft.GetPercentageFor( aPlusA ) );
+			Assert.IsTrue( results.Count == subtracted.Count );
+			for ( int i = 0; i < results.Count; ++i )
+			{
+				Interval<TMath> result = results[ i ];
+				Interval<TMath> subtractResult = subtracted[ i ];
+				Assert.IsTrue( result.Equals( subtractResult ) );
+			}
+		}
 
-            // Should lie after.
-            Assert.AreEqual( 2.0, left.GetPercentageFor( aPlusA ) );
-            Assert.AreEqual( 2.0, reversedRight.GetPercentageFor( aMinusA ) );
-        }
-
-        #endregion  // GetPercentageFor Tests
-
-
-        #region Map Tests
-
-        [TestMethod]
-        public void MapTest()
-        {
-            // Same type ranges.
-            MapHelper( 0, 10, 10, 20, 0, 10 ); // 0%
-            MapHelper( 0, 30, 10, 40, 10, 20 ); // 33%
-            MapHelper( 0, 10, 10, 20, 5, 15 ); // 50%
-            MapHelper( 0, 10, 10, 20, 10, 20 ); // 100%
-            MapHelper( 0, 4, 0, 100, 1, 25 ); // Different range sizes.
-            MapHelper( -100, 100, 0, 100, 0, 50 ); // Negative to positive.
-            MapHelper( 10, 20, -100, 50, 15, -25 ); // Positive to negative.
-            MapHelper( 10, 0, 0, 10, 5, 5 ); // Reversed ranges.
-            MapHelper( 0, 10, 100, 0, 5, 50 );
-            MapHelper<double, double>( 0, 1, 0, 100, 0.5, 50 ); // Double math.
-
-            // Different type ranges.
-            MapHelper<int, double>( 0, 10, 10, 20, 0, 10 ); // 0%
-            MapHelper<int, double>( 0, 30, 10, 40, 10, 20 ); // 33%
-            MapHelper<int, double>( 0, 10, 10, 20, 5, 15 ); // 50%
-            MapHelper<int, double>( 0, 10, 10, 20, 10, 20 ); // 100%
-            MapHelper<int, double>( 0, 4, 0, 100, 1, 25 ); // Different range sizes.
-            MapHelper<int, double>( -100, 100, 0, 100, 0, 50 ); // Negative to positive.
-            MapHelper<int, double>( 10, 20, -100, 50, 15, -25 ); // Positive to negative.
-            MapHelper<int, double>( 10, 0, 0, 10, 5, 5 ); // Reversed ranges.
-            MapHelper<int, double>( 0, 10, 100, 0, 5, 50 );
-        }
-
-        static void MapHelper<TMath, TRange>( TMath from, TMath to, TRange mapFrom, TRange mapTo, TMath valueToMap, TRange expected )
-        {
-            Interval<TMath> interval = new Interval<TMath>( from, to );
-            TRange result = interval.Map( valueToMap, new Interval<TRange>( mapFrom, mapTo ) );
-
-            Assert.IsTrue( result.Equals( expected ) );
-        }
-
-        #endregion  // Map Tests
+		#endregion  // Subtract Tests
 
 
-        #region Clamp Tests
+		#region GetPercentageFor Tests
 
-        [TestMethod]
-        public void ClampTest()
-        {
-            // Normal intervals.
-            ClampHelper( 0, 10, -100, 100, 5 );
-            ClampHelper( 0.0, 10.0, -100.0, 100.0, 5.0 );
+		[TestMethod]
+		public void GetPercentageForTest()
+		{
+			GetPercentageForHelper( 0, 5, 10 );
+			GetPercentageForHelper( 0.0, 5.0, 10.0 );
+		}
 
-            // Reversed intervals.
-            ClampHelper( 10, 0, 100, -100, 5 );
-            ClampHelper( 10.0, 0.0, 100.0, -100.0, 5.0 );
-        }
+		static void GetPercentageForHelper<TMath>( TMath aMinusA, TMath a, TMath aPlusA )
+		{
+			// Single range.
+			Interval<TMath> single = new Interval<TMath>( a, a );
+			Assert.AreEqual( 1.0, single.GetPercentageFor( a ) );
+			Assert.AreEqual( 0.0, single.GetPercentageFor( aMinusA ) );
 
-        static void ClampHelper<TMath>( TMath start, TMath end, TMath leftOfRange, TMath rightOfRange, TMath inRange )
-        {
-            Interval<TMath> interval = new Interval<TMath>( start, end );
 
-            // In range.
-            Assert.AreEqual( interval.Clamp( inRange ), inRange );
-            Assert.AreEqual( interval.Clamp( start ), start );
-            Assert.AreEqual( interval.Clamp( end ), end );
+			// Normal ranges. ( start < end )
+			Interval<TMath> right = new Interval<TMath>( a, aPlusA );
+			Interval<TMath> left = new Interval<TMath>( aMinusA, a );
+			Interval<TMath> big = new Interval<TMath>( aMinusA, aPlusA );
 
-            // Outside of range.
-            Assert.AreEqual( interval.Clamp( leftOfRange ), start );
-            Assert.AreEqual( interval.Clamp( rightOfRange ), end );
-        }
+			// Reversed ranges. ( end < start )
+			Interval<TMath> reversedRight = new Interval<TMath>( aPlusA, a );
+			Interval<TMath> reversedLeft = new Interval<TMath>( a, aMinusA );
+			Interval<TMath> reversedBig = new Interval<TMath>( aPlusA, aMinusA );
 
-        #endregion  // Clamp Tests
-    }
+
+			// Should lie at start.
+			Assert.AreEqual( 0.0, right.GetPercentageFor( a ) );
+			Assert.AreEqual( 0.0, reversedRight.GetPercentageFor( aPlusA ) );
+
+			// Should lie in middle.
+			Assert.AreEqual( 0.5, big.GetPercentageFor( a ) );
+			Assert.AreEqual( 0.5, reversedBig.GetPercentageFor( a ) );
+
+			// Should lie at end.
+			Assert.AreEqual( 1.0, left.GetPercentageFor( a ) );
+			Assert.AreEqual( 1.0, reversedLeft.GetPercentageFor( aMinusA ) );
+
+			// Should lie before.
+			Assert.AreEqual( -1.0, right.GetPercentageFor( aMinusA ) );
+			Assert.AreEqual( -1.0, reversedLeft.GetPercentageFor( aPlusA ) );
+
+			// Should lie after.
+			Assert.AreEqual( 2.0, left.GetPercentageFor( aPlusA ) );
+			Assert.AreEqual( 2.0, reversedRight.GetPercentageFor( aMinusA ) );
+		}
+
+		#endregion  // GetPercentageFor Tests
+
+
+		#region Map Tests
+
+		[TestMethod]
+		public void MapTest()
+		{
+			// Same type ranges.
+			MapHelper( 0, 10, 10, 20, 0, 10 ); // 0%
+			MapHelper( 0, 30, 10, 40, 10, 20 ); // 33%
+			MapHelper( 0, 10, 10, 20, 5, 15 ); // 50%
+			MapHelper( 0, 10, 10, 20, 10, 20 ); // 100%
+			MapHelper( 0, 4, 0, 100, 1, 25 ); // Different range sizes.
+			MapHelper( -100, 100, 0, 100, 0, 50 ); // Negative to positive.
+			MapHelper( 10, 20, -100, 50, 15, -25 ); // Positive to negative.
+			MapHelper( 10, 0, 0, 10, 5, 5 ); // Reversed ranges.
+			MapHelper( 0, 10, 100, 0, 5, 50 );
+			MapHelper<double, double>( 0, 1, 0, 100, 0.5, 50 ); // Double math.
+
+			// Different type ranges.
+			MapHelper<int, double>( 0, 10, 10, 20, 0, 10 ); // 0%
+			MapHelper<int, double>( 0, 30, 10, 40, 10, 20 ); // 33%
+			MapHelper<int, double>( 0, 10, 10, 20, 5, 15 ); // 50%
+			MapHelper<int, double>( 0, 10, 10, 20, 10, 20 ); // 100%
+			MapHelper<int, double>( 0, 4, 0, 100, 1, 25 ); // Different range sizes.
+			MapHelper<int, double>( -100, 100, 0, 100, 0, 50 ); // Negative to positive.
+			MapHelper<int, double>( 10, 20, -100, 50, 15, -25 ); // Positive to negative.
+			MapHelper<int, double>( 10, 0, 0, 10, 5, 5 ); // Reversed ranges.
+			MapHelper<int, double>( 0, 10, 100, 0, 5, 50 );
+		}
+
+		static void MapHelper<TMath, TRange>( TMath from, TMath to, TRange mapFrom, TRange mapTo, TMath valueToMap, TRange expected )
+		{
+			Interval<TMath> interval = new Interval<TMath>( from, to );
+			TRange result = interval.Map( valueToMap, new Interval<TRange>( mapFrom, mapTo ) );
+
+			Assert.IsTrue( result.Equals( expected ) );
+		}
+
+		#endregion  // Map Tests
+
+
+		#region Clamp Tests
+
+		[TestMethod]
+		public void ClampTest()
+		{
+			// Normal intervals.
+			ClampHelper( 0, 10, -100, 100, 5 );
+			ClampHelper( 0.0, 10.0, -100.0, 100.0, 5.0 );
+
+			// Reversed intervals.
+			ClampHelper( 10, 0, 100, -100, 5 );
+			ClampHelper( 10.0, 0.0, 100.0, -100.0, 5.0 );
+		}
+
+		static void ClampHelper<TMath>( TMath start, TMath end, TMath leftOfRange, TMath rightOfRange, TMath inRange )
+		{
+			Interval<TMath> interval = new Interval<TMath>( start, end );
+
+			// In range.
+			Assert.AreEqual( interval.Clamp( inRange ), inRange );
+			Assert.AreEqual( interval.Clamp( start ), start );
+			Assert.AreEqual( interval.Clamp( end ), end );
+
+			// Outside of range.
+			Assert.AreEqual( interval.Clamp( leftOfRange ), start );
+			Assert.AreEqual( interval.Clamp( rightOfRange ), end );
+		}
+
+		#endregion  // Clamp Tests
+	}
 }

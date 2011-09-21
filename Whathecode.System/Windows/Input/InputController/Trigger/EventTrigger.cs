@@ -4,50 +4,50 @@ using Whathecode.System.Windows.Input.InputController.Condition;
 
 namespace Whathecode.System.Windows.Input.InputController.Trigger
 {
-    /// <summary>
-    ///   A class which triggers events when certain input conditions are met.
-    /// </summary>
-    /// <author>Steven Jeuris</author>
-    public class EventTrigger : AbstractTrigger
-    {
-        /// <summary>
-        ///   The action which gets triggered once the input conditions are met.
-        /// </summary>
-        public event EventHandler TriggerEvent;
+	/// <summary>
+	///   A class which triggers events when certain input conditions are met.
+	/// </summary>
+	/// <author>Steven Jeuris</author>
+	public class EventTrigger : AbstractTrigger
+	{
+		/// <summary>
+		///   The action which gets triggered once the input conditions are met.
+		/// </summary>
+		public event EventHandler TriggerEvent;
 
-        /// <summary>
-        ///   The action which gets triggered once the input conditions no longer validate to true.
-        /// </summary>
-        public event EventHandler ConditionLostEvent;
+		/// <summary>
+		///   The action which gets triggered once the input conditions no longer validate to true.
+		/// </summary>
+		public event EventHandler ConditionLostEvent;
 
-        /// <summary>
-        ///   The event arguments which will be passed along once events are triggered.
-        /// </summary>
-        public EventArgs EventArguments { get; set; }
-
-
-        public EventTrigger( AbstractCondition inputCondition )
-            : base( inputCondition ) {}
+		/// <summary>
+		///   The event arguments which will be passed along once events are triggered.
+		/// </summary>
+		public EventArgs EventArguments { get; set; }
 
 
-        #region AbstractTrigger Members
+		public EventTrigger( AbstractCondition inputCondition )
+			: base( inputCondition ) {}
 
-        protected override void TriggerAction()
-        {
-            if ( TriggerEvent != null )
-            {
-                TriggerEvent( this, EventArguments );
-            }
-        }
 
-        protected override void ConditionLost()
-        {
-            if ( ConditionLostEvent != null )
-            {
-                ConditionLostEvent( this, EventArguments );
-            }
-        }
+		#region AbstractTrigger Members
 
-        #endregion  // AbstractInputTrigger Members
-    }
+		protected override void TriggerAction()
+		{
+			if ( TriggerEvent != null )
+			{
+				TriggerEvent( this, EventArguments );
+			}
+		}
+
+		protected override void ConditionLost()
+		{
+			if ( ConditionLostEvent != null )
+			{
+				ConditionLostEvent( this, EventArguments );
+			}
+		}
+
+		#endregion  // AbstractInputTrigger Members
+	}
 }

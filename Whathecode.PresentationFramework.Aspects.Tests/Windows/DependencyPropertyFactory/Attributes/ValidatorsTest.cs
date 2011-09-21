@@ -9,42 +9,44 @@ using Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Validators;
 
 namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Attributes
 {
-    [TestClass]
-    public class ValidatorsTest
-    {
-        #region Common test members
+	[TestClass]
+	public class ValidatorsTest
+	{
+		#region Common test members
 
-        ValidationControl _control;
-
-        [WpfControl( typeof( Property ) )]
-        public class ValidationControl : DependencyObject
-        {
-            [Flags]
-            public enum Property
-            {
-                RegexValidation
-            }
+		ValidationControl _control;
 
 
-            [DependencyProperty( Property.RegexValidation, DefaultValue = "test" )]
-            [RegexValidation( "test" )]
-            public string RegexValidation { get; set; }
-        }
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            _control = new ValidationControl();
-        }
-
-        #endregion  // Common test members
+		[WpfControl( typeof( Property ) )]
+		public class ValidationControl : DependencyObject
+		{
+			[Flags]
+			public enum Property
+			{
+				RegexValidation
+			}
 
 
-        [TestMethod]
-        public void RegexValidationTest()
-        {
-            _control.RegexValidation = "test";
-            AssertHelper.ThrowsException<ArgumentException>( () => _control.RegexValidation = "invalid" );
-        }
-    }
+			[DependencyProperty( Property.RegexValidation, DefaultValue = "test" )]
+			[RegexValidation( "test" )]
+			public string RegexValidation { get; set; }
+		}
+
+
+		[TestInitialize]
+		public void TestInitialize()
+		{
+			_control = new ValidationControl();
+		}
+
+		#endregion  // Common test members
+
+
+		[TestMethod]
+		public void RegexValidationTest()
+		{
+			_control.RegexValidation = "test";
+			AssertHelper.ThrowsException<ArgumentException>( () => _control.RegexValidation = "invalid" );
+		}
+	}
 }

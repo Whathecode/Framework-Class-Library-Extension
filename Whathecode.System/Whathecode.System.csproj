@@ -65,6 +65,9 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <SkipPostSharp>True</SkipPostSharp>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -168,6 +171,7 @@
     <Compile Include="ComponentModel\Validation\IValidation.cs" />
     <Compile Include="ComponentModel\Validation\RegexValidation.cs" />
     <Compile Include="Diagnostics\Extensions\Extensions.IEnumerable.cs" />
+    <Compile Include="Extensions\Extensions.Dictionary.cs" />
     <Compile Include="Extensions\Extensions.DirectoryInfo.cs" />
     <Compile Include="Extensions\Extensions.IEnumerable.cs" />
     <Compile Include="Extensions\Extensions.IList.cs" />

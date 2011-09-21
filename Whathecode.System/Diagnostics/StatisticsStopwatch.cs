@@ -6,69 +6,69 @@ using System.Diagnostics.Contracts;
 
 namespace Whathecode.System.Diagnostics
 {
-    /// <summary>
-    ///   A stopwatch which can give additional statistics for timed intervals.
-    /// </summary>
-    /// <author>Steven Jeuris</author>
-    public partial class StatisticsStopwatch
-    {
-        readonly Stopwatch _stopwatch = new Stopwatch();
-        readonly DateTime _timingStart;
-        readonly List<TimeSpan> _intervals = new List<TimeSpan>();
+	/// <summary>
+	///   A stopwatch which can give additional statistics for timed intervals.
+	/// </summary>
+	/// <author>Steven Jeuris</author>
+	public partial class StatisticsStopwatch
+	{
+		readonly Stopwatch _stopwatch = new Stopwatch();
+		readonly DateTime _timingStart;
+		readonly List<TimeSpan> _intervals = new List<TimeSpan>();
 
-        readonly string _label;
-
-
-        StatisticsStopwatch( DateTime start, string label )
-        {
-            _stopwatch.Start();
-            _timingStart = start;
-
-            _label = label;
-        }
+		readonly string _label;
 
 
-        public static StatisticsStopwatch Start()
-        {
-            return Start( "" );
-        }
+		StatisticsStopwatch( DateTime start, string label )
+		{
+			_stopwatch.Start();
+			_timingStart = start;
 
-        public static StatisticsStopwatch Start( string label )
-        {
-            Contract.Requires( label != null );
+			_label = label;
+		}
 
-            return new StatisticsStopwatch( DateTime.Now, label );
-        }
 
-        public void StartNextMeasurement()
-        {
-            // Make sure no previous measurement is running.
-            StopCurrentMeasurement();
+		public static StatisticsStopwatch Start()
+		{
+			return Start( "" );
+		}
 
-            // Start new measurement.
-            _stopwatch.Restart();
-        }
+		public static StatisticsStopwatch Start( string label )
+		{
+			Contract.Requires( label != null );
 
-        void StopCurrentMeasurement()
-        {
-            if ( _stopwatch.IsRunning )
-            {
-                _stopwatch.Stop();
+			return new StatisticsStopwatch( DateTime.Now, label );
+		}
 
-                // Add new interval.
-                _intervals.Add( new TimeSpan( _stopwatch.ElapsedTicks ) );
-            }
-        }
+		public void StartNextMeasurement()
+		{
+			// Make sure no previous measurement is running.
+			StopCurrentMeasurement();
 
-        public Measurement Stop()
-        {
-            DateTime timingStop = DateTime.Now;
+			// Start new measurement.
+			_stopwatch.Restart();
+		}
 
-            // When a previous measurement was still running, stop it first and add interval.
-            StopCurrentMeasurement();
+		void StopCurrentMeasurement()
+		{
+			if ( _stopwatch.IsRunning )
+			{
+				_stopwatch.Stop();
 
-            // Return latest updated measurement.            
-            return new Measurement( _label, _timingStart, timingStop, _intervals );
-        }
-    }
+				// Add new interval.
+				_intervals.Add( new TimeSpan( _stopwatch.ElapsedTicks ) );
+			}
+		}
+
+		public Measurement Stop()
+		{
+			DateTime timingStop = DateTime.Now;
+
+			// When a previous measurement was still running, stop it first and add interval.
+			StopCurrentMeasurement();
+
+			// Return latest updated measurement.            
+			return new Measurement( _label, _timingStart, timingStop, _intervals );
+		}
+	}
 }

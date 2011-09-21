@@ -1,0 +1,15 @@
+﻿<Window
+		x:Class="BlendCompatibilityTest.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:BlendCompatibilityTest="clr-namespace:BlendCompatibilityTest"
+		Title="MainWindow"
+		Height="350" Width="525">
+	<StackPanel>
+		<TextBlock
+				Text="Checking whether dependency properties work. (normal, factory approach, aspect)"
+				Background="Black" Foreground="White" />
+		<BlendCompatibilityTest:UserControlTest />
+		<BlendCompatibilityTest:AspectUserControlTest />
+	</StackPanel>
+</Window>
