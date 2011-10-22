@@ -175,7 +175,7 @@
     <Compile Include="Extensions\Extensions.DirectoryInfo.cs" />
     <Compile Include="Extensions\Extensions.IEnumerable.cs" />
     <Compile Include="Extensions\Extensions.IList.cs" />
-    <Compile Include="AbstractGenericAttribute.cs" />
+    <Compile Include="AbstractBehaviorAttribute.cs" />
     <Compile Include="Extensions\Extensions.object.cs" />
     <Compile Include="Extensions\Extensions.string.cs" />
     <Compile Include="InvalidImplementationException.cs" />

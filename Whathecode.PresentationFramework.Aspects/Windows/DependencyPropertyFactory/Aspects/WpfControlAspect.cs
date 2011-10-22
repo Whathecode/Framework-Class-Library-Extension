@@ -34,8 +34,6 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 		}
 
 
-		static readonly Type AttributeType = typeof( DependencyPropertyAttribute );        
-
 		static ConcreteDependencyPropertyFactory _propertyFactory;
 		const string AspectsMemberName = "_propertyAspects";
 		static List<DependencyPropertyAspect<T>> _propertyAspects = new List<DependencyPropertyAspect<T>>();

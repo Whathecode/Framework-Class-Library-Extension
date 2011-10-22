@@ -10,14 +10,26 @@ namespace Whathecode.Tests.System.Linq
 	public class IEnumerableExtensionsTest
 		// ReSharper restore InconsistentNaming
 	{
+		#region Common Test Members
+
+		List<int> _list;
+
+		[TestInitialize]
+		public void Initialize()
+		{
+			_list = new List<int> { 0, 1, 2, 3, 4 };
+		}
+
+		#endregion // Common Test Members
+
+
 		[TestMethod]
 		public void CountOfTest()
 		{
-			List<int> numbers = new List<int> { 0, 1, 2, 3, 4 };
-			Assert.IsFalse( numbers.CountOf( 0 ) );
-			Assert.IsFalse( numbers.CountOf( 2 ) );
-			Assert.IsTrue( numbers.CountOf( 5 ) );
-			Assert.IsFalse( numbers.CountOf( 10 ) );
+			Assert.IsFalse( _list.CountOf( 0 ) );
+			Assert.IsFalse( _list.CountOf( 2 ) );
+			Assert.IsTrue( _list.CountOf( 5 ) );
+			Assert.IsFalse( _list.CountOf( 10 ) );
 		}
 	}
 }

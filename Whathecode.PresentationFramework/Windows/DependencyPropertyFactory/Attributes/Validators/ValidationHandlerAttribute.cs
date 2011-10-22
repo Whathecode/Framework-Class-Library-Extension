@@ -13,7 +13,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Validat
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[AttributeUsage( AttributeTargets.Property )]
-	public class ValidationHandlerAttribute : AbstractGenericAttribute
+	public class ValidationHandlerAttribute : AbstractBehaviorAttribute
 	{
 		public readonly IValidation<object> GenericValidation;
 

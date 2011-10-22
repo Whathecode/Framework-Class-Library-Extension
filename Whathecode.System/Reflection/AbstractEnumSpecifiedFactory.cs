@@ -75,18 +75,22 @@ namespace Whathecode.System.Reflection
 			}
 
 			// Find all attributes with correct ID's set.
-			MatchingAttributes = (from member in AttributedMembers
+			MatchingAttributes = (
+				from member in AttributedMembers
 				from attribute in member.Value
 				let idAttribute = attribute as IdAttribute
 				where idAttribute != null && idAttribute.GetId() is TEnum
-				group idAttribute by member).ToDictionary( g => g.Key.Key, v => v.ToArray() );
+				group idAttribute by member
+				).ToDictionary( g => g.Key.Key, v => v.ToArray() );
 
 			// Should every enum have at least one matching member?
 			if ( RequireUsageOfAllEnums )
 			{
-				int enumsUsed = (from match in MatchingAttributes
+				int enumsUsed = (
+					from match in MatchingAttributes
 					from id in match.Value
-					select id.GetId()).Distinct().Count();
+					select id.GetId()
+					).Distinct().Count();
 
 				if ( EnumValues.Length != enumsUsed )
 				{
@@ -106,10 +110,12 @@ namespace Whathecode.System.Reflection
 		protected Dictionary<MemberInfo, IdAttribute[]> GetAttributedMembers<TAttributeType>( TEnum id )
 			where TAttributeType : IdAttribute
 		{
-			return (from member in OwnerType.GetMembers( ReflectionHelper.AllClassMembers )
+			return (
+				from member in OwnerType.GetMembers( ReflectionHelper.AllClassMembers )
 				from attribute in (IdAttribute[])member.GetCustomAttributes( typeof( TAttributeType ), false )
 				where attribute.GetId().Equals( id )
-				group attribute by member).ToDictionary( g => g.Key, g => g.ToArray() );
+				group attribute by member
+				).ToDictionary( g => g.Key, g => g.ToArray() );
 		}
 	}
 }

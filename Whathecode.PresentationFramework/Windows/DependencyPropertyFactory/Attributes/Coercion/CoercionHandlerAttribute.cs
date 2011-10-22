@@ -12,7 +12,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[AttributeUsage( AttributeTargets.Property )]
-	public class CoercionHandlerAttribute : AbstractGenericAttribute
+	public class CoercionHandlerAttribute : AbstractBehaviorAttribute
 	{
 		public readonly IControlCoercion<object, object> GenericCoercion;
 

@@ -61,6 +61,7 @@ namespace Whathecode.System.Reflection.Extensions
 		///   The dot operator can be used to access composed members as you would ordinarily use it.
 		///   E.g. Member.SubMember.SubSubMember
 		/// </param>
+		/// <exception cref="ArgumentException">Thrown when an invalid path is passed and no value could be found.</exception>
 		/// <returns>The object at the given path.</returns>
 		public static object GetValue( this object source, string path )
 		{

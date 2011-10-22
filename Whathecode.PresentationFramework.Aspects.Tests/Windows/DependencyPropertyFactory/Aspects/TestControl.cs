@@ -45,8 +45,8 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Aspects
 		{
 			return CoerceCallbackCalled( d, value );
 		}
-
 		// ReSharper restore UnusedMember.Local
+
 
 		class CallbackValidation : AbstractValidation<string>
 		{
