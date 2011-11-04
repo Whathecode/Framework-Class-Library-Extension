@@ -1,6 +1,6 @@
 ﻿using System;
+using Whathecode.System.Arithmetic.Operators;
 using Whathecode.System.ComponentModel.Coercion;
-using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercion
@@ -8,6 +8,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
 	/// <summary>
 	///   Coerces a value to a certain range.
 	/// </summary>
+	/// <author>Steven Jeuris</author>
 	public class RangeCoercionAttribute : CoercionHandlerAttribute
 	{
 		/// <summary>
@@ -22,7 +23,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
 					new RangeCoercion<RedirectedControlCoercion<TEnum, TValue>, TValue>(
 						r => (TValue)r.Values[ rangeStart ],
 						r => (TValue)r.Values[ rangeEnd ] ),
-					(TEnum)rangeStart.EnumOr( rangeEnd ) ) {}
+					BitwiseOperator<TEnum>.Or( rangeStart, rangeEnd ) ) {}
 		}
 
 

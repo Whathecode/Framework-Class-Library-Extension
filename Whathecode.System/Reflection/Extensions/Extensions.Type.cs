@@ -3,12 +3,34 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
+using Whathecode.System.Linq;
 
 
 namespace Whathecode.System.Reflection.Extensions
 {
 	public static partial class Extensions
 	{
+		/// <summary>
+		///   Returns a <see cref = "Type" /> object based on the <see cref = "Type" /> object
+		///   with its type parameters replaced with the given type arguments.
+		/// </summary>
+		/// <param name = "source">The source of this extension method.</param>
+		/// <param name = "typeArguments">
+		///   An array of types to be substituted for the type parameters of the given <see cref = "Type" />.
+		/// </param>
+		/// <returns>
+		///   A <see cref = "Type" /> object that represents the constructed type formed by substituting
+		///   the elements of <paramref name = "typeArguments" /> for the type parameters of the current type definition.
+		/// </returns>
+		public static Type GetGenericTypeDefinition( this Type source, params Type[] typeArguments )
+		{
+			Contract.Requires( source.IsGenericType );
+
+			return source
+				.GetGenericTypeDefinition()
+				.MakeGenericType( typeArguments );
+		}
+
 		/// <summary>
 		///   Searches for the specified method whose parameters match the specified argument types,
 		///   using the specified binding constraints.
@@ -38,6 +60,92 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
+		///   Determines whether a conversion from one type to another is possible.
+		///   This uses .NET rules. E.g. short is not implicitly convertible to int, while this is possible in C#.
+		///   TODO: Support constraints, custom implicit conversion operators? Unit tests for explicit converts.
+		/// </summary>
+		/// <param name = "fromType">The type to convert from.</param>
+		/// <param name = "targetType">The type to convert to.</param>
+		/// <param name = "castType">Specifies what types of casts should be considered.</param>
+		/// <returns>true when a conversion to the target type is possible, false otherwise.</returns>
+		public static bool CanConvertTo( this Type fromType, Type targetType, CastType castType = CastType.Implicit )
+		{
+			return CanConvertTo( fromType, targetType, castType, false );
+		}
+
+		static bool CanConvertTo( this Type fromType, Type targetType, CastType castType, bool switchVariance )
+		{
+			bool allowExplicit = castType == CastType.Explicit;
+
+			Func<Type, Type, bool> covarianceCheck = allowExplicit
+				? (Func<Type, Type, bool>)IsInHierarchy
+				: ( from, to ) => from == to || from.IsSubclassOf( to );
+			Func<Type, Type, bool> contravarianceCheck = allowExplicit
+				? (Func<Type, Type, bool>)IsInHierarchy
+				: ( from, to ) => from == to || to.IsSubclassOf( from );
+
+			if ( switchVariance )
+			{
+				Variable.Swap( ref covarianceCheck, ref contravarianceCheck );
+			}
+
+			// Simple hierarchy check.
+			if ( covarianceCheck( fromType, targetType ) )
+			{
+				return true;
+			}
+
+			// Interface check.
+			if ( (targetType.IsInterface && fromType.ImplementsInterface( targetType ))
+				|| (allowExplicit && fromType.IsInterface && targetType.ImplementsInterface( fromType )) )
+			{
+				return true;
+			}
+
+			// Explicit value type conversions (including enums).
+			if ( allowExplicit && (fromType.IsValueType && targetType.IsValueType) )
+			{
+				return true;
+			}
+
+			// Recursively verify when it is a generic type.
+			if ( targetType.IsGenericType )
+			{
+				Type genericDefinition = targetType.GetGenericTypeDefinition();
+				Type sourceGeneric = fromType.GetMatchingGenericType( genericDefinition );
+
+				if ( sourceGeneric != null ) // Same generic types.
+				{
+					// Check whether parameters correspond, taking into account variance rules.
+					return sourceGeneric.GetGenericArguments().Zip(
+						targetType.GetGenericArguments(), genericDefinition.GetGenericArguments(),
+						( from, to, generic )
+							=> !(from.IsValueType || to.IsValueType)	// Variance applies only to reference types.
+								? generic.GenericParameterAttributes.HasFlag( GenericParameterAttributes.Covariant )
+									? CanConvertTo( from, to, castType, false )
+									: generic.GenericParameterAttributes.HasFlag( GenericParameterAttributes.Contravariant )
+										? CanConvertTo( from, to, castType, true )
+										: false
+								: false )
+						.All( match => match );
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		///   Determines whether one type is in the same inheritance hierarchy than another.
+		/// </summary>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "type">The type the check whether it is in the same inheritance hierarchy.</param>
+		/// <returns>true when both types are in the same inheritance hierarchy, false otherwise.</returns>
+		public static bool IsInHierarchy( this Type source, Type type )
+		{
+			return source == type || source.IsSubclassOf( type ) || type.IsSubclassOf( source );
+		}
+
+		/// <summary>
 		///   Get the first found matching generic type.
 		///   The type parameters of the generic type are optional.
 		///   E.g. Dictionary&lt;,&gt; or Dictionary&lt;string,&gt;
@@ -56,11 +164,11 @@ namespace Whathecode.System.Reflection.Extensions
 			Func<Type[], bool> argumentsMatch
 				= arguments => genericArguments
 					.Zip( arguments, Tuple.Create )
-					.All( t => t.Item1.IsGenericParameter || // No type specified.
-						t.Item1 == t.Item2 );
+					.All( t => t.Item1.IsGenericParameter // No type specified.
+						|| t.Item1 == t.Item2 );
 
 			Type matchingType = null;
-			if ( type.IsInterface )
+			if ( type.IsInterface && !source.IsInterface )
 			{
 				// Traverse across all interfaces to find a matching interface.
 				matchingType = (
@@ -120,6 +228,16 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
+		///   Verify whether a given type is a delegate.
+		/// </summary>
+		/// <param name = "source">The source of this extension method.</param>
+		/// <returns>True when the given type is a delegate, false otherwise.</returns>
+		public static bool IsDelegate( this Type source )
+		{
+			return source.IsSubclassOf( typeof( Delegate ) );
+		}
+
+		/// <summary>
 		///   Does a certain type implement a given interface or not.
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
@@ -127,6 +245,8 @@ namespace Whathecode.System.Reflection.Extensions
 		/// <returns>True when the type implements the given interface, false otherwise.</returns>
 		public static bool ImplementsInterface( this Type source, Type interfaceType )
 		{
+			Contract.Requires( interfaceType.IsInterface );
+
 			return source.GetInterface( interfaceType.ToString() ) != null;
 		}
 

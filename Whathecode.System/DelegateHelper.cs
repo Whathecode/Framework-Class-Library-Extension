@@ -4,7 +4,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Whathecode.System.Linq;
+using System.Runtime.CompilerServices;
+using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System
@@ -19,7 +20,6 @@ namespace Whathecode.System
 		/// <summary>
 		///   Options which specify what type of delegate should be created.
 		/// </summary>
-		[Flags]
 		public enum CreateOptions
 		{
 			None,
@@ -32,12 +32,12 @@ namespace Whathecode.System
 
 
 		/// <summary>
-		///   A struct which holds the expressions for the arguments when creating delegates.
+		///   Holds the expressions for the parameters when creating delegates.
 		/// </summary>
-		struct DelegateArgumentExpressions
+		struct ParameterConversionExpressions
 		{
-			public IEnumerable<ParameterExpression> OriginalArguments;
-			public IEnumerable<Expression> ConvertedArguments;
+			public IEnumerable<ParameterExpression> OriginalParameters;
+			public IEnumerable<Expression> ConvertedParameters;
 		}
 
 
@@ -45,6 +45,7 @@ namespace Whathecode.System
 		///   The name of the Invoke method of a Delegate.
 		/// </summary>
 		const string InvokeMethod = "Invoke";
+
 
 		/// <summary>
 		///   Get method info for a specified delegate type.
@@ -57,6 +58,41 @@ namespace Whathecode.System
 
 			return delegateType.GetMethod( InvokeMethod );
 		}
+
+		/// <summary>
+		///   Creates a delegate of a specified type which wraps another similar delegate, doing downcasts where necessary.
+		///   The created delegate will only work in case the casts are valid.
+		/// </summary>
+		/// <typeparam name = "TDelegate">The type for the delegate to create.</typeparam>
+		/// <param name = "toWrap">The delegate which needs to be wrapped by another delegate.</param>
+		/// <returns>A new delegate which wraps the passed delegate, doing downcasts where necessary.</returns>
+		public static TDelegate WrapDelegate<TDelegate>( Delegate toWrap )
+			where TDelegate : class
+		{
+			Contract.Requires( typeof( TDelegate ).IsSubclassOf( typeof( MulticastDelegate ) ), "Given type should be a delegate." );
+
+			MethodInfo toCreateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
+			MethodInfo toWrapInfo = toWrap.Method;
+
+			// Create delegate original and converted parameters.
+			// TODO: In the unlikely event that someone would create a delegate with a Closure argument, the following logic will fail.
+			var toCreateArguments = toCreateInfo.GetParameters().Select( d => d.ParameterType );			
+			var toWrapArguments = toWrapInfo.GetParameters()
+				.SkipWhile( p => p.ParameterType == typeof( Closure ) )	// Closure argument isn't an actual argument, but added by the compiler.
+				.Select( p => p.ParameterType );
+			var parameterExpressions = CreateParameterConversionExpressions( toCreateArguments, toWrapArguments );
+
+			// Create call to wrapped delegate.
+			Expression delegateCall = Expression.Invoke(
+				Expression.Constant( toWrap ),
+				parameterExpressions.ConvertedParameters );
+
+			return Expression.Lambda<TDelegate>(
+				ConvertOrWrapDelegate( delegateCall, toCreateInfo.ReturnType ),
+				parameterExpressions.OriginalParameters
+				).Compile();
+		}
+
 
 		/// <summary>
 		///   Creates a delegate of a specified type that represents the specified static or instance method,
@@ -78,31 +114,29 @@ namespace Whathecode.System
 					// Ordinary delegate creation, maintaining variance safety.
 					return Delegate.CreateDelegate( typeof( TDelegate ), instance, method ) as TDelegate;
 
+				case CreateOptions.Downcasting:
+					{
+						MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
+
+						// Create delegate original and converted arguments.
+						var delegateTypes = delegateInfo.GetParameters().Select( d => d.ParameterType );
+						var methodTypes = method.GetParameters().Select( p => p.ParameterType );
+						var delegateParameterExpressions = CreateParameterConversionExpressions( delegateTypes, methodTypes );
+
+						// Create method call.
+						Expression methodCall = Expression.Call(
+							instance == null ? null : Expression.Constant( instance ),
+							method,
+							delegateParameterExpressions.ConvertedParameters );
+
+						return Expression.Lambda<TDelegate>(
+							ConvertOrWrapDelegate( methodCall, delegateInfo.ReturnType ), // Convert return type when necessary.
+							delegateParameterExpressions.OriginalParameters
+							).Compile();
+					}
+
 				default:
-				{
-					MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
-
-					// Create delegate original and converted arguments.
-					var delegateTypes = delegateInfo.GetParameters().Select( d => d.ParameterType );
-					var methodTypes = method.GetParameters().Select( m => m.ParameterType );
-					var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
-
-					// Create method call.
-					Expression methodCall = Expression.Call(
-						instance == null ? null : Expression.Constant( instance ),
-						method,
-						delegateArgumentExpressions.ConvertedArguments );
-
-					// Convert return type when necessary.
-					Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
-						? methodCall
-						: Expression.Convert( methodCall, delegateInfo.ReturnType );
-
-					return Expression.Lambda<TDelegate>(
-						convertedMethodCall,
-						delegateArgumentExpressions.OriginalArguments
-						).Compile();
-				}
+					throw new NotSupportedException();
 			}
 		}
 
@@ -130,68 +164,102 @@ namespace Whathecode.System
 					// Ordinary delegate creation, maintaining variance safety.
 					return Delegate.CreateDelegate( typeof( TDelegate ), method ) as TDelegate;
 
+				case CreateOptions.Downcasting:
+					{
+						MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
+						var delegateParameters = delegateInfo.GetParameters();
+
+						// Convert instance type when necessary.
+						Type delegateInstanceType = delegateParameters.Select( p => p.ParameterType ).First();
+						Type methodInstanceType = method.DeclaringType;
+						ParameterExpression instance = Expression.Parameter( delegateInstanceType );
+						Expression convertedInstance = ConvertOrWrapDelegate( instance, methodInstanceType );
+
+						// Create delegate original and converted arguments.
+						var delegateTypes = delegateParameters.Select( d => d.ParameterType ).Skip( 1 );
+						var methodTypes = method.GetParameters().Select( m => m.ParameterType );
+						var delegateParameterExpressions = CreateParameterConversionExpressions( delegateTypes, methodTypes );
+
+						// Create method call.
+						Expression methodCall = Expression.Call(
+							convertedInstance,
+							method,
+							delegateParameterExpressions.ConvertedParameters );					
+
+						return Expression.Lambda<TDelegate>(
+							ConvertOrWrapDelegate( methodCall, delegateInfo.ReturnType ), // Convert return type when necessary.
+							new[] { instance }.Concat( delegateParameterExpressions.OriginalParameters )
+							).Compile();
+					}
+
 				default:
-				{
-					MethodInfo delegateInfo = MethodInfoFromDelegateType( typeof( TDelegate ) );
-					var delegateParameters = delegateInfo.GetParameters();
-
-					// Convert instance type when necessary.
-					Type delegateInstanceType = delegateParameters.Select( p => p.ParameterType ).First();
-					Type methodInstanceType = method.DeclaringType;
-					ParameterExpression instance = Expression.Parameter( delegateInstanceType );
-					Expression convertedInstance = delegateInstanceType == methodInstanceType
-						? (Expression)instance
-						: Expression.Convert( instance, methodInstanceType );
-
-					// Create delegate original and converted arguments.
-					var delegateTypes = delegateParameters.Select( d => d.ParameterType ).Skip( 1 );
-					var methodTypes = method.GetParameters().Select( m => m.ParameterType );
-					var delegateArgumentExpressions = CreateDelegateArgumentExpressions( delegateTypes, methodTypes );
-
-					// Create method call.
-					Expression methodCall = Expression.Call(
-						convertedInstance,
-						method,
-						delegateArgumentExpressions.ConvertedArguments );
-
-					// Convert return type when necessary.
-					Expression convertedMethodCall = delegateInfo.ReturnType == method.ReturnType
-						? methodCall
-						: Expression.Convert( methodCall, delegateInfo.ReturnType );
-
-					return Expression.Lambda<TDelegate>(
-						convertedMethodCall,
-						new[] { instance }.Concat( delegateArgumentExpressions.OriginalArguments )
-						).Compile();
-				}
+					throw new NotSupportedException();
 			}
 		}
 
 		/// <summary>
-		///   Creates the expressions for the delegate parameters and their conversions
-		///   to the corresponding required types for the method parameters.
+		///   Creates the expressions for delegate parameters and their conversions
+		///   to the corresponding required types where necessary.
 		/// </summary>
-		/// <param name = "delegateTypes">The types of the delegate parameters.</param>
-		/// <param name = "methodTypes">The required types of the method parameters.</param>
+		/// <param name = "toCreateTypes">The types of the parameters of the delegate to create.</param>
+		/// <param name = "toWrapTypes">The types of the parameters of the call to wrap.</param>
 		/// <returns>An object containing the delegate expressions.</returns>
-		static DelegateArgumentExpressions CreateDelegateArgumentExpressions(
-			IEnumerable<Type> delegateTypes,
-			IEnumerable<Type> methodTypes )
+		static ParameterConversionExpressions CreateParameterConversionExpressions(
+			IEnumerable<Type> toCreateTypes,
+			IEnumerable<Type> toWrapTypes )
 		{
-			var delegateArguments = delegateTypes.Select( Expression.Parameter ).ToArray(); // ToArray prevents deferred execution.   
-
-			// Convert the arguments from the delegate argument type to the method argument type when necessary.
-			var convertedArguments = delegateArguments.Zip(
-				methodTypes, delegateTypes,
-				( delegateArgument, methodType, delegateType ) => methodType != delegateType
-					? (Expression)Expression.Convert( delegateArgument, methodType )
-					: delegateArgument );
-
-			return new DelegateArgumentExpressions
+			var originalParameters = toCreateTypes.Select( Expression.Parameter ).ToArray(); // ToArray prevents deferred execution.   
+			
+			return new ParameterConversionExpressions
 			{
-				OriginalArguments = delegateArguments,
-				ConvertedArguments = convertedArguments
+				OriginalParameters = originalParameters,
+
+				// Convert the parameters from the delegate parameter type to the required type when necessary.
+				ConvertedParameters = originalParameters.Zip( toWrapTypes, ConvertOrWrapDelegate )
 			};
+		}
+
+		/// <summary>
+		///   Converts the result of the given expression to the desired type,
+		///   or when it is a delegate, tries to wrap it with a delegate which attempts to do downcasts where necessary.
+		/// </summary>
+		/// <param name="expression">The expression of which the result needs to be converted.</param>
+		/// <param name="toType">The type to which the result needs to be converted.</param>
+		/// <returns>An expression which converts the given expression to the desired type.</returns>
+		static Expression ConvertOrWrapDelegate( Expression expression, Type toType )
+		{
+			Expression convertedExpression;
+			Type fromType = expression.Type;
+
+			if ( toType == fromType )
+			{
+				convertedExpression = expression;	// No conversion of the return type needed.
+			}
+			else
+			{
+				// TODO: CanConvertTo is incomplete. For the current purpose it returns the correct result, but might not in all cases.
+				if ( fromType.CanConvertTo( toType, CastType.Explicit ) )
+				{
+					convertedExpression = Expression.Convert( expression, toType );
+				}
+				else
+				{
+					// When the return type is a delegate, attempt recursively wrapping it, adding extra conversions where needed. E.g. Func<T>
+					if ( fromType.IsDelegate() && fromType.IsGenericType )
+					{
+						Func<Delegate, object> wrapDelegateDelegate = WrapDelegate<object>;
+						MethodInfo wrapDelegateMethod = wrapDelegateDelegate.Method.GetGenericMethodDefinition( toType );
+						MethodCallExpression wrapDelegate = Expression.Call( wrapDelegateMethod, expression );
+						convertedExpression = wrapDelegate;
+					}
+					else
+					{
+						throw new InvalidOperationException( "Can't downcast the return type to its desired type." );
+					}
+				}
+			}
+
+			return convertedExpression;
 		}
 	}
 }

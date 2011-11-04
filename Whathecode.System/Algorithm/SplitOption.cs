@@ -1,4 +1,4 @@
-﻿namespace Whathecode.System.Arithmetic
+﻿namespace Whathecode.System.Algorithm
 {
 	/// <summary>
 	///   Option which specifies how a split operation should be handled.

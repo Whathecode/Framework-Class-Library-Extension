@@ -151,7 +151,21 @@ namespace Whathecode.Tests.System
 		}
 
 		[TestMethod]
-		public void CreateUpcastingDelegateTest()
+		public void WrapDelegateTest()
+		{
+			// Parameter and return type wrapping.
+			Func<int, int, int> add = ( a, b ) => a + b;
+			Func<object, object, object> addWrapped = DelegateHelper.WrapDelegate<Func<object, object, object>>( add );
+			Assert.AreEqual( addWrapped( 5, 5 ), 10 );
+
+			// One-level recursive delegate return type wrapping.
+			Func<int, Func<int>> addFive = a => () => a + 5;
+			Func<object, Func<object>> addFiveWrapped = DelegateHelper.WrapDelegate<Func<object, Func<object>>>( addFive );
+			Assert.AreEqual( addFiveWrapped( 5 )(), 10 );
+		}
+
+		[TestMethod]
+		public void CreateDowncastingDelegateTest()
 		{
 			// Downcasting, so the specific type doesn't need to be known. Force covariance for one type.
 			MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );
@@ -186,7 +200,7 @@ namespace Whathecode.Tests.System
 		}
 
 		[TestMethod]
-		public void CreateUpcastingDynamicInstanceDelegateTest()
+		public void CreateDowncastingDynamicInstanceDelegateTest()
 		{
 			// Downcasting, so the specific type doesn't need to be known. Force covariance for one type.
 			MethodInfo playMethod = _dog.GetType().GetMethod( PlayWithMethodName );

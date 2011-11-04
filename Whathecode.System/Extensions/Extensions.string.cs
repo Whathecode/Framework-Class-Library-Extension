@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
-using Whathecode.System.Arithmetic;
+using Whathecode.System.Algorithm;
 
 
 namespace Whathecode.System.Extensions

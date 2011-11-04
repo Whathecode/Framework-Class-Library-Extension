@@ -100,5 +100,29 @@ namespace Whathecode.System.Linq
 
 			return source.Take( count + 1 ).Count() == count;
 		}
+
+		/// <summary>
+		///   Determines whether a sequence contains a set of specified elements by using the default equality comparer.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "elements">The elements to locate in the sequence.</param>
+		/// <returns>true if the source sequence contains all elements; otherwise, false.</returns>
+		public static bool ContainsAll<T>( this IEnumerable<T> source, IEnumerable<T> elements )
+		{
+			return elements.All( e => source.Contains( e ) );
+		}
+
+		/// <summary>
+		///   Determines whether a sequence contains the same set of elements than another sequence by using the default equality comparer.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "elements">The elements to compare with.</param>
+		/// <returns>true if both sequences contain the same elements; otherwise, false.</returns>
+		public static bool ContainsOnly<T>( this IEnumerable<T> source, IEnumerable<T> elements )
+		{
+			return source.Intersect( elements ).Count() == source.Count();				
+		}
 	}
 }

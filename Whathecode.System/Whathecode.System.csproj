@@ -154,8 +154,11 @@
     <Compile Include="Arithmetic\Interpolation\KeyPoint\CumulativeKeyPointCollection.Enumerator.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
+    <Compile Include="Arithmetic\Operators\OperatorHelper.cs" />
+    <Compile Include="Arithmetic\Operators\BitwiseOperator.cs" />
     <Compile Include="Arithmetic\Range\IntervalEnumerator.cs" />
-    <Compile Include="Arithmetic\SplitOption.cs" />
+    <Compile Include="Algorithm\SplitOption.cs" />
+    <Compile Include="CastType.cs" />
     <Compile Include="Collections\Algorithm\BinarySearch.cs" />
     <Compile Include="Collections\Algorithm\BinarySearchResult.cs" />
     <Compile Include="Collections\Delegates\IndexerDelegates.cs" />
@@ -178,6 +181,7 @@
     <Compile Include="AbstractBehaviorAttribute.cs" />
     <Compile Include="Extensions\Extensions.object.cs" />
     <Compile Include="Extensions\Extensions.string.cs" />
+    <Compile Include="Extensions\Extensions.Tuple.cs" />
     <Compile Include="InvalidImplementationException.cs" />
     <Compile Include="Linq\Extensions.IList.cs" />
     <Compile Include="Collections\LazyOperationsList.cs" />
@@ -212,6 +216,8 @@
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
     <Compile Include="Private.cs" />
+    <Compile Include="Collections\Generic\TupleList.cs" />
+    <Compile Include="Variable.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AndCondition.cs" />
@@ -257,7 +263,6 @@
       <Name>Arithmetic</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

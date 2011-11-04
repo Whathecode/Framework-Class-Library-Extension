@@ -157,8 +157,10 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 				bool valid = false;
 				if ( attachedProperty.Count <= 2 )
 				{
-					MethodInfo[] methods = (from p in attachedProperty
-						select (MethodInfo)p.MemberInfo).ToArray();
+					MethodInfo[] methods = (
+						from p in attachedProperty
+						select (MethodInfo)p.MemberInfo
+						).ToArray();
 					MethodInfo getter = methods.Single( m => m.Name.StartsWith( GetPrefix ) );
 					MethodInfo setter = methods.SingleOrDefault( m => m.Name.StartsWith( SetPrefix ) && m.ReturnType == typeof( void ) );
 

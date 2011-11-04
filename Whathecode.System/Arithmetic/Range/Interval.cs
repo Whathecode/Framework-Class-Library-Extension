@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Lambda.Generic.Arithmetic;
+using Whathecode.System.Algorithm;
 
 
 namespace Whathecode.System.Arithmetic.Range

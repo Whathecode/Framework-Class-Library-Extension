@@ -98,7 +98,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +111,7 @@
     <Compile Include="Collections\LazyOperationsListTest.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\NotifyPropertyFactoryTest.cs" />
     <Compile Include="DelegateHelperTest.cs" />
+    <Compile Include="EnumHelperTest.cs" />
     <Compile Include="Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="Linq\IEnumerableExtensionsTest.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Reflection\Extensions\MethodInfoExtensionsTest.cs" />
     <Compile Include="Reflection\Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Reflection\Extensions\TypeExtensionsTest.cs" />
+    <Compile Include="VariableTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Whathecode.Microsoft.VisualStudio.QualityTools.Unit\Whathecode.Microsoft.VisualStudio.QualityTools.Unit.csproj">
