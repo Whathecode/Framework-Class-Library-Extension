@@ -130,7 +130,7 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 				{ genericObject, _object, true },
 				{ _object, genericObject, false },
 
-				// contravariance object <-> value
+				// no variance between object <-> value
 				{ genericValue, genericObject, false },
 				{ genericObject, genericValue, false }
 			}.Test();
