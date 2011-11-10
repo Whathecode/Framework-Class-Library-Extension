@@ -238,7 +238,7 @@ namespace Whathecode.System
 			else
 			{
 				// TODO: CanConvertTo is incomplete. For the current purpose it returns the correct result, but might not in all cases.
-				if ( fromType.CanConvertTo( toType, CastType.Explicit ) )
+				if ( fromType.CanConvertTo( toType, CastType.SameHierarchy ) )
 				{
 					convertedExpression = Expression.Convert( expression, toType );
 				}

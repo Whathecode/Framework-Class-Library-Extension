@@ -75,12 +75,12 @@ namespace Whathecode.System.Reflection.Extensions
 
 		static bool CanConvertTo( this Type fromType, Type targetType, CastType castType, bool switchVariance )
 		{
-			bool allowExplicit = castType == CastType.Explicit;
+			bool sameHierarchy = castType == CastType.SameHierarchy;
 
-			Func<Type, Type, bool> covarianceCheck = allowExplicit
+			Func<Type, Type, bool> covarianceCheck = sameHierarchy
 				? (Func<Type, Type, bool>)IsInHierarchy
 				: ( from, to ) => from == to || from.IsSubclassOf( to );
-			Func<Type, Type, bool> contravarianceCheck = allowExplicit
+			Func<Type, Type, bool> contravarianceCheck = sameHierarchy
 				? (Func<Type, Type, bool>)IsInHierarchy
 				: ( from, to ) => from == to || to.IsSubclassOf( from );
 
@@ -97,13 +97,13 @@ namespace Whathecode.System.Reflection.Extensions
 
 			// Interface check.
 			if ( (targetType.IsInterface && fromType.ImplementsInterface( targetType ))
-				|| (allowExplicit && fromType.IsInterface && targetType.ImplementsInterface( fromType )) )
+				|| (sameHierarchy && fromType.IsInterface && targetType.ImplementsInterface( fromType )) )
 			{
 				return true;
 			}
 
 			// Explicit value type conversions (including enums).
-			if ( allowExplicit && (fromType.IsValueType && targetType.IsValueType) )
+			if ( sameHierarchy && (fromType.IsValueType && targetType.IsValueType) )
 			{
 				return true;
 			}
@@ -114,6 +114,9 @@ namespace Whathecode.System.Reflection.Extensions
 				Type genericDefinition = targetType.GetGenericTypeDefinition();
 				Type sourceGeneric = fromType.GetMatchingGenericType( genericDefinition );
 
+				// Delegates never support casting in the 'opposite' direction than their varience type parameters dictate.
+				CastType cast = fromType.IsDelegate() ? CastType.Implicit : castType;
+
 				if ( sourceGeneric != null ) // Same generic types.
 				{
 					// Check whether parameters correspond, taking into account variance rules.
@@ -122,9 +125,9 @@ namespace Whathecode.System.Reflection.Extensions
 						( from, to, generic )
 							=> !(from.IsValueType || to.IsValueType)	// Variance applies only to reference types.
 								? generic.GenericParameterAttributes.HasFlag( GenericParameterAttributes.Covariant )
-									? CanConvertTo( from, to, castType, false )
+									? CanConvertTo( from, to, cast, false )
 									: generic.GenericParameterAttributes.HasFlag( GenericParameterAttributes.Contravariant )
-										? CanConvertTo( from, to, castType, true )
+										? CanConvertTo( from, to, cast, true )
 										: false
 								: false )
 						.All( match => match );

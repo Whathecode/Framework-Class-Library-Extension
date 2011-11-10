@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Whathecode.System;
 using Whathecode.System.Collections.Generic;
 using Whathecode.System.Reflection.Extensions;
 
@@ -16,12 +16,14 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 
 		interface IOne<T> {}
 		class One<T> : IOne<T> {}
-		class ExtendingOne<T> : One<T> {}		
-		
+		class ExtendingOne<T> : One<T> {}
+
 		interface ICovariantOne<out T> {}
 		interface IContravariantOne<in T> {}
 		class CovariantOne<T> : ICovariantOne<T> {}
 		class ContravariantOne<T> : IContravariantOne<T> {}
+
+		delegate bool TestDelegate( int test );
 
 		// Types.
 		readonly Type _int = typeof( int );
@@ -29,17 +31,29 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 		readonly Type _string = typeof( string );
 		readonly Type _object = typeof( object );
 		readonly Type _simple = typeof( Simple );
+		readonly Type _comparable = typeof( IComparable );
 
 		/// <summary>
-		///   List which groups the type from which to which to convert, together with the expected outcome (success/failure).
+		///   List which groups the type from which to which to convert,
+		///   together with the expected outcome for an implicit and explicit conversion. (success/failure)
 		/// </summary>
-		class CanConvert : TupleList<Type, Type, bool>
+		class CanConvert : TupleList<Type, Type, bool, bool>
 		{
+			public void Add( Type from, Type to, bool expectedResult )
+			{
+				// By default, assume explicit conversions within the same hierarchy are always possible.
+				Add( from, to, expectedResult, true );
+			}
+
 			public void Test()
 			{
 				foreach ( var test in this )
 				{
+					// Implicit test.
 					Assert.AreEqual( test.Item3, test.Item1.CanConvertTo( test.Item2 ) );
+
+					// Test whether explicit casts to to type in same hierarchy is possible.
+					Assert.AreEqual( test.Item4, test.Item1.CanConvertTo( test.Item2, CastType.SameHierarchy ) );
 				}
 			}
 		}
@@ -48,32 +62,30 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 
 
 		[TestMethod]
-		public void CanConvertToImplicitTest()
+		public void CanConvertToTest()
 		{
-			Type comparable = typeof( IComparable );
-
 			new CanConvert
 			{
 				// Non generic.
-				{ _int, _int, true }, // No change.
+				{ _int, _int, true },		// No change.
 				{ _string, _string, true },
 				{ _object, _object, true },
 				{ _simple, _simple, true },
-				{ _int, _object, true }, // object <-> value
+				{ _int, _object, true },	// object <-> value
 				{ _object, _int, false },
-				{ _string, _object, true }, // string <-> object
+				{ _string, _object, true },	// string <-> object
 				{ _object, _string, false },
-				{ _simple, _object, true }, // object <-> object
+				{ _simple, _object, true },	// object <-> object
 				{ _object, _simple, false },
-				{ _int, _short, false }, // value <-> value (by .NET rules, not C#)
+				{ _int, _short, false },	// value <-> value (by .NET rules, not C#)
 				{ _short, _int, false },
 
 				// Interface.
-				{ comparable, comparable, true }, // No change.
-				{ _int, comparable, true }, // value <-> interface
-				{ comparable, _int, false },
-				{ comparable, _object, true }, // object <-> interface
-				{ _object, comparable, false }
+				{ _comparable, _comparable, true },	// No change.
+				{ _int, _comparable, true },		// value <-> interface
+				{ _comparable, _int, false },
+				{ _comparable, _object, true },		// object <-> interface
+				{ _object, _comparable, false }
 			}.Test();
 
 			// Interface variant type parameters.
@@ -81,10 +93,11 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 			VarianceCheck( typeof( ICovariantOne<> ), makeGeneric, true );
 			VarianceCheck( typeof( IContravariantOne<> ), makeGeneric, false );
 
-			// Delegate variant type parameters.
+			// Delegate variant type parameter.
 			VarianceCheck( typeof( Func<> ), makeGeneric, true );
 			VarianceCheck( typeof( Action<> ), makeGeneric, false );
 
+			// Multiple variant type parameters.
 			Type simpleObject = typeof( Func<Simple, object> );
 			Type objectSimple = typeof( Func<object, Simple> );
 			Type simpleSimple = typeof( Func<Simple, Simple> );
@@ -94,6 +107,8 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 			Assert.IsTrue( objectSimple.CanConvertTo( simpleObject ) );
 			Assert.IsFalse( simpleObject.CanConvertTo( simpleSimple ) );
 			Assert.IsTrue( objectSimple.CanConvertTo( objectObject ) );
+
+			// TODO: Multiple inheritance for interfaces.
 
 			// Recursive variant type parameters.
 			Func<Type, Type, Type> makeInnerGeneric = ( g, t ) 
@@ -110,6 +125,7 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 
 		/// <summary>
 		///   Checks the variance rules for generic types.
+		///   For interfaces, only considers single implementing interface.
 		/// </summary>
 		/// <param name = "genericType">The generic type to check.</param>
 		/// <param name = "makeGeneric">Function which can convert generic type into a specific type.</param>
@@ -120,7 +136,8 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 			Type genericObject = makeGeneric( genericType, _object );
 			Type genericValue = makeGeneric( genericType, _int );
 
-			// General variance checks.
+			bool isDelegate = genericType.IsDelegate();
+
 			new CanConvert
 			{
 				// No change.
@@ -131,13 +148,20 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 				{ _object, genericObject, false },
 
 				// No variance for value type parameters.
-				{ genericValue, genericObject, false },
-				{ genericObject, genericValue, false }
-			}.Test();
+				// Converting from a generic type with a value parameter to one with a reference type parameters is only possible
+				// when it is an interface type, and a certain type implements both interfaces. (e.g. ICovariance<int> -> ICovariance<object>)
+				{ genericValue, genericObject, false, false },
+				{ genericObject, genericValue, false, false },
 
-			// Specific covariance/contravariance checks.
-			Assert.AreEqual( covariant, genericSimple.CanConvertTo( genericObject ) );
-			Assert.AreEqual( !covariant, genericObject.CanConvertTo( genericSimple ) );
+				// Covariance/contraviariance between reference type parameters.
+				// Only generic interface types can explicitly convert in the 'opposite' direction of their variance. Delegates can't!				
+				{ genericSimple, genericObject,
+					covariant,
+					covariant ? true : !isDelegate },
+				{ genericObject, genericSimple,
+					!covariant,
+					!covariant ? true : !isDelegate }
+			}.Test();
 		}
 
 		[TestMethod]
@@ -158,6 +182,16 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 			Assert.AreEqual( interfaceType, interfaceType.GetMatchingGenericType( interfaceType ) );
 			Assert.AreEqual( interfaceType, baseType.GetMatchingGenericType( interfaceType ) );
 			Assert.AreEqual( interfaceType, baseType.GetMatchingGenericType( incompleteInterfaceType ) );
+		}
+
+		[TestMethod]
+		public void IsDelegateTest()
+		{
+			Assert.IsTrue( typeof( Func<int> ).IsDelegate() );
+			Assert.IsTrue( typeof( Action ).IsDelegate() );
+			Assert.IsTrue( typeof( TestDelegate ).IsDelegate() );
+
+			Assert.IsFalse( typeof( TypeExtensionsTest ).IsDelegate() );
 		}
 	}
 }
