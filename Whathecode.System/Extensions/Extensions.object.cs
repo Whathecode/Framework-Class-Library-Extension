@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Whathecode.System.Extensions
@@ -27,6 +29,20 @@ namespace Whathecode.System.Extensions
 		public static bool EqualsAny( this object source, params object[] toCompare )
 		{
 			return toCompare.Any( o => o.Equals( source ) );
+		}
+
+		/// <summary>
+		///   Returns a selected value when the source is not null; null otherwise.
+		/// </summary>
+		/// <typeparam name = "T">Type of the source object.</typeparam>
+		/// <typeparam name = "TInner">Type of the object which the selector returns.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "selector">A function which given the source object, returns a selected value.</param>
+		/// <returns>The selected value when source is not null; null otherwise.</returns>
+		public static TInner IfNotNull<T, TInner>( this T source, Func<T, TInner> selector )
+			where T : class
+		{
+			return source != null ? selector( source ) : default( TInner );
 		}
 	}
 }
