@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using Whathecode.System.Arithmetic.Interpolation.KeyPoint;
 using Whathecode.System.Arithmetic.Interpolation.TypeProvider;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Arithmetic.Interpolation
@@ -75,7 +76,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 								+ (baseFunction11 * tangentBigger);
 
 				// Sum up all functions.
-				interpolated[ i ] = Calculator.ConvertFrom( result );
+				interpolated[ i ] = CastOperator<double, TMath>.Cast( result );
 			}
 
 			return typeProvider.CreateInstance( interpolated );
@@ -116,7 +117,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 								+ (baseFunction11 * tangentBigger);
 
 				// Sum up all functions.
-				tangent[ i ] = Calculator.ConvertFrom( result );
+				tangent[ i ] = CastOperator<double, TMath>.Cast( result );
 			}
 
 			return typeProvider.CreateInstance( tangent );
@@ -138,7 +139,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			TValue p3 = KeyPoints[ biggerIndex != KeyPoints.Count - 1 ? biggerIndex + 1 : biggerIndex ];
 
 			// Retrieve required dimension values.
-			Converter<TMath, double> toDoubleConverter = from => Calculator.ConvertToDouble( from );
+			Converter<TMath, double> toDoubleConverter = from => CastOperator<TMath, double>.Cast( from );
 			double[] p0Values = Array.ConvertAll( typeProvider.GetDimensionValues( p0 ), toDoubleConverter );
 			double[] p1Values = Array.ConvertAll( typeProvider.GetDimensionValues( p1 ), toDoubleConverter );
 			double[] p2Values = Array.ConvertAll( typeProvider.GetDimensionValues( p2 ), toDoubleConverter );

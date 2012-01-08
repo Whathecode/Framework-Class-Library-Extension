@@ -1,5 +1,5 @@
 ﻿using System;
-using Whathecode.System.Arithmetic.Operators;
+using Whathecode.System.Operators;
 using Whathecode.System.ComponentModel.Coercion;
 
 
@@ -9,7 +9,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
 	///   Coerces a value to a certain range.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	public class RangeCoercionAttribute : CoercionHandlerAttribute
+	public class RangeCoercionAttribute : CoercionHandlerAttribute		
 	{
 		/// <summary>
 		///   Helper class to support creating a generic attribute.
@@ -17,6 +17,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
 		/// <typeparam name = "TEnum">The type of the enum values which link to properties.</typeparam>
 		/// <typeparam name = "TValue">The type of the value to coerce.</typeparam>
 		class GenericHelper<TEnum, TValue> : RedirectedControlCoercion<TEnum, TValue>
+			where TValue : IComparable<TValue>
 		{
 			public GenericHelper( TEnum rangeStart, TEnum rangeEnd )
 				: base(

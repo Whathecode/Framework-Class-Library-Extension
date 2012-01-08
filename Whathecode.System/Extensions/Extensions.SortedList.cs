@@ -66,6 +66,7 @@ namespace Whathecode.System.Extensions
 		/// <param name = "source">The source for this extension method.</param>
 		/// <returns>The interval in between which all keys lie.</returns>
 		public static Interval<TKey> GetKeysInterval<TKey, TValue>( this SortedList<TKey, TValue> source )
+			where TKey : IComparable<TKey>
 		{
 			return new Interval<TKey>( source.Keys[ 0 ], source.Keys[ source.Count - 1 ] );
 		}

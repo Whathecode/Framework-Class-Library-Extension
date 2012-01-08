@@ -9,7 +9,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 	/// <typeparam name = "TValue">The type for which to get interpolation data.</typeparam>
 	/// <typeparam name = "TMath">The value type to use for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public abstract class AbstractTypeInterpolationProvider<TValue, TMath> : AbstractBasicArithmetic<TMath>
+	public abstract class AbstractTypeInterpolationProvider<TValue, TMath>
 	{
 		/// <summary>
 		///   The amount of dimensions the type has.

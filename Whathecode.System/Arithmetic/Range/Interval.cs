@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using Lambda.Generic.Arithmetic;
 using Whathecode.System.Algorithm;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Arithmetic.Range
@@ -13,9 +13,11 @@ namespace Whathecode.System.Arithmetic.Range
 	/// </summary>
 	/// <typeparam name = "TMath">The type used to specify the interval, and used for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public class Interval<TMath> : AbstractBasicArithmetic<TMath>, ICloneable
+	public class Interval<TMath> : ICloneable
+		where TMath : IComparable<TMath>
 	{
 		readonly bool _isReversed;
+		readonly bool _isIntegralType;
 
 
 		/// <summary>
@@ -54,8 +56,8 @@ namespace Whathecode.System.Arithmetic.Range
 			get
 			{
 				return _isReversed
-					? Calculator.Subtract( Start, End )
-					: Calculator.Subtract( End, Start );
+					? Operator<TMath>.Subtract( Start, End )
+					: Operator<TMath>.Subtract( End, Start );
 			}
 		}
 
@@ -66,18 +68,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "start">The start of the interval, included in the interval.</param>
 		/// <param name = "end">The end of the interval, included in the interval.</param>
 		public Interval( TMath start, TMath end )
-			: this(
-				CalculatorFactory.CreateBasicCalculator<TMath>( CalculatorFactory.CheckedOption.Unchecked ),
-				start, end ) {}
-
-		/// <summary>
-		///   Create a new interval with a custom calculator and with a specified start and end, both included in the interval.
-		/// </summary>
-		/// <param name = "calculator">A calculator which can handle TMath, which is used for calculations internally.</param>
-		/// <param name = "start">The start of the interval, included in the interval.</param>
-		/// <param name = "end">The end of the interval, included in the interval.</param>
-		public Interval( IMath<TMath> calculator, TMath start, TMath end )
-			: this( calculator, start, true, end, true ) {}
+			: this( start, true, end, true ) {}
 
 		/// <summary>
 		///   Create a new interval with a specified start and end.
@@ -87,24 +78,9 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "end">The end of the interval.</param>
 		/// <param name = "isEndIncluded">Is the value at the end of the interval included in the interval.</param>
 		public Interval( TMath start, bool isStartIncluded, TMath end, bool isEndIncluded )
-			: this(
-				CalculatorFactory.CreateBasicCalculator<TMath>( CalculatorFactory.CheckedOption.Unchecked ),
-				start, isStartIncluded, end, isEndIncluded ) {}
-
-		/// <summary>
-		///   Create a new interval with a custom calculator and specified start and end.
-		/// </summary>
-		/// <param name = "calculator">A calculator which can handle TMath, which is used for calculations internally.</param>
-		/// <param name = "start">The start of the interval.</param>
-		/// <param name = "isStartIncluded">Is the value at the start of the interval included in the interval.</param>
-		/// <param name = "end">The end of the interval.</param>
-		/// <param name = "isEndIncluded">Is the value at the end of the interval included in the interval.</param>
-		public Interval( IMath<TMath> calculator, TMath start, bool isStartIncluded, TMath end, bool isEndIncluded )
-			: base( calculator )
 		{
-			Contract.Requires( calculator != null );
 			Contract.Requires(
-				calculator.Compare( end, start ) != 0 || (calculator.Compare( end, start ) == 0 && isStartIncluded && isEndIncluded),
+				end.CompareTo( start ) != 0 || (end.CompareTo( start ) == 0 && isStartIncluded && isEndIncluded),
 				"Invalid interval arguments. e.g. ]0, 0]" );
 
 			Start = start;
@@ -112,8 +88,10 @@ namespace Whathecode.System.Arithmetic.Range
 			End = end;
 			IsEndIncluded = isEndIncluded;
 
+			_isIntegralType = TypeHelper.IsIntegralNumericType<TMath>();
+
 			// Check whether the interval is a reverse interval. E.g. [5, 0]
-			_isReversed = calculator.Compare( start, end ) > 0;
+			_isReversed = start.CompareTo(  end ) > 0;					
 		}
 
 
@@ -126,14 +104,18 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "percentage">The percentage in the range of which to return the value.</param>
 		/// <returns>The value at the given percentage within the interval.</returns>
 		public TMath GetValueAt( double percentage )
-		{
+		{			
 			// Use double math for the calculation, and then cast to the desired type.
-			TMath addition = Calculator.ConvertFrom(
-				percentage * Calculator.ConvertToDouble( Size )
-					* (_isReversed ? -1 : 1), // Substraction is required for a reversed interval.
-				TypeRounding.Nearest );
+			double value = percentage * CastOperator<TMath, double>.Cast( Size );
+			double addition = value * (_isReversed ? -1 : 1); // Subtraction is required for a reversed interval.
 
-			return Calculator.Add( Start, addition );
+			// Ensure nearest neighbour rounding for integral types.
+			if ( _isIntegralType )
+			{
+				addition = Math.Round( addition );
+			}
+
+			return Operator<TMath>.Add( Start, CastOperator<double, TMath>.Cast( addition ) );
 		}
 
 		/// <summary>
@@ -143,7 +125,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The percentage indicating how far inside (or outside) the interval the given value lies.</returns>
 		public double GetPercentageFor( TMath position )
 		{
-			double size = Calculator.ConvertToDouble( Size );
+			double size = CastOperator<TMath, double>.Cast( Size );
 
 			// When size is zero, return 1.0 when in interval.
 			if ( size == 0 )
@@ -152,10 +134,10 @@ namespace Whathecode.System.Arithmetic.Range
 			}
 
 			Interval<TMath> positionRange = new Interval<TMath>( Start, position );
-			double percentage = Calculator.ConvertToDouble( positionRange.Size ) / size;
+			double percentage = CastOperator<TMath, double>.Cast( positionRange.Size ) / size;
 
 			// Negate percentage when position lies before the interval.
-			int positionCompare = Calculator.Compare( position, Start );
+			int positionCompare = position.CompareTo( Start );
 			bool isPositionBeforeInterval = _isReversed
 				? positionCompare > 0
 				: positionCompare < 0;
@@ -187,6 +169,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "range">The range to which to map the value.</param>
 		/// <returns>The value, mapped to the given range.</returns>
 		public TRange Map<TRange>( TMath value, Interval<TRange> range )
+			where TRange : IComparable<TRange>
 		{
 			return range.GetValueAt( GetPercentageFor( value ) );
 		}
@@ -199,8 +182,8 @@ namespace Whathecode.System.Arithmetic.Range
 		[Pure]
 		public bool LiesInInterval( TMath value )
 		{
-			int startCompare = Calculator.Compare( value, Start );
-			int endCompare = Calculator.Compare( value, End );
+			int startCompare = value.CompareTo( Start );
+			int endCompare = value.CompareTo( End );
 
 			return (startCompare > 0 || (startCompare == 0 && IsStartIncluded))
 				&& (endCompare < 0 || (endCompare == 0 && IsEndIncluded));
@@ -213,8 +196,8 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>True when the intervals intersect, false otherwise.</returns>
 		public bool Intersects( Interval<TMath> interval )
 		{
-			int rightOfCompare = Calculator.Compare( interval.Start, End );
-			int leftOfCompare = Calculator.Compare( interval.End, Start );
+			int rightOfCompare = interval.Start.CompareTo( End );
+			int leftOfCompare = interval.End.CompareTo( Start );
 
 			bool liesRightOf = rightOfCompare > 0 || (rightOfCompare == 0 && !(interval.IsStartIncluded && IsEndIncluded));
 			bool liesLeftOf = leftOfCompare < 0 || (leftOfCompare == 0 && !(interval.IsEndIncluded && IsStartIncluded));
@@ -232,9 +215,9 @@ namespace Whathecode.System.Arithmetic.Range
 			TMath smallest = _isReversed ? End : Start;
 			TMath biggest = _isReversed ? Start : End;
 
-			return Calculator.Compare( value, smallest ) < 0
+			return value.CompareTo( smallest ) < 0
 				? smallest
-				: Calculator.Compare( value, biggest ) > 0
+				: value.CompareTo( biggest ) > 0
 					? biggest
 					: value;
 		}
@@ -248,10 +231,10 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "after">The interval in which to store the part after the point, if any, null otherwise.</param>
 		public void Split( TMath atPoint, SplitOption option, out Interval<TMath> before, out Interval<TMath> after )
 		{
-			Contract.Requires( Calculator.Compare( atPoint, Start ) >= 0 && Calculator.Compare( atPoint, End ) <= 0 );
+			Contract.Requires( atPoint.CompareTo( Start ) >= 0 && atPoint.CompareTo( End ) <= 0 );
 
 			// Part before.
-			if ( Calculator.Compare( atPoint, Start ) != 0 )
+			if ( atPoint.CompareTo( Start ) != 0 )
 			{
 				before = new Interval<TMath>(
 					Start, IsStartIncluded,
@@ -264,7 +247,7 @@ namespace Whathecode.System.Arithmetic.Range
 			}
 
 			// Part after.
-			if ( Calculator.Compare( atPoint, End ) != 0 )
+			if ( atPoint.CompareTo( End ) != 0 )
 			{
 				after = new Interval<TMath>(
 					atPoint,
@@ -299,7 +282,7 @@ namespace Whathecode.System.Arithmetic.Range
 				// Add remaining section at the start.   
 				if ( startInInterval )
 				{
-					int startCompare = Calculator.Compare( subtract.Start, Start );
+					int startCompare = subtract.Start.CompareTo( Start );
 					if ( startCompare > 0 || (startCompare == 0 && IsStartIncluded && !subtract.IsStartIncluded) )
 					{
 						result.Add( new Interval<TMath>( Start, IsStartIncluded, subtract.Start, !subtract.IsStartIncluded ) );
@@ -309,7 +292,7 @@ namespace Whathecode.System.Arithmetic.Range
 				// Add remaining section at the back.
 				if ( endInInterval )
 				{
-					int endCompare = Calculator.Compare( subtract.End, End );
+					int endCompare = subtract.End.CompareTo( End );
 					if ( endCompare < 0 || (endCompare == 0 && IsEndIncluded && !subtract.IsEndIncluded) )
 					{
 						result.Add( new Interval<TMath>( subtract.End, !subtract.IsEndIncluded, End, IsEndIncluded ) );
@@ -332,8 +315,8 @@ namespace Whathecode.System.Arithmetic.Range
 				return null;
 			}
 
-			int startCompare = Calculator.Compare( Start, interval.Start );
-			int endCompare = Calculator.Compare( End, interval.End );
+			int startCompare = Start.CompareTo( interval.Start );
+			int endCompare = End.CompareTo( interval.End );
 
 			return new Interval<TMath>(
 				startCompare > 0 ? Start : interval.Start,
@@ -362,8 +345,8 @@ namespace Whathecode.System.Arithmetic.Range
 
 			return IsStartIncluded == interval.IsStartIncluded
 				&& IsEndIncluded == interval.IsEndIncluded
-					&& Calculator.Compare( Start, interval.Start ) == 0
-						&& Calculator.Compare( End, interval.End ) == 0;
+					&& Start.CompareTo( interval.Start ) == 0
+						&& End.CompareTo( interval.End ) == 0;
 		}
 
 		public override int GetHashCode()
@@ -383,7 +366,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "stepAction">The operation to execute.</param>
 		public void EveryStepOf( TMath step, Action<TMath> stepAction )
 		{
-			foreach ( var i in new IntervalEnumerator<TMath>( this, Calculator, step ) )
+			foreach ( var i in new IntervalEnumerator<TMath>( this, step ) )
 			{
 				stepAction( i );
 			}
@@ -412,8 +395,8 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "include">Include the value to which is expanded in the interval.</param>
 		public void ExpandTo( TMath value, bool include )
 		{
-			int startCompare = Calculator.Compare( value, Start );
-			int endCompare = Calculator.Compare( value, End );
+			int startCompare = value.CompareTo( Start );
+			int endCompare = value.CompareTo( End );
 
 			if ( startCompare <= 0 || (startCompare == 0 && include) )
 			{
@@ -433,7 +416,7 @@ namespace Whathecode.System.Arithmetic.Range
 
 		public object Clone()
 		{
-			return new Interval<TMath>( Calculator, Start, IsStartIncluded, End, IsEndIncluded );
+			return new Interval<TMath>( Start, IsStartIncluded, End, IsEndIncluded );
 		}
 	}
 }

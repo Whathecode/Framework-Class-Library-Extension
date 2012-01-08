@@ -1,11 +1,10 @@
-using System;
 using System.Diagnostics.Contracts;
 
 
 namespace Lambda.Generic.Arithmetic
 {
 	/// <summary>
-	///   Rounding when given value can't be represented for this type.
+	///   Rounding when given value can't be represented by a type.
 	/// </summary>
 	public enum TypeRounding
 	{

@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Lambda.Generic.Arithmetic;
-using Whathecode.System.Arithmetic;
 using Whathecode.System.Arithmetic.Range;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Collections
@@ -21,23 +20,21 @@ namespace Whathecode.System.Collections
 	/// <typeparam name = "TObject">The object types in the calculation.</typeparam>
 	/// <author>Steven Jeuris</author>
 	public class IntervalCollection<TMath, TObject>
-		: AbstractBasicArithmetic<TMath>, IEnumerable<IntervalCollection<TMath, TObject>.IntervalValues>
+		: IEnumerable<IntervalCollection<TMath, TObject>.IntervalValues>
+		where TMath : IComparable<TMath>
 	{
 		/// <summary>
 		///   Defines values available for a certain interval.
 		/// </summary>
 		public class IntervalValues : IComparable<IntervalValues>
 		{
-			readonly IMath<TMath> _calculator;
-
 			public IList<TObject> Values { get; private set; }
 
 			public Interval<TMath> Interval { get; private set; }
 
 
-			public IntervalValues( IMath<TMath> calculator, IList<TObject> values, Interval<TMath> interval )
+			public IntervalValues( IList<TObject> values, Interval<TMath> interval )
 			{
-				_calculator = calculator;
 				Values = values;
 				Interval = interval;
 			}
@@ -45,7 +42,7 @@ namespace Whathecode.System.Collections
 
 			public int CompareTo( IntervalValues other )
 			{
-				int intervalStartCompare = _calculator.Compare( Interval.Start, other.Interval.Start );
+				int intervalStartCompare = Interval.Start.CompareTo( other.Interval.Start );
 
 				if ( intervalStartCompare == 0 && (Interval.IsStartIncluded != other.Interval.IsStartIncluded) )
 				{
@@ -101,7 +98,7 @@ namespace Whathecode.System.Collections
 					// Add intersection with objects of both intervals.
 					List<TObject> mergedObjects = new List<TObject>( intersectingRange.Values );
 					mergedObjects.AddRange( values );
-					_rangedObjects.Add( new IntervalValues( Calculator, mergedObjects, intersection ) );
+					_rangedObjects.Add( new IntervalValues( mergedObjects, intersection ) );
 
 					// Remove intersections from remnants.
 					List<Interval<TMath>> newRemnants = new List<Interval<TMath>>();
@@ -115,13 +112,13 @@ namespace Whathecode.System.Collections
 				// Add remnants of the newly added interval.
 				foreach ( var remnant in remnants )
 				{
-					_rangedObjects.Add( new IntervalValues( Calculator, values, remnant ) );
+					_rangedObjects.Add( new IntervalValues( values, remnant ) );
 				}
 			}
 			else
 			{
 				// No intersections, just add.
-				_rangedObjects.Add( new IntervalValues( Calculator, values, interval ) );
+				_rangedObjects.Add( new IntervalValues( values, interval ) );
 			}
 		}
 
@@ -138,7 +135,7 @@ namespace Whathecode.System.Collections
 			// Add non intersection parts.
 			foreach ( var remaining in objectRange.Interval.Subtract( interval ) )
 			{
-				_rangedObjects.Add( new IntervalValues( Calculator, objectRange.Values, remaining ) );
+				_rangedObjects.Add( new IntervalValues( objectRange.Values, remaining ) );
 			}
 		}
 
@@ -185,11 +182,11 @@ namespace Whathecode.System.Collections
 
 				// Add moved remainder to list to be added again.
 				Interval<TMath> movedInterval = new Interval<TMath>(
-					Calculator.Add( intersection.Start, offset ),
+					Operator<TMath>.Add( intersection.Start, offset ),
 					intersection.IsStartIncluded,
-					Calculator.Add( intersection.End, offset ),
+					Operator<TMath>.Add( intersection.End, offset ),
 					intersection.IsEndIncluded );
-				movedIntervals.Add( new IntervalValues( Calculator, intersectingRange.Values, movedInterval ) );
+				movedIntervals.Add( new IntervalValues( intersectingRange.Values, movedInterval ) );
 			}
 
 			// Add moved intervals again.

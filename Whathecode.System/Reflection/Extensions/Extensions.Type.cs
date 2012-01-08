@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Whathecode.System.Linq;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Reflection.Extensions
@@ -205,7 +207,7 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
-		///   Is a certain type of a given generic type or not.
+		///   Is the type of a given generic type or not.
 		///   Also works for raw generic types. E.g. Dictionary&lt;,&gt;.
 		///   When full (generic) type is known (e.g. Dictionary&lt;string,string&gt;),
 		///   the "is" operator is most likely more performant, but this function will still work correctly.
@@ -220,7 +222,7 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
-		///   Verify whether a given type is an enum with the <see cref = "FlagsAttribute" /> applied.
+		///   Verify whether the type is an enum with the <see cref = "FlagsAttribute" /> applied.
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
 		/// <returns>True when the given type is a flags enum, false otherwise.</returns>
@@ -231,17 +233,77 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
-		///   Verify whether a given type is a delegate.
+		///   Verify whether the type is a delegate.
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
 		/// <returns>True when the given type is a delegate, false otherwise.</returns>
+		[Pure]
 		public static bool IsDelegate( this Type source )
 		{
 			return source.IsSubclassOf( typeof( Delegate ) );
 		}
 
 		/// <summary>
-		///   Does a certain type implement a given interface or not.
+		///   Verify whether the type is a numeric type.
+		/// </summary>
+		/// <param name = "source">The source of this extension method.</param>
+		/// <returns>True when the given type is a numeric type, false otherwise.</returns>
+		public static bool IsNumericType( this Type source )
+		{
+			// All primitive types except bool are numeric.
+			if ( source.IsPrimitive )
+			{				
+				return source != typeof( bool );
+			}
+
+			// Check whether all numeric operators are available.
+			return Operator.NumericalOperators.All( o => source.HasOperator( o ) );
+		}
+
+		/// <summary>
+		///   Verify whether the type supports a certain operator.
+		/// </summary>
+		/// <param name = "source">The source of this extension method.</param>
+		/// <param name = "operator">The operator to check for.</param>
+		/// <returns>True when the type supports the operator, false otherwise.</returns>
+		[Pure]
+		public static bool HasOperator( this Type source, Operator @operator )
+		{
+			var defaultValue = Expression.Default( source );
+
+			BinaryOperator binaryOperator = @operator as BinaryOperator;
+			if ( binaryOperator != null )
+			{
+				try
+				{
+					binaryOperator.GetExpression()( defaultValue, defaultValue ); // Throws an exception if operator is not defined.
+					return true;
+				}
+				catch
+				{
+					return false;
+				}								
+			}
+
+			UnaryOperator unaryOperator = @operator as UnaryOperator;
+			if ( unaryOperator != null )
+			{
+				try
+				{
+					unaryOperator.GetExpression()( defaultValue ); // Throws an exception if operator is not defined.
+					return true;
+				}
+				catch
+				{
+					return false;
+				}					
+			}
+
+			throw new NotSupportedException( String.Format( "Operator \"{0}\" isn't supported.", @operator ) );
+		}
+
+		/// <summary>
+		///   Does the type implement a given interface or not.
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
 		/// <param name = "interfaceType">The interface type to check for.</param>
@@ -254,7 +316,7 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
-		///   Create a default initialisation of the given object type.
+		///   Create a default initialisation of this object type.
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
 		/// <returns>The default initialisation for the given objectType.</returns>

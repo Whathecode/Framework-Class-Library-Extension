@@ -107,6 +107,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Operators\OperatorTest.cs" />
     <Compile Include="Arithmetic\Range\IntervalTest.cs" />
     <Compile Include="Collections\LazyOperationsListTest.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\NotifyPropertyFactoryTest.cs" />

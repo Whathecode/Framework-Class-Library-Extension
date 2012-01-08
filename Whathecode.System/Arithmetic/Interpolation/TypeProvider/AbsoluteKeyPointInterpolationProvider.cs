@@ -1,6 +1,6 @@
 ﻿using System;
-using Lambda.Generic.Arithmetic;
 using Whathecode.System.Arithmetic.Interpolation.KeyPoint;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
@@ -17,33 +17,15 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 		where TKey : new()
 	{
 		readonly AbstractTypeInterpolationProvider<TValue, TMath> _keyPointInterpolationProvider;
-		readonly IMath<TKey> _keyCalculator;
 
 
 		/// <summary>
-		///   Create a new interpolation provider which can interpolate over AbsoluteKeypoints,
-		///   using a factory to initialize the calculator for the TKey type.
+		///   Create a new interpolation provider which can interpolate over AbsoluteKeyPoints.
 		/// </summary>
-		/// <param name = "keyPointInterpolationProvider">The interpolation provider for the key point type.</param>
 		public AbsoluteKeyPointInterpolationProvider( AbstractTypeInterpolationProvider<TValue, TMath> keyPointInterpolationProvider )
-			: this( keyPointInterpolationProvider, CalculatorFactory.CreateBasicCalculator<TKey>( CalculatorFactory.CheckedOption.Unchecked ) )
-		{
-			_keyPointInterpolationProvider = keyPointInterpolationProvider;
-		}
-
-		/// <summary>
-		///   Create a new interpolation provider which can interpolate over AbsoluteKeyPoints,
-		///   using a specified custom calculator to do operations on the TKey type.
-		/// </summary>
-		/// <param name = "keyPointInterpolationProvider"></param>
-		/// <param name = "keyCalculator"></param>
-		public AbsoluteKeyPointInterpolationProvider(
-			AbstractTypeInterpolationProvider<TValue, TMath> keyPointInterpolationProvider,
-			IMath<TKey> keyCalculator )
 			: base( keyPointInterpolationProvider.AmountOfDimensions + 1 )
 		{
 			_keyPointInterpolationProvider = keyPointInterpolationProvider;
-			_keyCalculator = keyCalculator;
 		}
 
 
@@ -56,13 +38,13 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 
 		public override TMath RelativePosition( AbsoluteKeyPoint<TKey, TValue> from, AbsoluteKeyPoint<TKey, TValue> to )
 		{
-			return KeyToMath( _keyCalculator.Subtract( from.Key, to.Key ) );
+			return KeyToMath( Operator<TKey>.Subtract( from.Key, to.Key ) );
 		}
 
 		public override AbsoluteKeyPoint<TKey, TValue> CreateInstance( TMath[] interpolated )
 		{
 			// Get interpolated key.
-			TKey key = _keyCalculator.ConvertFrom( Calculator.ConvertToDouble( interpolated[ 0 ] ) );
+			TKey key = CastOperator<double, TKey>.Cast( CastOperator<TMath, double>.Cast( interpolated[ 0 ] ) );
 
 			// Get interpolated key point values.
 			int keyPointValueCount = interpolated.Length - 1;
@@ -74,9 +56,9 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 				_keyPointInterpolationProvider.CreateInstance( keyPointValues ) );
 		}
 
-		TMath KeyToMath( TKey value )
+		static TMath KeyToMath( TKey value )
 		{
-			return Calculator.ConvertFrom( _keyCalculator.ConvertToDouble( value ) );
+			return CastOperator<double, TMath>.Cast( CastOperator<TKey, double>.Cast( value ) );
 		}
 	}
 }

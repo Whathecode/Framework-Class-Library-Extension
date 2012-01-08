@@ -23,6 +23,7 @@ namespace Whathecode.System.Collections.Algorithm
 	/// <author>Steven Jeuris</author>
 	public class BinarySearch<TObject, TIndex>
 		where TObject : IComparable<TObject>
+		where TIndex : IComparable<TIndex>
 	{
 		static readonly EqualityComparer<TIndex> IndexComparer = EqualityComparer<TIndex>.Default;
 
@@ -36,7 +37,7 @@ namespace Whathecode.System.Collections.Algorithm
 		public static BinarySearchResult<TObject> Search(
 			TObject toFind,
 			Interval<TIndex> range,
-			IndexerDelegates<TObject, TIndex> indexOperations )
+			IndexerDelegates<TObject, TIndex> indexOperations )			
 		{
 			// Make sure start and end of range are valid.
 			// TODO: This is only necessary the first call of the recursion. Implementing the search as a loop could be more performant.

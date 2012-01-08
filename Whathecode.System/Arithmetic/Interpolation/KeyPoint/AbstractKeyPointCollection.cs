@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Whathecode.System.Arithmetic.Interpolation.TypeProvider;
@@ -16,7 +17,8 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 	/// <typeparam name = "TMath">The value type to use for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[ContractClass( typeof( AbstractKeyPointCollectionContract<,> ) )]
-	public abstract class AbstractKeyPointCollection<TValue, TMath> : AbstractBasicArithmetic<TMath>, IEnumerable<TValue>
+	public abstract class AbstractKeyPointCollection<TValue, TMath> : IEnumerable<TValue>
+		where TMath : IComparable<TMath>
 	{
 		/// <summary>
 		///   The provider which gives information about the type, required to do interpolation.
@@ -122,6 +124,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 
 	[ContractClassFor( typeof( AbstractKeyPointCollection<,> ) )]
 	abstract class AbstractKeyPointCollectionContract<TValue, TMath> : AbstractKeyPointCollection<TValue, TMath>
+		where TMath : IComparable<TMath>
 	{
 		protected AbstractKeyPointCollectionContract( AbstractTypeInterpolationProvider<TValue, TMath> typeProvider )
 			: base( typeProvider ) {}

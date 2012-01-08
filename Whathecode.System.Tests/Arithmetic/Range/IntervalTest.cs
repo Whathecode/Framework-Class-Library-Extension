@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Whathecode.System.Arithmetic.Range;
 
@@ -6,7 +7,7 @@ using Whathecode.System.Arithmetic.Range;
 namespace Whathecode.Tests.System.Arithmetic.Range
 {
 	/// <summary>
-	///   Unit tests for Interval.
+	///   Unit tests for <see cref="Interval{TMath}" />.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[TestClass]
@@ -26,6 +27,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void LiesInIntervalTestHelper<TMath>( TMath start, TMath end, TMath inside, TMath outside )
+			where TMath : IComparable<TMath>
 		{
 			Interval<TMath> included = new Interval<TMath>( start, end );
 			LiesInInterval( included, inside, true );
@@ -38,6 +40,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void LiesInInterval<TMath>( Interval<TMath> interval, TMath value, bool expected )
+			where TMath : IComparable<TMath>
 		{
 			bool insideInterval = interval.LiesInInterval( value );
 
@@ -60,6 +63,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		///   Test intersecting intervals with given parameters from small to bigger.
 		/// </summary>
 		static void IntersectsTestHelper<TMath>( TMath a, TMath b, TMath c, TMath d, TMath e )
+			where TMath : IComparable<TMath>
 		{
 			// Create required intervals.
 			Interval<TMath> ab = new Interval<TMath>( a, b );
@@ -94,6 +98,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void Intersects<TMath>( Interval<TMath> a, Interval<TMath> b, bool expected )
+			where TMath : IComparable<TMath>
 		{
 			bool intersects = a.Intersects( b );
 
@@ -116,6 +121,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		///   Test intersecting intervals with given parameters from small to bigger.
 		/// </summary>
 		static void SubtractTestHelper<TMath>( TMath a, TMath b, TMath c, TMath d, TMath e )
+			where TMath : IComparable<TMath>
 		{
 			// Create required intervals.
 			Interval<TMath> ab = new Interval<TMath>( a, b );
@@ -163,6 +169,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, Interval<TMath> result )
+			where TMath : IComparable<TMath>
 		{
 			List<Interval<TMath>> results = from.Subtract( subtract );
 
@@ -171,6 +178,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, List<Interval<TMath>> results )
+			where TMath : IComparable<TMath>
 		{
 			List<Interval<TMath>> subtracted = from.Subtract( subtract );
 
@@ -196,6 +204,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void GetPercentageForHelper<TMath>( TMath aMinusA, TMath a, TMath aPlusA )
+			where TMath : IComparable<TMath>
 		{
 			// Single range.
 			Interval<TMath> single = new Interval<TMath>( a, a );
@@ -268,6 +277,8 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void MapHelper<TMath, TRange>( TMath from, TMath to, TRange mapFrom, TRange mapTo, TMath valueToMap, TRange expected )
+			where TMath : IComparable<TMath>
+			where TRange : IComparable<TRange>
 		{
 			Interval<TMath> interval = new Interval<TMath>( from, to );
 			TRange result = interval.Map( valueToMap, new Interval<TRange>( mapFrom, mapTo ) );
@@ -293,6 +304,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		static void ClampHelper<TMath>( TMath start, TMath end, TMath leftOfRange, TMath rightOfRange, TMath inRange )
+			where TMath : IComparable<TMath>
 		{
 			Interval<TMath> interval = new Interval<TMath>( start, end );
 

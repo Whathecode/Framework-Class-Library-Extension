@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using Whathecode.System.Arithmetic.Interpolation.KeyPoint;
 using Whathecode.System.Arithmetic.Range;
 using Whathecode.System.Collections.Algorithm;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Arithmetic.Interpolation
@@ -14,7 +15,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 	/// <typeparam name = "TMath">The value type to use for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[ContractClass( typeof( AbstractInterpolationContract<,> ) )]
-	public abstract class AbstractInterpolation<TValue, TMath> : AbstractBasicArithmetic<TMath>
+	public abstract class AbstractInterpolation<TValue, TMath>
 		where TMath : IComparable<TMath>
 	{
 		/// <summary>
@@ -88,14 +89,14 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			}
 			else
 			{
-				// Use double math to calculate percentage of desired value inside 
-				double smallerValue = Calculator.ConvertToDouble( searchResult.Smaller );
-				double biggerValue = Calculator.ConvertToDouble( searchResult.Bigger );
+				// Use double math to calculate the desired value inside the interval. (percentage)				
+				double smallerValue = CastOperator<TMath, double>.Cast( searchResult.Smaller );
+				double biggerValue = CastOperator<TMath, double>.Cast( searchResult.Bigger );
 
 				result = Interpolate(
 					KeyPoints.IndexAtPosition( searchResult.Smaller ),
 					KeyPoints.IndexAtPosition( searchResult.Bigger ),
-					new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( Calculator.ConvertToDouble( position ) ) );
+					new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( CastOperator<TMath, double>.Cast( position ) ) );
 			}
 
 			return result;
@@ -129,13 +130,13 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			BinarySearchResult<TMath> searchResult = KeyPoints.BinarySearch( position );
 
 			// Use double math to calculate percentage of desired value inside 
-			double smallerValue = Calculator.ConvertToDouble( searchResult.Smaller );
-			double biggerValue = Calculator.ConvertToDouble( searchResult.Bigger );
+			double smallerValue = CastOperator<TMath, double>.Cast( searchResult.Smaller );
+			double biggerValue = CastOperator<TMath, double>.Cast( searchResult.Bigger );
 
 			TValue result = TangentAt(
 				KeyPoints.IndexAtPosition( searchResult.Smaller ),
 				KeyPoints.IndexAtPosition( searchResult.Bigger ),
-				new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( Calculator.ConvertToDouble( position ) ) );
+				new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( CastOperator<TMath, double>.Cast( position ) ) );
 
 			return result;
 		}

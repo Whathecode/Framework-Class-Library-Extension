@@ -6,6 +6,7 @@ using Whathecode.System.Collections;
 using Whathecode.System.Collections.Algorithm;
 using Whathecode.System.Collections.Delegates;
 using Whathecode.System.Extensions;
+using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
@@ -47,6 +48,8 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			_data = new LazyOperationsList<KeyPoint>();
 
 		Interval<TMath> _dataRange;
+		readonly TMath _zero;
+		readonly TMath _minusOne;
 
 		/// <summary>
 		///   The range of all the data between which is interpolated.
@@ -100,7 +103,11 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 		///   The provider which gives information about the type, required to do interpolation between the key points.
 		/// </param>
 		public CumulativeKeyPointCollection( AbstractTypeInterpolationProvider<TValue, TMath> typeProvider )
-			: base( typeProvider ) {}
+			: base( typeProvider )
+		{
+			_zero = CastOperator<double, TMath>.Cast( 0 );
+			_minusOne = CastOperator<double, TMath>.Cast( -1 );
+		}
 
 
 		public override void Add( TValue value )
@@ -112,7 +119,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 				// Add the new key point, with the accumulated distance since the last key point.
 				KeyPoint last = _data[ _data.Count - 1 ];
 				TMath distance = DistanceBetween( last.Value, value );
-				position = Calculator.Add( last.Position, distance );
+				position = Operator<TMath>.Add( last.Position, distance );
 			}
 
 			// Create new key point.
@@ -126,8 +133,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			if ( _dataRange == null )
 			{
 				// First object has zero distance.
-				TMath zero = Calculator.Zero;
-				_dataRange = new Interval<TMath>( zero, zero );
+				_dataRange = new Interval<TMath>( _zero, _zero );
 			}
 			else
 			{
@@ -139,7 +145,10 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 
 		TMath DistanceBetween( TValue from, TValue to )
 		{
-			return Calculator.Abs( TypeProvider.RelativePosition( from, to ) );
+			TMath distance = TypeProvider.RelativePosition( from, to );
+			return distance.CompareTo( _zero ) == -1
+				? Operator<TMath>.Multiply( distance, _minusOne )
+				: distance;
 		}
 
 		/// <summary>
@@ -151,7 +160,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			KeyPoint remove = _data[ index ];
 
 			// Update distance for all data following this index.
-			TMath excessDistance = Calculator.Zero;
+			TMath excessDistance = _zero;
 			if ( index != _data.Count - 1 )
 			{
 				KeyPoint next = _data[ index + 1 ];
@@ -162,14 +171,14 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 				{
 					// Substract new distance from previous point.
 					TMath newDistance = DistanceBetween( _data[ index - 1 ].Value, next.Value );
-					excessDistance = Calculator.Subtract( excessDistance, newDistance );
+					excessDistance = Operator<TMath>.Subtract( excessDistance, newDistance );
 				}
 
 				// Update by adding a pending operation to the range of all following data.
 				_data.AddOperation(
 					d =>
 					{
-						d.Position = Calculator.Subtract( d.Position, excessDistance );
+						d.Position = Operator<TMath>.Subtract( d.Position, excessDistance );
 						return d;
 					},
 					new Interval<int>( index + 1, _data.Count - 1 ) );
@@ -185,8 +194,8 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			else
 			{
 				_dataRange = new Interval<TMath>(
-					Calculator.Zero,
-					Calculator.Subtract( DataRange.End, excessDistance ) );
+					_zero,
+					Operator<TMath>.Subtract( DataRange.End, excessDistance ) );
 			}
 		}
 
@@ -213,7 +222,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			{
 				IsObjectInRange = result.IsObjectInRange,
 				IsObjectFound = result.IsObjectFound,
-				Object = result.IsObjectFound ? result.Object.Position : default(TMath),
+				Object = result.IsObjectFound ? result.Object.Position : default( TMath ),
 				Smaller = result.Smaller.Position,
 				Bigger = result.Bigger.Position
 			};

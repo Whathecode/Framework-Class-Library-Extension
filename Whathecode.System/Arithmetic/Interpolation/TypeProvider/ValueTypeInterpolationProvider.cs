@@ -1,4 +1,7 @@
-﻿namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
+﻿using Whathecode.System.Operators;
+
+
+namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 {
 	/// <summary>
 	///   Allows AbstractInterpolation to interpolate over a basic value type. E.g. double.
@@ -19,7 +22,7 @@
 
 		public override T RelativePosition( T from, T to )
 		{
-			return Calculator.Subtract( from, to );
+			return Operator<T>.Subtract( from, to );
 		}
 
 		public override T CreateInstance( T[] interpolated )

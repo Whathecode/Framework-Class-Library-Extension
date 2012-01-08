@@ -11,6 +11,7 @@ namespace Whathecode.System.ComponentModel.Coercion
 	/// <typeparam name = "TValue">The type of the value to coerce.</typeparam>
 	/// <author>Steven Jeuris</author>
 	public class RangeCoercion<TContext, TValue> : AbstractCoercion<TContext, TValue>
+		where TValue : IComparable<TValue>
 	{
 		readonly Func<TContext, TValue> _getRangeStart;
 		readonly Func<TContext, TValue> _getRangeEnd;
@@ -34,7 +35,7 @@ namespace Whathecode.System.ComponentModel.Coercion
 		/// <param name = "context">The context in which to coerce the value.</param>
 		/// <param name = "value">The value to coerce.</param>
 		/// <returns>The coerced value.</returns>
-		public override TValue Coerce( TContext context, TValue value )
+		public override TValue Coerce( TContext context, TValue value )			
 		{
 			// TODO: Cache interval, or calculator?
 			return new Interval<TValue>( _getRangeStart( context ), true, _getRangeEnd( context ), true ).Clamp( value );
