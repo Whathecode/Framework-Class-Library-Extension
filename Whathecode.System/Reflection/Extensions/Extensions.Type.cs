@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Whathecode.System.Linq;
-using Whathecode.System.Operators;
 
 
 namespace Whathecode.System.Reflection.Extensions
