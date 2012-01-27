@@ -112,6 +112,7 @@
     <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <SkipPostSharp>True</SkipPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -145,7 +146,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ActionHelper.cs" />
+    <Compile Include="Algorithm\IGate.cs" />
     <Compile Include="Algorithm\Loop.LoopIteration.cs" />
+    <Compile Include="Algorithm\SkipGate.cs" />
     <Compile Include="Arithmetic\Interpolation\CardinalSplineInterpolation.cs" />
     <Compile Include="Arithmetic\Interpolation\KeyPoint\AbsoluteKeyPoint.cs" />
     <Compile Include="Arithmetic\Interpolation\KeyPoint\AbsoluteKeyPointCollection.cs" />
@@ -258,12 +261,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Libraries\Arithmetic\Arithmetic\Arithmetic.csproj">
-      <Project>{1C2129C6-6797-4892-8CEB-F2E99FDF1B03}</Project>
-      <Name>Arithmetic</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,6 +20,8 @@ namespace Whathecode.System.Windows.Data
 		public bool ForceChangeCallbackFirstTime { get; set; }
 
 
+		public AdvancedBindingExtension() {}
+
 		public AdvancedBindingExtension( string path )
 			: base( path ) {}
 

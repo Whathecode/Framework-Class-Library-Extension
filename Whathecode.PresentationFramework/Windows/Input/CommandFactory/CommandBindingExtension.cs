@@ -28,6 +28,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 		/// </summary>
 		public object Command { get; set; }
 
+
 		/// <summary>
 		///   Create a new binding to a command with a given ID.
 		/// </summary>
