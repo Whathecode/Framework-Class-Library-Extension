@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Xaml;
 
 
 namespace Whathecode.System.Windows.Markup
@@ -16,7 +17,10 @@ namespace Whathecode.System.Windows.Markup
 
 		~AbstractDataContextBindingExtension()
 		{
-			_frameworkElement.DataContextChanged -= DataContextChanged;
+			if ( _dataContextChangedHooked )
+			{
+				_frameworkElement.DataContextChanged -= DataContextChanged;
+			}
 		}
 
 
@@ -31,12 +35,25 @@ namespace Whathecode.System.Windows.Markup
 			DependencyObject dependencyObject,
 			DependencyProperty dependencyProperty )
 		{
-			_frameworkElement = dependencyObject as FrameworkElement;
+			// Attempt to find a FrameworkElement from which the DataContext can be accessed.
+			if ( dependencyObject is FrameworkElement )
+			{
+				_frameworkElement = dependencyObject as FrameworkElement;
+			}
+			else
+			{
+				// Use the root object in case the DependencyObject isn't a FrameworkElement. (e.g. Freezable)
+				// TODO: This might be an overly simplistic implementation. What about custom DataContext's lower in the tree?				
+				var rootProvider = (IRootObjectProvider)ServiceProvider.GetService( typeof( IRootObjectProvider ) );
+				_frameworkElement = rootProvider.RootObject as FrameworkElement;
+			}			
 			if ( _frameworkElement == null )
 			{
-				throw new InvalidImplementationException( "The DataContextBinding may only be used on framework elements." );
+				throw new InvalidImplementationException(
+					"The DataContextBinding may only be used in a context where DataContext can be obtained." );
 			}
 
+			// Listen to DataContext changes.
 			if ( !_dataContextChangedHooked )
 			{
 				_frameworkElement.DataContextChanged += DataContextChanged;
