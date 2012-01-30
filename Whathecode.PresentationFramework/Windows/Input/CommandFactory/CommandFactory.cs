@@ -16,6 +16,11 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 	/// <author>Steven Jeuris</author>
 	public class CommandFactory<T> : AbstractEnumSpecifiedFactory<T>
 	{
+		/// <summary>
+		///   The name of the property holding the dictionary with all the commands in the CommandFactory.
+		/// </summary>
+		public const string CommandsProperty = "Commands";
+
 		readonly object _owner;
 
 		/// <summary>

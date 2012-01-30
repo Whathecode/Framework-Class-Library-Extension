@@ -61,21 +61,9 @@ namespace Whathecode.System.Windows.Input.InputController.Condition
 					Application app = Application.Current;
 					if ( app != null )
 					{
-						if ( app.Dispatcher.CheckAccess() )
-						{
-							down = Keyboard.IsKeyDown( key );
-						}
-						else
-						{
-							try
-							{
-								down = (bool)app.Dispatcher.Invoke( new Func<bool>( () => Keyboard.IsKeyDown( key ) ) );
-							}
-							catch ( NullReferenceException )
-							{
-								// TODO: Occurs when shutting down (from within trainingcenter?). WTF?
-							}
-						}
+						down = app.Dispatcher.CheckAccess()
+							? Keyboard.IsKeyDown( key )
+							: (bool)app.Dispatcher.Invoke( new Func<bool>( () => Keyboard.IsKeyDown( key ) ) );
 					}
 
 					return down;

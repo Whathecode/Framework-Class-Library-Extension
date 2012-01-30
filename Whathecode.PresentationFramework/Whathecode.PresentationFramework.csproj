@@ -128,6 +128,7 @@
     <Compile Include="Windows\Input\CommandFactory\CommandFactory.cs" />
     <Compile Include="Windows\Input\DelegateCommand.cs" />
     <Compile Include="Windows\Input\InputController\Condition\KeyInputCondition.cs" />
+    <Compile Include="Windows\Input\InputController\Trigger\CommandBindingTrigger.cs" />
     <Compile Include="Windows\Markup\AbstractDataContextBindingExtension.cs" />
     <Compile Include="Windows\Markup\AbstractDependencyPropertyBindingExtension.cs" />
     <Compile Include="Windows\Markup\AbstractMarkupExtension.cs" />

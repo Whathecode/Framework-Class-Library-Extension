@@ -17,13 +17,6 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 	public class CommandBindingExtension : AbstractDataContextBindingExtension
 	{
 		/// <summary>
-		///   The name of the property holding the dictionary with all the commands
-		///   in the CommandFactory.
-		///   TODO: Can this string literal somehow be circumvented by accessing the generic class directly?
-		/// </summary>
-		const string CommandsProperty = "Commands";
-
-		/// <summary>
 		///   An enum value specifying the command to which to bind.
 		/// </summary>
 		public object Command { get; set; }
@@ -70,10 +63,11 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 				object factory = dataContext.GetValue( commandFactory );
 
 				// Get dictionary containing commands from command factory.
-				IDictionary dictionary = factory.GetPropertyValue( CommandsProperty ) as IDictionary;
+				const string commandsProperty = CommandFactory<object>.CommandsProperty;
+				IDictionary dictionary = factory.GetPropertyValue( commandsProperty ) as IDictionary;
 				if ( dictionary == null )
 				{
-					throw new InvalidCastException( "Expected that \"" + CommandsProperty + "\" property is IDictionary." );
+					throw new InvalidCastException( "Expected that \"" + commandsProperty + "\" property is IDictionary." );
 				}
 				if ( !dictionary.Contains( Command ) )
 				{
