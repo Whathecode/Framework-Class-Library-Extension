@@ -221,6 +221,7 @@
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
     <Compile Include="Private.cs" />
     <Compile Include="Collections\Generic\TupleList.cs" />
+    <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
     <Compile Include="TypeHelper.cs" />
     <Compile Include="Variable.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
@@ -231,6 +232,9 @@
     <Compile Include="Windows\Input\InputController\Trigger\AbstractTrigger.cs" />
     <Compile Include="Windows\Input\InputController\Trigger\EventTrigger.cs" />
     <Compile Include="Extensions\Extensions.Point.cs" />
+    <Compile Include="Windows\Interop\User32.cs" />
+    <Compile Include="Windows\Interop\WindowInfo.cs" />
+    <Compile Include="Windows\Interop\WindowManager.cs" />
     <Compile Include="Windows\Threading\DispatcherHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +266,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -41,7 +41,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 
 			foreach ( var attribute in MatchingAttributes )
 			{
-				MethodInfo method = (MethodInfo)attribute.Key;
+				var method = (MethodInfo)attribute.Key;
 
 				foreach ( var id in attribute.Value )
 				{
@@ -60,7 +60,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 						// Get the can execute method.
 						Dictionary<MemberInfo, IdAttribute[]>.Enumerator matchesEnumerator = matches.GetEnumerator();
 						matchesEnumerator.MoveNext();
-						MethodInfo canExecuteMethod = (MethodInfo)matchesEnumerator.Current.Key;
+						var canExecuteMethod = (MethodInfo)matchesEnumerator.Current.Key;
 						canExecute = (Func<bool>)Delegate.CreateDelegate( typeof( Func<bool> ), _owner, canExecuteMethod );
 					}
 
@@ -77,6 +77,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 						}
 						case 1:
 						{
+							// TODO: Support conversion to primitive types. (object -> int doesn't seem to work)
 							Action<object> compatibleExecute
 								= method.CreateDelegate<Action<object>>( _owner, DelegateHelper.CreateOptions.Downcasting );
 							command = new DelegateCommand<object>( compatibleExecute, canExecute );

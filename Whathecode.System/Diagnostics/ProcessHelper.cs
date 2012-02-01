@@ -7,7 +7,7 @@ using System.Text;
 namespace Whathecode.System.Diagnostics
 {
 	/// <summary>
-	///   A helper class to do common Process operations.
+	///   A helper class to do common <see cref="Process" /> operations.
 	/// </summary>
 	/// <author>Eric White</author>
 	/// <author>Steven Jeuris <email>mailto:steven.jeuris@gmail.com</email></author>
