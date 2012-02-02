@@ -157,6 +157,7 @@
     <Compile Include="Arithmetic\Interpolation\KeyPoint\CumulativeKeyPointCollection.Enumerator.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
+    <Compile Include="Collections\Generic\LoopList.cs" />
     <Compile Include="Operators\CastOperator.cs" />
     <Compile Include="Operators\Operator.cs" />
     <Compile Include="Operators\OperatorHelper.cs" />
@@ -227,11 +228,12 @@
     <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AndCondition.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\DelegateCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\OrCondition.cs" />
     <Compile Include="Windows\Input\InputController\InputController.cs" />
-    <Compile Include="Windows\Input\InputController\Trigger\AbstractTrigger.cs" />
     <Compile Include="Windows\Input\InputController\Trigger\EventTrigger.cs" />
     <Compile Include="Extensions\Extensions.Point.cs" />
+    <Compile Include="Windows\Input\InputController\Trigger\SequenceTrigger.cs" />
     <Compile Include="Windows\Interop\User32.cs" />
     <Compile Include="Windows\Interop\WindowInfo.cs" />
     <Compile Include="Windows\Interop\WindowManager.cs" />

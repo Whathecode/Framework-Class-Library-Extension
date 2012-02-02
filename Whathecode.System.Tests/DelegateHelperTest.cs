@@ -8,7 +8,7 @@ using Whathecode.System;
 namespace Whathecode.Tests.System
 {
 	/// <summary>
-	///   Unit tests for <see href = "DelegateHelper">DelegateHelper</see>.
+	///   Unit tests for <see cref = "DelegateHelper" />.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[TestClass]

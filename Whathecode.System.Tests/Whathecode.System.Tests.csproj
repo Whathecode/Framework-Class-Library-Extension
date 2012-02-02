@@ -123,6 +123,8 @@
     <Compile Include="Reflection\Extensions\ObjectExtensionsTest.cs" />
     <Compile Include="Reflection\Extensions\TypeExtensionsTest.cs" />
     <Compile Include="VariableTest.cs" />
+    <Compile Include="Windows\Input\InputController\InputControllerTest.cs" />
+    <Compile Include="Windows\Input\InputController\Trigger\SequenceTriggerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Whathecode.Microsoft.VisualStudio.QualityTools.Unit\Whathecode.Microsoft.VisualStudio.QualityTools.Unit.csproj">

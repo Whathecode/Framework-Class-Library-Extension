@@ -12,12 +12,12 @@ namespace Whathecode.System.Windows.Input.InputController
 	/// <author>Steven Jeuris</author>
 	public class InputController
 	{
-		readonly List<AbstractTrigger> _toRemove = new List<AbstractTrigger>();
+		readonly List<EventTrigger> _toRemove = new List<EventTrigger>();
 
 		/// <summary>
 		///   List of InputTrigger's which the InputController needs to manage.
 		/// </summary>
-		protected List<AbstractTrigger> Triggers { get; set; }
+		protected List<EventTrigger> Triggers { get; set; }
 
 		/// <summary>
 		///   Enable/disable input triggers.
@@ -28,16 +28,16 @@ namespace Whathecode.System.Windows.Input.InputController
 		public InputController()
 		{
 			Enabled = true;
-			Triggers = new List<AbstractTrigger>();
+			Triggers = new List<EventTrigger>();
 		}
 
 
-		public void AddTrigger( AbstractTrigger trigger )
+		public void AddTrigger( EventTrigger trigger )
 		{
 			Triggers.Add( trigger );
 		}
 
-		public void RemoveTrigger( AbstractTrigger trigger )
+		public void RemoveTrigger( EventTrigger trigger )
 		{
 			_toRemove.Add( trigger );
 		}

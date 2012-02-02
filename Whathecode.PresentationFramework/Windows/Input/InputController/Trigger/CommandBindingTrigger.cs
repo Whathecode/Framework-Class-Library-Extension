@@ -18,7 +18,7 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 	/// </summary>
 	/// <typeparam name = "TCommand">An enum used to identify the commands.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public class CommandBindingTrigger<TCommand> : AbstractTrigger
+	public class CommandBindingTrigger<TCommand> : EventTrigger
 	{
 		readonly TCommand _desiredCommand;
 		ICommand _command;
@@ -31,6 +31,7 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 
 			_desiredCommand = command;
 
+			ConditionsMet += TriggerAction;
 			element.DataContextChanged += OnDataContextChanged;
 		}
 
@@ -77,17 +78,12 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 		}
 
 
-		protected override void TriggerAction()
+		void TriggerAction()
 		{
 			if ( _command != null )
 			{
 				_command.Execute( null );
 			}
-		}
-
-		protected override void ConditionLost()
-		{
-			// Nothing to do.
 		}
 	}
 }
