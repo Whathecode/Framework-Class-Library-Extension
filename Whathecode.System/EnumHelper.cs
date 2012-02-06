@@ -54,5 +54,24 @@ namespace Whathecode.System
 				   select (T)(object)value;
 			// ReSharper restore PossibleNullReferenceException
 		}
+
+		/// <summary>
+		///   Converts an enum of one type to an enum of another type, using a mapping between both.
+		///   TODO: Support flags enums?
+		/// </summary>
+		/// <typeparam name="TTargetEnum">The target enum type.</typeparam>
+		/// <param name="value">The value to map to the other enum type.</param>
+		/// <param name="conversionMapping">Dictionary which is used to map values from one enum type to the other.</param>
+		/// <returns>The passed value, mapped to the desired target enum type.</returns>
+		public static TTargetEnum Convert<TTargetEnum>( T value, IDictionary<T, TTargetEnum> conversionMapping )
+		{
+			Contract.Requires( typeof( T ).IsEnum && typeof( TTargetEnum ).IsEnum  );
+
+			// ReSharper disable PossibleNullReferenceException
+			// ReSharper disable AssignNullToNotNullAttribute
+			return conversionMapping.First( pair => (value as Enum).HasFlag( pair.Key as Enum ) ).Value;
+			// ReSharper restore AssignNullToNotNullAttribute
+			// ReSharper restore PossibleNullReferenceException
+		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Whathecode.System.Windows.Interop
 	///   Class through which user32.dll calls can be accessed for which the .NET framework offers no alternative.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	public static class User32
+	static partial class User32
 	{
 		const string Dll = "user32.dll";
 
@@ -63,6 +63,30 @@ namespace Whathecode.System.Windows.Interop
 		public static extern int GetClassName( IntPtr windowHandle, StringBuilder classNameBuffer, int bufferLength );
 
 		/// <summary>
+		///   Retrieves the show state and the restored, minimized, and maximized positions of the specified window.
+		/// </summary>
+		/// <param name="windowHandle">A handle to the window.</param>
+		/// <param name="windowPlacement">
+		///   A WindowPlacement structure that receives the show state and position information.
+		///   Before calling GetWindowPlacement, set the length member to sizeof( WindowPlacement ).
+		///   GetWindowPlacement fails if WindowPlacement's length is not set correctly.
+		/// </param>
+		/// <remakrs>
+		///   The flags member of WindowPlacement retrieved by this function is always zero.
+		///   If the window identified by the windowHandle parameter is maximized, the showCmd member is SW_SHOWMAXIMIZED.
+		///   If the window is minimized, showCmd is SW_SHOWMINIMIZED. Otherwise, it is SW_SHOWNORMAL.
+		///	  The length member of WindowPlacement must be set to sizeof( WindowPlacement ).
+		///   If this member is not set correctly, the function returns FALSE.
+		///   For additional remarks on the proper use of window placement coordinates, see WindowPlacement.
+		/// </remakrs>
+		/// <returns>
+		///   If the function succeeds, the return value is true.
+		///   If the function fails, the return value is false. To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern bool GetWindowPlacement( IntPtr windowHandle, ref WindowPlacement windowPlacement );
+
+		/// <summary>
 		///   Copies the text of the specified window's title bar (if it has one) into a buffer.
 		///   If the specified window is a control, the text of the control is copied. However, GetWindowText cannot retrieve the text of a control in another application.
 		/// </summary>
@@ -105,6 +129,18 @@ namespace Whathecode.System.Windows.Interop
 		/// </remarks>
 		[DllImport( Dll )]
 		public static extern int GetWindowTextLength( IntPtr windowHandle );
+
+		/// <summary>
+		///   Retrieves the identifier of the thread that created the specified window and, optionally,
+		///   the identifier of the process that created the window.
+		/// </summary>
+		/// <param name="windowHandle">A handle to the window.</param>
+		/// <param name="processId">
+		///   A pointer to a variable that receives the process identifier.
+		/// </param>
+		/// <returns>The return value is the identifier of the thread that created the window.</returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern int GetWindowThreadProcessId( IntPtr windowHandle, ref int processId );
 
 		/// <summary>
 		///   Determines the visibility state of the specified window.

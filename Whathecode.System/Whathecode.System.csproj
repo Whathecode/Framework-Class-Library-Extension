@@ -235,8 +235,10 @@
     <Compile Include="Extensions\Extensions.Point.cs" />
     <Compile Include="Windows\Input\InputController\Trigger\SequenceTrigger.cs" />
     <Compile Include="Windows\Interop\User32.cs" />
+    <Compile Include="Windows\Interop\User32.Types.cs" />
     <Compile Include="Windows\Interop\WindowInfo.cs" />
     <Compile Include="Windows\Interop\WindowManager.cs" />
+    <Compile Include="Windows\Interop\WindowState.cs" />
     <Compile Include="Windows\Threading\DispatcherHelper.cs" />
   </ItemGroup>
   <ItemGroup>
