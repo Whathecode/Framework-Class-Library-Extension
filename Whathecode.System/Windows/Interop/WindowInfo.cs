@@ -90,7 +90,7 @@ namespace Whathecode.System.Windows.Interop
 		public WindowState GetWindowState()
 		{
 			User32.WindowPlacement placement = GetWindowPlacement();
-			User32.WindowState state = (User32.WindowState)placement.ShowCommand;
+			var state = (User32.WindowState)placement.ShowCommand;
 
 			return EnumHelper<User32.WindowState>.Convert( state, _windowStateMapping );
 		}
@@ -110,6 +110,23 @@ namespace Whathecode.System.Windows.Interop
 		}
 
 		/// <summary>
+		///   Hides the window and activates another window.
+		/// </summary>
+		public void Hide()
+		{
+			User32.ShowWindow( _handle, User32.WindowState.Hide );
+		}
+
+		/// <summary>
+		///   Verifies whether this window has been destroyed or not.
+		/// </summary>
+		/// <returns>True when the window no longer exists; false otherwise.</returns>
+		public bool IsDestroyed()
+		{
+			return !User32.IsWindow( _handle );
+		}
+
+		/// <summary>
 		///   Determines the visibility state of the window.
 		/// </summary>
 		public bool IsVisible()
@@ -117,6 +134,35 @@ namespace Whathecode.System.Windows.Interop
 			return User32.IsWindowVisible( _handle );
 		}
 
+		/// <summary>
+		///   Activates the window and displays it as a maximized window.
+		/// </summary>
+		public void Maximize()
+		{
+			User32.ShowWindow( _handle, User32.WindowState.ShowMaximized );
+		}
+
+		/// <summary>
+		///   Minimizes the window and activates the next top-level window in the z-order.
+		/// </summary>
+		public void Minimize()
+		{
+			User32.ShowWindow( _handle, User32.WindowState.Minimize );
+		}
+
+		/// <summary>
+		///   Activates the window and displays it in its current size and position.
+		/// </summary>
+		/// <param name="activate">
+		///	  When set to true, the window will be brought to the front and activated.
+		///   Otherwise it will stay in it's previous state, e.g. minimized.
+		/// </param>
+		public void Show( bool activate = true )
+		{
+			User32.ShowWindow(
+				_handle,
+				activate ? User32.WindowState.Show : User32.WindowState.ShowNoActivate );
+		}
 
 		public override bool Equals( object other )
 		{

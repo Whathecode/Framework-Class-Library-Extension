@@ -108,7 +108,7 @@ namespace Whathecode.System.Windows.Interop
 			{
 				get
 				{
-					WindowPlacement result = new WindowPlacement();
+					var result = new WindowPlacement();
 					result.Length = Marshal.SizeOf( result );
 
 					return result;
@@ -118,7 +118,7 @@ namespace Whathecode.System.Windows.Interop
 
 
 		/// <summary>
-		///   The current show state of the window.
+		///   The show state of the window.
 		/// </summary>
 		public enum WindowState
 		{
@@ -172,13 +172,13 @@ namespace Whathecode.System.Windows.Interop
 			/// </summary>
 			Restore = 9,
 			/// <summary>
-			///   Puts the window in the application's startup default state.
-			///   TODO: This isn't on msdn, only pinvoke.net?
+			///   Sets the show state based on the value specified in the STARTUPINFO structure
+			///   passed to the CreateProcess function by the program that started the application.
 			/// </summary>
 			ShowDefault = 10,
 			/// <summary>
-			///   Forces the window into a minimized state.
-			///   TODO: This isn't on msdn, only pinvoke.net?
+			///   Minimizes a window, even if the thread that owns the window is not responding.
+			///   This flag should only be used when minimizing windows from a different thread.
 			/// </summary>
 			ForceMinimize = 11
 		}

@@ -7,6 +7,7 @@ namespace Whathecode.System.Windows.Interop
 {
 	/// <summary>
 	///   Class through which user32.dll calls can be accessed for which the .NET framework offers no alternative.
+	///   TODO: Clean up remaining original documentation, converting it to the wrapper's equivalents.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	static partial class User32
@@ -143,6 +144,21 @@ namespace Whathecode.System.Windows.Interop
 		public static extern int GetWindowThreadProcessId( IntPtr windowHandle, ref int processId );
 
 		/// <summary>
+		///   Determines whether the specified window handle identifies an existing window.
+		/// </summary>
+		/// <param name="windowHandle">A handle to the window to be tested.</param>
+		/// <returns>
+		///   If the window handle identifies an existing window, the return value is true.
+		///   If the window handle does not identify an existing window, the return value is false.
+		/// </returns>
+		/// <remarks>
+		///   A thread should not use IsWindow for a window that it did not create because the window could be destroyed after this function was called.
+		///   Further, because window handles are recycled the handle could even point to a different window.
+		/// </remarks>
+		[DllImport( Dll )]
+		public static extern bool IsWindow( IntPtr windowHandle );
+
+		/// <summary>
 		///   Determines the visibility state of the specified window.
 		/// </summary>
 		/// <param name="windowHandle">A handle to the window to be tested.</param>
@@ -158,5 +174,34 @@ namespace Whathecode.System.Windows.Interop
 		/// </remarks>
 		[DllImport( Dll )]
 		public static extern bool IsWindowVisible( IntPtr windowHandle );
+
+		/// <summary>
+		///   Sets the specified window's show state.
+		/// </summary>
+		/// <param name="windowHandle">A handle to the window.</param>
+		/// <param name="showCommand">
+		///   Controls how the window is to be shown. This parameter is ignored the first time an application calls ShowWindow,
+		///   if the program that launched the application provides a STARTUPINFO structure.
+		///   Otherwise, the first time ShowWindow is called, the value should be the value obtained by the WinMain function in its showCommand parameter.
+		///   In subsequent calls, this parameter can be any Show... value of <see cref="WindowState" />.
+		/// </param>
+		/// <returns>If the window was previously visible, the return value is true. If the window was previously hidden, the return value is false.</returns>
+		/// <remarks>
+		///   To perform certain special effects when showing or hiding a window, use AnimateWindow.
+		///   The first time an application calls ShowWindow, it should use the WinMain function's showCommand parameter as its showCommand parameter.
+		///   Subsequent calls to ShowWindow must use one of the Show... values of <see cref="WindowState" />,
+		///   instead of the one specified by the WinMain function's showCommand parameter.
+		///   As noted in the discussion of the showCommand parameter, the showCommand value is ignored in the first call to ShowWindow
+		///   if the program that launched the application specifies startup information in the structure.
+		///   In this case, ShowWindow uses the information specified in the STARTUPINFO structure to show the window.
+		///   On subsequent calls, the application must call ShowWindow with showCommand set to ShowDefault
+		///   to use the startup information provided by the program that launched the application.
+		///   This behavior is designed for the following situations:
+		///   - Applications create their main window by calling CreateWindow with the WS_VISIBLE flag set.
+		///   - Applications create their main window by calling CreateWindow with the WS_VISIBLE flag cleared,
+		///     and later call ShowWindow with the Show flag set to make it visible.
+		/// </remarks>
+		[DllImport( Dll )]
+		public static extern bool ShowWindow( IntPtr windowHandle, WindowState showCommand );
 	}
 }
