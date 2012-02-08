@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using Whathecode.System.Runtime.InteropServices;
 
@@ -34,6 +33,24 @@ namespace Whathecode.System.Windows.Interop
 			_handle = handle;
 		}
 
+
+		/// <summary>
+		///   Enumerates the child windows that belong to this window.
+		/// </summary>
+		/// <returns></returns>
+		public List<WindowInfo> GetChildWindows()
+		{
+			var windows = new List<WindowInfo>();
+			User32.EnumChildWindows( _handle,
+				( handle, lparam ) =>
+				{
+					windows.Add( new WindowInfo( handle ) );
+					return true;
+				},
+				IntPtr.Zero );
+
+			return windows;
+		}
 
 		/// <summary>
 		///   Retrieves the name of the class to which the specified window belongs.
@@ -188,6 +205,13 @@ namespace Whathecode.System.Windows.Interop
 		public override int GetHashCode()
 		{
 			return _handle.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return string.Format(
+				"Window \"{0}\" ({1}) state: {2}, classname: {3}",
+				GetTitle(), GetProcess().ProcessName, GetWindowState(), GetClassName() );
 		}
 	}
 }

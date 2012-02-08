@@ -28,6 +28,26 @@ namespace Whathecode.System.Windows.Interop
 
 
 		/// <summary>
+		///   Enumerates the child windows that belong to the specified parent window by passing the handle to each child window,
+		///   in turn, to an application-defined callback function.
+		///   EnumChildWindows continues until the last child window is enumerated or the callback function returns FALSE.
+		/// </summary>
+		/// <param name="windowHandle">
+		///   A handle to the parent window whose child windows are to be enumerated.
+		///   If this parameter is IntPtr.Zero, this function is equivalent to EnumWindows.
+		/// </param>
+		/// <param name="callback">A pointer to an application-defined callback function. For more information, see EnumChildProc.</param>
+		/// <param name="lParam">An application-defined value to be passed to the callback function.</param>
+		/// <returns>The return value is not used.</returns>
+		/// <remarks>
+		///   If a child window has created child windows of its own, EnumChildWindows enumerates those windows as well.
+		///   A child window that is moved or repositioned in the Z order during the enumeration process will be properly enumerated.
+		///   The function does not enumerate a child window that is destroyed before being enumerated or that is created during the enumeration process.
+		/// </remarks>
+		[DllImport( Dll )]
+		public static extern bool EnumChildWindows( IntPtr windowHandle, EnumWindowsProc callback, IntPtr lParam );
+
+		/// <summary>
 		///   Enumerates all top-level windows on the screen by passing the handle to each window, in turn, to an application-defined callback function.
 		///   EnumWindows continues until the last top-level window is enumerated or the callback function returns FALSE.
 		/// </summary>
