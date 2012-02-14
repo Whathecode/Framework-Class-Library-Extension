@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 using Whathecode.System.Algorithm;
 
 
@@ -22,6 +23,31 @@ namespace Whathecode.System.Extensions
 				source.Substring( 0, index + (splitOption.EqualsAny( SplitOption.Left, SplitOption.Both ) ? 1 : 0) ),
 				source.Substring( index + (splitOption.EqualsAny( SplitOption.Right, SplitOption.Both ) ? 0 : 1) )
 			};
+		}
+
+		/// <summary>
+		///   Ensure a string is unique by applying a certain suffix.
+		///   TODO: Allow more choices than a counting int suffix.
+		/// </summary>
+		/// <param name="source">The source of this extension method</param>
+		/// <param name="isUnique">Checks whether a certain path is unique or not.</param>
+		/// <param name="format">A standard or custom suffix format string. (see Remarks)</param>
+		/// <returns>The original string with optionally a suffix applied to it to make it unique.</returns>
+		/// <remarks>
+		///   The <paramref name="format" /> parameter should contain a format pattern
+		///   that defines the format of the suffix which will be applied to the string.
+		///   - "i" can be used to represent a number which increases per found duplicate.
+		/// </remarks>
+		public static string MakeUnique( this string source, Func<string, bool> isUnique, string format )
+		{
+			int count = 1;			
+			string current = source;
+			while ( !isUnique( current ) )
+			{
+				string suffix = format.Replace( "i", count++.ToString() );
+				current = source + suffix;
+			}
+			return current;
 		}
 	}
 }
