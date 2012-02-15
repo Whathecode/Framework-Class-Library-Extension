@@ -256,7 +256,7 @@ namespace Whathecode.System.Reflection.Extensions
 			}
 
 			// Check whether all numeric operators are available.
-			return Operator.NumericalOperators.All( o => source.HasOperator( o ) );
+			return Operator.NumericalOperators.All( source.HasOperator );
 		}
 
 		/// <summary>
@@ -270,7 +270,7 @@ namespace Whathecode.System.Reflection.Extensions
 		{
 			var defaultValue = Expression.Default( source );
 
-			BinaryOperator binaryOperator = @operator as BinaryOperator;
+			var binaryOperator = @operator as BinaryOperator;
 			if ( binaryOperator != null )
 			{
 				try
@@ -284,7 +284,7 @@ namespace Whathecode.System.Reflection.Extensions
 				}								
 			}
 
-			UnaryOperator unaryOperator = @operator as UnaryOperator;
+			var unaryOperator = @operator as UnaryOperator;
 			if ( unaryOperator != null )
 			{
 				try

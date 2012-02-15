@@ -137,7 +137,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 				select item;
 			foreach ( var item in properties )
 			{
-				DependencyPropertyAttribute attribute = (DependencyPropertyAttribute)item.Value[ 0 ];
+				var attribute = (DependencyPropertyAttribute)item.Value[ 0 ];
 				CreateDependencyProperty( GetDependencyPropertyInfo( item.Key as PropertyInfo, attribute ) );
 			}
 
@@ -167,7 +167,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					if ( setter != null && getter.Name.Substring( GetPrefix.Length ) == setter.Name.Substring( SetPrefix.Length ) )
 					{
 						// TODO: Check whether attributes settings correspond?
-						DependencyPropertyAttribute attribute = (DependencyPropertyAttribute)attachedProperty.First().Attribute;
+						var attribute = (DependencyPropertyAttribute)attachedProperty.First().Attribute;
 						DependencyPropertyInfo info = GetAttachedDependencyPropertyInfo( getter, setter, attribute );
 
 						// HACK: For collections, use a dependency property with non-matching name so the getter is called the first time,
@@ -220,7 +220,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			// Set dependency property parameters.
 			Type propertyType = property.PropertyType;
 			MethodInfo setMethod = property.GetSetMethod();
-			DependencyPropertyInfo dependencyPropertyInfo = new DependencyPropertyInfo
+			var dependencyPropertyInfo = new DependencyPropertyInfo
 			{
 				IsAttached = false,
 				Name = attribute.Name ?? property.Name,
@@ -258,12 +258,9 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 		void CreateDependencyProperty( DependencyPropertyInfo info )
 		{
 			// Find callbacks.
-			PropertyChangedCallback changedCallback =
-				(PropertyChangedCallback)CreateCallbackDelegate<DependencyPropertyChangedAttribute>( info.Id );
-			CoerceValueCallback coerceCallback =
-				(CoerceValueCallback)CreateCallbackDelegate<DependencyPropertyCoerceAttribute>( info.Id );
-			ValidateValueCallback validateValueCallback =
-				(ValidateValueCallback)CreateCallbackDelegate<DependencyPropertyValidateAttribute>( info.Id );
+			var changedCallback = (PropertyChangedCallback)CreateCallbackDelegate<DependencyPropertyChangedAttribute>( info.Id );
+			var coerceCallback = (CoerceValueCallback)CreateCallbackDelegate<DependencyPropertyCoerceAttribute>( info.Id );
+			var validateValueCallback = (ValidateValueCallback)CreateCallbackDelegate<DependencyPropertyValidateAttribute>( info.Id );
 
 			// Find specified handlers through the handler attributes when no callback found yet.
 			// TODO: At the moment no handlers for attached properties are implemented.
@@ -275,7 +272,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					ValidationHandlerAttribute handler = property.GetAttributes<ValidationHandlerAttribute>().FirstOrDefault();
 					if ( handler != null )
 					{
-						validateValueCallback = new ValidateValueCallback( handler.GenericValidation.IsValid );
+						validateValueCallback = handler.GenericValidation.IsValid;
 					}
 				}
 				if ( coerceCallback == null )
@@ -283,7 +280,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					CoercionHandlerAttribute handler = property.GetAttributes<CoercionHandlerAttribute>().FirstOrDefault();
 					if ( handler != null )
 					{
-						coerceCallback = new CoerceValueCallback( handler.GenericCoercion.Coerce );
+						coerceCallback = handler.GenericCoercion.Coerce;
 					}
 				}
 			}
@@ -302,13 +299,13 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					).ToArray();
 				if ( dependentProperties.Length > 0 )
 				{
-					changedCallback = new PropertyChangedCallback( ( dependencyObject, changedArgs ) =>
+					changedCallback = ( dependencyObject, changedArgs ) =>
 					{
 						foreach ( var p in dependentProperties )
 						{
 							dependencyObject.CoerceValue( Properties[ p ] );
 						}
-					} );
+					};
 				}
 			}
 
@@ -463,10 +460,8 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
 				return value;
 			}
-			else
-			{
-				return o.GetValue( Properties[ property ] );
-			}
+
+			return o.GetValue( Properties[ property ] );
 		}
 
 		/// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using Whathecode.System.Extensions;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory;
@@ -19,7 +20,7 @@ namespace Whathecode.System.Xaml
 	/// 
 	///     <SomeControl>
 	///         <Xaml:PropertyObservers.Observers>
-	///             <Xaml:PropertyObserver PropertyPath="ActualWidth"
+	///             <Xaml:PropertyObserver Path="ActualWidth"
 	///                                    Observer="{Binding Width, Mode=OneWayToSource}" />
 	///         </Xaml:PropertyObservers.Observers>
 	///     </SomeControl>
