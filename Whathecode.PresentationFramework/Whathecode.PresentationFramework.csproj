@@ -137,7 +137,7 @@
     <Compile Include="Windows\Media\Media3D\Matrix3DHelper.cs" />
     <Compile Include="Windows\Media\Media3D\PitchRollYawRotation.cs" />
     <Compile Include="Xaml\Behaviors\MouseBehavior.cs" />
-    <Compile Include="Xaml\Behaviors\PropertyObserver.cs" />
+    <Compile Include="Xaml\PropertyObserver.cs" />
     <Compile Include="Xaml\PropertyObservers.cs" />
   </ItemGroup>
   <ItemGroup>
