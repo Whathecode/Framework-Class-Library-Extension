@@ -90,7 +90,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		[DependencyPropertyChanged( Properties.MovedCommand )]
 		static void OnMovedCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
 		{
-			IInputElement element = d as IInputElement;
+			var element = d as IInputElement;
 
 			if ( element != null )
 			{
@@ -118,7 +118,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		[DependencyPropertyChanged( Properties.LeftClickDragCommand )]
 		static void OnLeftClickDragCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
 		{
-			IInputElement element = d as IInputElement;
+			var element = d as IInputElement;
 
 			if ( element != null )
 			{
@@ -148,7 +148,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		[DependencyPropertyChanged( Properties.RightClickDragCommand )]
 		static void OnRightClickDragCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
 		{
-			IInputElement element = d as IInputElement;
+			var element = d as IInputElement;
 
 			if ( element != null )
 			{
@@ -170,7 +170,7 @@ namespace Whathecode.System.Xaml.Behaviors
 
 		static void OnMouseMoved( object sender, MouseEventArgs e )
 		{
-			FrameworkElement element = (FrameworkElement)sender;
+			var element = (FrameworkElement)sender;
 
 			MouseState mouseState = GetMouseState( e, element );
 
@@ -222,7 +222,7 @@ namespace Whathecode.System.Xaml.Behaviors
 
 		static void MouseButtonDown( object sender, MouseButtonEventArgs e )
 		{
-			FrameworkElement element = (FrameworkElement)sender;
+			var element = (FrameworkElement)sender;
 
 			MouseState mouseState = GetMouseState( e, element );
 
@@ -235,7 +235,7 @@ namespace Whathecode.System.Xaml.Behaviors
 				: RightClickDragInfo;
 			if ( clickDragCommand != null )
 			{
-				ClickDragInfo info = new ClickDragInfo
+				var info = new ClickDragInfo
 				{
 					Mouse = mouseState,
 					State = ClickDragState.Start,
@@ -252,7 +252,7 @@ namespace Whathecode.System.Xaml.Behaviors
 
 		static void MouseButtonUp( object sender, MouseButtonEventArgs e )
 		{
-			FrameworkElement element = (FrameworkElement)sender;
+			var element = (FrameworkElement)sender;
 
 			MouseState mouseState = GetMouseState( e, element );
 

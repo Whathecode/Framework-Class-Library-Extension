@@ -133,7 +133,7 @@ namespace Whathecode.System.Arithmetic.Range
 				return LiesInInterval( position ) ? 1.0 : 0.0;
 			}
 
-			Interval<TMath> positionRange = new Interval<TMath>( Start, position );
+			var positionRange = new Interval<TMath>( Start, position );
 			double percentage = CastOperator<TMath, double>.Cast( positionRange.Size ) / size;
 
 			// Negate percentage when position lies before the interval.
@@ -267,7 +267,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The resulting intervals after subtraction.</returns>
 		public List<Interval<TMath>> Subtract( Interval<TMath> subtract )
 		{
-			List<Interval<TMath>> result = new List<Interval<TMath>>();
+			var result = new List<Interval<TMath>>();
 
 			if ( !Intersects( subtract ) )
 			{
@@ -336,7 +336,7 @@ namespace Whathecode.System.Arithmetic.Range
 
 		public override bool Equals( object obj )
 		{
-			Interval<TMath> interval = obj as Interval<TMath>;
+			var interval = obj as Interval<TMath>;
 
 			if ( interval == null )
 			{
@@ -378,7 +378,7 @@ namespace Whathecode.System.Arithmetic.Range
 		#region Modifiers
 
 		/// <summary>
-		///   Expand the range up to the given value (and including) when required.
+		///   Expand the interval up to the given value (and including) when required.
 		/// </summary>
 		/// <param name = "value">The value up to which to expand the interval.</param>
 		public void ExpandTo( TMath value )
@@ -389,7 +389,7 @@ namespace Whathecode.System.Arithmetic.Range
 		}
 
 		/// <summary>
-		///   Expand the range up to the given value when required.
+		///   Expand the interval up to the given value when required.
 		/// </summary>
 		/// <param name = "value">The value up to which to expand the interval.</param>
 		/// <param name = "include">Include the value to which is expanded in the interval.</param>
@@ -409,6 +409,34 @@ namespace Whathecode.System.Arithmetic.Range
 				End = value;
 				IsEndIncluded = true;
 			}
+		}
+
+		/// <summary>
+		///   Move the interval by a specified amount.
+		/// </summary>
+		/// <param name="amount">How much to move the interval.</param>
+		public void Move( TMath amount )
+		{
+			Start = Operator<TMath>.Add( Start, amount );
+			End = Operator<TMath>.Add( End, amount ); ;
+		}
+
+		/// <summary>
+		///   Scale the current interval.
+		/// </summary>
+		/// <param name="scale">
+		///   Percentage to scale the interval up or down.
+		///   Smaller than 1.0 to scale down, larger to scale up.
+		/// </param>
+		/// <param name="aroundPercentage">The percentage inside the interval around which to scale.</param>
+		public void Scale( double scale, double aroundPercentage = 0.5 )
+		{
+			TMath scaledSize = CastOperator<double, TMath>.Cast( CastOperator<TMath, double>.Cast( Size ) * scale );
+			TMath sizeDiff = Operator<TMath>.Subtract( scaledSize, Size ); // > 0 larger, < 0 smaller
+			TMath startAddition = CastOperator<double, TMath>.Cast( CastOperator<TMath, double>.Cast( sizeDiff ) * aroundPercentage );
+			TMath endSubtraction = Operator<TMath>.Subtract( sizeDiff, startAddition );
+			Start = Operator<TMath>.Add( Start, startAddition );
+			End = Operator<TMath>.Subtract( End, endSubtraction );
 		}
 
 		#endregion  // Modifiers
