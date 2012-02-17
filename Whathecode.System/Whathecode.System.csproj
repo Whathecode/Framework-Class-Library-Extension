@@ -158,6 +158,7 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
+    <Compile Include="Extensions\Extensions.DateTime.cs" />
     <Compile Include="IO\PathHelper.cs" />
     <Compile Include="Operators\CastOperator.cs" />
     <Compile Include="Operators\Operator.cs" />

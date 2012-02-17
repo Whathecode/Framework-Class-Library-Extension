@@ -17,7 +17,7 @@ namespace Whathecode.System.Arithmetic.Range
 		where TMath : IComparable<TMath>
 	{
 		readonly bool _isReversed;
-		readonly bool _isIntegralType;
+		readonly static bool _isIntegralType;
 
 
 		/// <summary>
@@ -61,6 +61,10 @@ namespace Whathecode.System.Arithmetic.Range
 			}
 		}
 
+		static Interval()
+		{
+			_isIntegralType = TypeHelper.IsIntegralNumericType<TMath>();			
+		}
 
 		/// <summary>
 		///   Create a new interval with a specified start and end, both included in the interval.
@@ -86,9 +90,7 @@ namespace Whathecode.System.Arithmetic.Range
 			Start = start;
 			IsStartIncluded = isStartIncluded;
 			End = end;
-			IsEndIncluded = isEndIncluded;
-
-			_isIntegralType = TypeHelper.IsIntegralNumericType<TMath>();
+			IsEndIncluded = isEndIncluded;			
 
 			// Check whether the interval is a reverse interval. E.g. [5, 0]
 			_isReversed = start.CompareTo(  end ) > 0;					
