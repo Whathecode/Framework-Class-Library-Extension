@@ -448,5 +448,13 @@ namespace Whathecode.System.Arithmetic.Range
 		{
 			return new Interval<TMath>( Start, IsStartIncluded, End, IsEndIncluded );
 		}
+
+		public override string ToString()
+		{
+			string output = IsStartIncluded ? "[" : "]";
+			output += Start + ", " + End;
+			output += IsEndIncluded ? "]" : "[";
+			return output;
+		}
 	}
 }

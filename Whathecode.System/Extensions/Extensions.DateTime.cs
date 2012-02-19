@@ -5,15 +5,32 @@ namespace Whathecode.System.Extensions
 {
 	public static partial class Extensions
 	{
-		public enum DateTimePart
+		/// <summary>
+		///   Returns part of the <see cref="DateTime" /> object.
+		/// </summary>
+		/// <param name="source">The <see cref="DateTime" /> to retrieve a part from.</param>
+		/// <param name="part">Which part of the <see cref="DateTime" /> to retrieve.</param>
+		public static double GetDateTimePart( this DateTime source, DateTimePart part )
 		{
-			Year = 0,
-			Month,
-			Day,
-			Hour,
-			Minute,
-			Second,
-			Millisecond
+			switch ( part )
+			{
+				case DateTimePart.Day:
+					return source.Day;
+				case DateTimePart.Hour:
+					return source.Hour;
+				case DateTimePart.Millisecond:
+					return source.Millisecond;
+				case DateTimePart.Minute:
+					return source.Minute;
+				case DateTimePart.Month:
+					return source.Month;
+				case DateTimePart.Second:
+					return source.Second;
+				case DateTimePart.Year:
+					return source.Year;
+			}
+
+			throw new NotSupportedException();
 		}
 
 		/// <summary>

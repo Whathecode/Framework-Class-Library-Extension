@@ -158,6 +158,7 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
+    <Compile Include="DateTimePart.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
     <Compile Include="IO\PathHelper.cs" />
     <Compile Include="Operators\CastOperator.cs" />
@@ -225,6 +226,7 @@
     <Compile Include="Private.cs" />
     <Compile Include="Collections\Generic\TupleList.cs" />
     <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
+    <Compile Include="TimeSpanHelper.cs" />
     <Compile Include="TypeHelper.cs" />
     <Compile Include="Variable.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
