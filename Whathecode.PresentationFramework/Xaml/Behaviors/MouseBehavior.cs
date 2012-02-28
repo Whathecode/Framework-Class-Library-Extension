@@ -55,6 +55,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		}
 
 
+		[Flags]
 		enum Properties
 		{
 			MovedCommand,
