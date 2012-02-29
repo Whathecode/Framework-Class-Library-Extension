@@ -10,6 +10,10 @@ namespace Whathecode.System
 	/// <author>Steven Jeuris</author>
 	public static class TimeSpanHelper
 	{
+		public static readonly TimeSpan MinimumMonthLength = TimeSpan.FromDays( 28 );
+		public static readonly TimeSpan MinimumYearLength = TimeSpan.FromDays( 365 );
+
+
 		static readonly Dictionary<DateTimePart, Func<double, TimeSpan>> TimeSpanConstructors
 			= new Dictionary<DateTimePart, Func<double, TimeSpan>>
 		{

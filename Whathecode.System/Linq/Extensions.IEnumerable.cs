@@ -10,6 +10,32 @@ namespace Whathecode.System.Linq
 	public static partial class Extensions
 	{
 		/// <summary>
+		///   Returns distinct elements based on a selected value from a sequence by using the default equality comparer to compare values.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <typeparam name = "TSelect">The type of the value returned by <paramref name="selector" />.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "selector">A transform function to apply to each element which selects the elements to be compared.</param>
+		/// <returns>An <see cref="IEnumerable{T}" /> that contains distinct elements from the source sequence.</returns>
+		public static IEnumerable<T> Distinct<T, TSelect>( this IEnumerable<T> source, Func<T, TSelect> selector )
+		{
+			HashSet<TSelect> unique = new HashSet<TSelect>();
+
+			using ( IEnumerator<T> iterator = source.GetEnumerator() )
+			{
+				while ( iterator.MoveNext() )
+				{
+					TSelect selected = selector( iterator.Current );
+					if ( !unique.Contains( selected ) )
+					{
+						unique.Add( selected );
+						yield return iterator.Current;
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		///   Merges three sequences by using the specified predicate function.
 		/// </summary>
 		/// <typeparam name = "TFirst">The type of the elements of the first input sequence.</typeparam>
