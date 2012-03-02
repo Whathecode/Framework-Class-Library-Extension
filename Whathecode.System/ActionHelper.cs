@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 namespace Whathecode.System
 {
 	/// <summary>
-	///   A helper class to do common <see cref = "Action">Action</see> operations.
+	///   A helper class to do common <see cref = "Action" /> operations.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	public class ActionHelper

@@ -161,6 +161,7 @@
     <Compile Include="DateTimePart.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
     <Compile Include="IO\PathHelper.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Operators\CastOperator.cs" />
     <Compile Include="Operators\Operator.cs" />
     <Compile Include="Operators\OperatorHelper.cs" />
