@@ -105,7 +105,9 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\Media\Media3D\Vector3DInterpolationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Data\AbstractBindingDecoratorExtension.cs" />
+    <Compile Include="Windows\Data\AbstractGenericValueConverter.cs" />
     <Compile Include="Windows\Data\AdvancedBindingExtension.cs" />
+    <Compile Include="Windows\Data\IValueConverter.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyCallbackAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Coercion\CoercionHandlerAttribute.cs" />
