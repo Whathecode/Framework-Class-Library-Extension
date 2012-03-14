@@ -62,6 +62,8 @@ namespace Whathecode.System.Xaml.Behaviors
 			RightMouseUpCommand,
 			LeftMouseDownCommand,
 			RightMouseDownCommand,
+			LeftClickCommand,
+			RightClickCommand,
 			MovedCommand,
 			LeftClickDragCommand,
 			RightClickDragCommand
@@ -74,10 +76,14 @@ namespace Whathecode.System.Xaml.Behaviors
 		public static DependencyProperty RightMouseUpCommand = DependencyProperties[ Properties.RightMouseUpCommand ];
 		public static DependencyProperty LeftMouseDownCommand = DependencyProperties[ Properties.LeftMouseDownCommand ];
 		public static DependencyProperty RightMouseDownCommand = DependencyProperties[ Properties.RightMouseDownCommand ];
+		public static DependencyProperty LefClickCommand = DependencyProperties[ Properties.LeftClickCommand ];
+		public static DependencyProperty RightClickCommand = DependencyProperties[ Properties.RightClickCommand ];
 		public static DependencyProperty MovedCommandProperty = DependencyProperties[ Properties.MovedCommand ];		
 		public static DependencyProperty LeftClickDragCommand = DependencyProperties[ Properties.LeftClickDragCommand ];
 		public static DependencyProperty RightClickDragCommand = DependencyProperties[ Properties.RightClickDragCommand ];
 
+		static readonly Dictionary<object, ClickDragInfo> LeftClickInfo = new Dictionary<object,ClickDragInfo>();
+		static readonly Dictionary<object, ClickDragInfo> RightClickInfo = new Dictionary<object, ClickDragInfo>();
 		static readonly Dictionary<object, ClickDragInfo> LeftClickDragInfo = new Dictionary<object, ClickDragInfo>();
 		static readonly Dictionary<object, ClickDragInfo> RightClickDragInfo = new Dictionary<object, ClickDragInfo>();
 
@@ -192,6 +198,62 @@ namespace Whathecode.System.Xaml.Behaviors
 		}
 
 		#endregion // RightMouseDown Command
+
+
+		#region LeftClick Command
+
+		[DependencyProperty( Properties.LeftClickCommand )]
+		public static ICommand GetLeftClickCommand( FrameworkElement target )
+		{
+			return DependencyProperties.GetValue( target, Properties.LeftClickCommand ) as ICommand;
+		}
+
+		[DependencyProperty( Properties.LeftClickCommand )]
+		public static void SetLeftClickCommand( FrameworkElement target, ICommand value )
+		{
+			DependencyProperties.SetValue( target, Properties.LeftClickCommand, value );
+		}
+
+		[DependencyPropertyChanged( Properties.LeftClickCommand )]
+		static void OnLeftClickCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+		{
+			var element = d as IInputElement;
+
+			if ( element != null )
+			{
+				HookMouseLeft( element );
+			}
+		}
+
+		#endregion // LeftClick Command
+
+
+		#region RightClick Command
+
+		[DependencyProperty( Properties.RightClickCommand )]
+		public static ICommand GetRightClickCommand( FrameworkElement target )
+		{
+			return DependencyProperties.GetValue( target, Properties.RightClickCommand ) as ICommand;
+		}
+
+		[DependencyProperty( Properties.RightClickCommand )]
+		public static void SetRightClickCommand( FrameworkElement target, ICommand value )
+		{
+			DependencyProperties.SetValue( target, Properties.RightClickCommand, value );
+		}
+
+		[DependencyPropertyChanged( Properties.RightClickCommand )]
+		static void OnRightClickCommandChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+		{
+			var element = d as IInputElement;
+
+			if ( element != null )
+			{
+				HookMouseRight( element );
+			}
+		}
+
+		#endregion // RightClick Command
 
 
 		#region Moved Command
@@ -375,6 +437,28 @@ namespace Whathecode.System.Xaml.Behaviors
 				rightDownCommand.Execute( mouseState );
 			}
 
+			// Track click commands.
+			ICommand leftClickCommand = e.ChangedButton == MouseButton.Left
+				? GetLeftClickCommand( element )
+				: GetRightClickCommand( element );
+			Dictionary<object, ClickDragInfo> clickInfo = e.ChangedButton == MouseButton.Left
+				? LeftClickInfo
+				: RightClickInfo;
+			if ( leftClickCommand != null && e.ChangedButton == MouseButton.Left )
+			{
+				var info = new ClickDragInfo
+				{
+					Mouse = mouseState,
+					State = ClickDragState.Start,
+					StartPosition = mouseState.Position
+				};
+				
+				if ( !clickInfo.ContainsKey( sender ) )
+				{
+					clickInfo.Add( sender, info );
+				}
+			}
+
 			// Trigger click drag commands.
 			ICommand clickDragCommand = e.ChangedButton == MouseButton.Left
 				? GetLeftClickDragCommand( element )
@@ -416,6 +500,21 @@ namespace Whathecode.System.Xaml.Behaviors
 			{
 				rightUpCommand.Execute( mouseState );
 			}
+
+			// Trigger click commands.
+			ClickDragInfo clickInfo;
+			ICommand leftClickCommand = GetLeftClickCommand( element );
+			if ( leftClickCommand != null && e.ChangedButton == MouseButton.Left && LeftClickInfo.TryGetValue( sender, out clickInfo ) )
+			{
+				leftClickCommand.Execute( mouseState );				
+			}
+			LeftClickInfo.Clear();
+			ICommand rightClickCommand = GetRightClickCommand( element );
+			if ( rightClickCommand != null && e.ChangedButton == MouseButton.Right && RightClickInfo.TryGetValue( sender, out clickInfo ) )
+			{
+				rightClickCommand.Execute( mouseState );				
+			}
+			RightClickInfo.Clear();
 
 			// Trigger click drag commands.
 			ICommand leftClickDragCommand = GetLeftClickDragCommand( element );
