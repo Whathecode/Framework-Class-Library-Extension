@@ -107,6 +107,7 @@
     <Compile Include="Windows\Data\AbstractBindingDecoratorExtension.cs" />
     <Compile Include="Windows\Data\AbstractGenericValueConverter.cs" />
     <Compile Include="Windows\Data\AdvancedBindingExtension.cs" />
+    <Compile Include="Windows\Data\CalculateValueConverter.cs" />
     <Compile Include="Windows\Data\IValueConverter.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyCallbackAttribute.cs" />

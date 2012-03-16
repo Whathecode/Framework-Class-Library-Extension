@@ -157,6 +157,7 @@
     <Compile Include="Arithmetic\Interpolation\KeyPoint\CumulativeKeyPointCollection.Enumerator.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
+    <Compile Include="Arithmetic\MathOperator.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
     <Compile Include="DateTimePart.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
