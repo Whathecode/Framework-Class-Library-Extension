@@ -46,18 +46,19 @@ namespace Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting
 		{
 			if ( typeof( TObject ) == typeof( string ) )
 			{
+				// Strings are copied by value, and don't leak anyhow.
 				return;
 			}
 
 			int generation = GC.GetGeneration( @object );
 			useObject( @object );
-			WeakReference reference = new WeakReference( @object, true );
+			WeakReference reference = new WeakReference( @object );
 			@object = null;
 
 			GC.Collect( generation, GCCollectionMode.Forced );
 			GC.WaitForPendingFinalizers();
 
-			Assert.IsNull( reference.Target );
+			Assert.IsFalse( reference.IsAlive );
 		}
 	}
 }
