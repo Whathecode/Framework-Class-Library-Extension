@@ -33,5 +33,31 @@ namespace Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting
 
 			Assert.Fail( "Expected exception \"" + type + "\" was not thrown." );
 		}
+
+		public static void IsGarbageCollected<TObject>( ref TObject @object )
+			where TObject : class
+		{
+			Action<TObject> emptyAction = o => { };
+			IsGarbageCollected( ref @object, emptyAction );
+		}
+
+		public static void IsGarbageCollected<TObject>( ref TObject @object, Action<TObject> useObject )
+			where TObject : class
+		{
+			if ( typeof( TObject ) == typeof( string ) )
+			{
+				return;
+			}
+
+			int generation = GC.GetGeneration( @object );
+			useObject( @object );
+			WeakReference reference = new WeakReference( @object, true );
+			@object = null;
+
+			GC.Collect( generation, GCCollectionMode.Forced );
+			GC.WaitForPendingFinalizers();
+
+			Assert.IsNull( reference.Target );
+		}
 	}
 }

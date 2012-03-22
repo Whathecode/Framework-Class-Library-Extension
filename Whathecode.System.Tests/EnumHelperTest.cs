@@ -8,7 +8,7 @@ using Whathecode.System.Linq;
 namespace Whathecode.Tests.System
 {
 	/// <summary>
-	///   Unit tests for <see href = "EnumHelper{T}">EnumHelper</see>.
+	///   Unit tests for <see href = "EnumHelper{T}" />.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[TestClass]

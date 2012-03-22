@@ -145,6 +145,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AbstractDisposable.cs" />
     <Compile Include="ActionHelper.cs" />
     <Compile Include="Algorithm\IGate.cs" />
     <Compile Include="Algorithm\Loop.LoopIteration.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Arithmetic\MathOperator.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
     <Compile Include="DateTimePart.cs" />
+    <Compile Include="EnumHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
     <Compile Include="IO\PathHelper.cs" />
     <Compile Include="MathHelper.cs" />
@@ -210,7 +212,6 @@
     <Compile Include="Arithmetic\Range\Interval.cs" />
     <Compile Include="Algorithm\Loop.cs" />
     <Compile Include="Algorithm\Loop.OperationHook.cs" />
-    <Compile Include="EnumHelper.cs" />
     <Compile Include="Extensions\Extensions.IComparable.cs" />
     <Compile Include="Linq\Extensions.IEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
