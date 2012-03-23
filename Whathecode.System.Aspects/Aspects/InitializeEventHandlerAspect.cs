@@ -11,7 +11,7 @@ namespace Whathecode.System.Aspects
 	public class InitializeEventHandlerAspect : IEventLevelAspect, IInstanceScopedAspect
 	{
 		[NonSerialized]
-		WeakReference _instance;
+		object _instance;
 
 		[NonSerialized]
 		EventInfo _event;
@@ -24,8 +24,10 @@ namespace Whathecode.System.Aspects
 
 		public object CreateInstance( AdviceArgs adviceArgs )
 		{
-			_instance = new WeakReference( adviceArgs.Instance );
-			return MemberwiseClone();
+			var newAspect = (InitializeEventHandlerAspect)MemberwiseClone();
+			newAspect._instance = adviceArgs.Instance;
+
+			return newAspect;
 		}
 
 		public void RuntimeInitializeInstance()
@@ -34,7 +36,7 @@ namespace Whathecode.System.Aspects
 			ParameterExpression[] parameters = delegateInfo.GetParameters().Select( p => Expression.Parameter( p.ParameterType ) ).ToArray();
 			Delegate emptyDelegate
 				= Expression.Lambda( _event.EventHandlerType, Expression.Empty(), "EmptyDelegate", true, parameters ).Compile();
-			_event.AddEventHandler( _instance.Target, emptyDelegate );
+			_event.AddEventHandler( _instance, emptyDelegate );
 		}
 	}
 }
