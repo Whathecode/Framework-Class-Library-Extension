@@ -6,11 +6,11 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C96C8AD1-A0C2-4E02-B562-C345F0A53BB0}</ProjectGuid>
+    <ProjectGuid>{67217589-B234-4998-A446-F33116FFB63C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Whathecode.System.Aspects.Tests</RootNamespace>
-    <AssemblyName>Whathecode.System.Aspects.Tests</AssemblyName>
+    <RootNamespace>Whathecode.System.Experimental.Tests</RootNamespace>
+    <AssemblyName>Whathecode.System.Experimental.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -33,26 +33,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
       <Visible>False</Visible>
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aspects\InitializeEventHandlersAttributeTest.cs" />
+    <Compile Include="PrivateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\Extensions\ConstructorInfoExtensionsTest.cs" />
+    <Compile Include="Reflection\Extensions\EventInfoExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Whathecode.Microsoft.VisualStudio.QualityTools.Unit\Whathecode.Microsoft.VisualStudio.QualityTools.Unit.csproj">
-      <Project>{7CBBE1A6-C366-452B-A055-1E5DC457FD6B}</Project>
-      <Name>Whathecode.Microsoft.VisualStudio.QualityTools.Unit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Whathecode.System.Aspects\Whathecode.System.Aspects.csproj">
-      <Project>{EDE62A57-C6BA-4604-A727-7BC0476A5EE4}</Project>
-      <Name>Whathecode.System.Aspects</Name>
+    <ProjectReference Include="..\Whathecode.System.Experimental\Whathecode.System.Experimental.csproj">
+      <Project>{CD40CD00-CD86-4B38-8F81-300F847BE914}</Project>
+      <Name>Whathecode.System.Experimental</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

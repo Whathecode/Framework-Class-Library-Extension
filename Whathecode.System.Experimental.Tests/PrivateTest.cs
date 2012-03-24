@@ -1,17 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Whathecode.System;
+using Whathecode.System.Experimental;
 
 
-namespace Whathecode.Tests.System
+namespace Whathecode.Tests.System.Experimental
 {
 	[TestClass]
 	public class PrivateTest
 	{
 		class PrivateTestClass
 		{
-			// ReSharper disable MemberCanBeMadeStatic.Local
 			public static int StaticTest( int setValue )
-				// ReSharper restore MemberCanBeMadeStatic.Local
 			{
 				Private<int> test = Private<int>.Static( () => 0 );
 

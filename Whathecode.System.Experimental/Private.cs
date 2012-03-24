@@ -2,10 +2,10 @@
 using Whathecode.System.Collections.Generic;
 
 
-namespace Whathecode.System
+namespace Whathecode.System.Experimental
 {
 	/// <summary>
-	///   EXPERIMENTAL: Do not use!
+	///   EXPERIMENTAL! More info: http://whathecode.wordpress.com/2011/06/13/beyond-private-accessibility/
 	///   Class which serves as a workaround to support variables scoped even beyond private.
 	/// </summary>
 	/// <typeparam name = "TValue">The type of the local value.</typeparam>

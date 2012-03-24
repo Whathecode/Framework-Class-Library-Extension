@@ -223,10 +223,10 @@
     <Compile Include="Reflection\Extensions\Extensions.MemberInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.MethodInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.object.cs" />
+    <Compile Include="Reflection\Extensions\Extensions.FieldInfo.cs" />
     <Compile Include="Reflection\Operator.cs" />
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
-    <Compile Include="Private.cs" />
     <Compile Include="Collections\Generic\TupleList.cs" />
     <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
     <Compile Include="TimeSpanHelper.cs" />

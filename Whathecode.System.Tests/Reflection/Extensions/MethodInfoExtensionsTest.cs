@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Whathecode.System;
 using Whathecode.System.Reflection.Extensions;
 
 
@@ -13,7 +12,7 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 		#region Common test members
 
 		const string TestString = "bleh";
-		readonly MethodInfo _toUpperMethod = typeof( string ).GetMethod( "ToUpper", new Type[] { } );
+		readonly MethodInfo _toUpperMethod = typeof( string ).GetMethod( "ToUpper", Type.EmptyTypes );
 
 		#endregion // Common test members
 
