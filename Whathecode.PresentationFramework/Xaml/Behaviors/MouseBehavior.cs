@@ -65,6 +65,7 @@ namespace Whathecode.System.Xaml.Behaviors
 			LeftClickCommand,
 			RightClickCommand,
 			MovedCommand,
+			ClickDragContainer,
 			LeftClickDragCommand,
 			RightClickDragCommand
 		}
@@ -78,12 +79,14 @@ namespace Whathecode.System.Xaml.Behaviors
 		public static DependencyProperty RightMouseDownCommand = DependencyProperties[ Properties.RightMouseDownCommand ];
 		public static DependencyProperty LefClickCommand = DependencyProperties[ Properties.LeftClickCommand ];
 		public static DependencyProperty RightClickCommand = DependencyProperties[ Properties.RightClickCommand ];
-		public static DependencyProperty MovedCommandProperty = DependencyProperties[ Properties.MovedCommand ];		
+		public static DependencyProperty MovedCommandProperty = DependencyProperties[ Properties.MovedCommand ];
+		public static DependencyProperty ClickDragContainer = DependencyProperties[ Properties.ClickDragContainer ];
 		public static DependencyProperty LeftClickDragCommand = DependencyProperties[ Properties.LeftClickDragCommand ];
 		public static DependencyProperty RightClickDragCommand = DependencyProperties[ Properties.RightClickDragCommand ];
 
 		static readonly Dictionary<object, ClickDragInfo> LeftClickInfo = new Dictionary<object,ClickDragInfo>();
 		static readonly Dictionary<object, ClickDragInfo> RightClickInfo = new Dictionary<object, ClickDragInfo>();
+		static readonly Dictionary<object, FrameworkElement> ClickDragContainers = new Dictionary<object, FrameworkElement>(); 
 		static readonly Dictionary<object, ClickDragInfo> LeftClickDragInfo = new Dictionary<object, ClickDragInfo>();
 		static readonly Dictionary<object, ClickDragInfo> RightClickDragInfo = new Dictionary<object, ClickDragInfo>();
 
@@ -284,6 +287,47 @@ namespace Whathecode.System.Xaml.Behaviors
 		#endregion  // Moved Command
 
 
+		#region ClickDragContainer
+
+		[DependencyProperty( Properties.ClickDragContainer )]
+		public static FrameworkElement GetClickDragContainer( FrameworkElement target )
+		{
+			return DependencyProperties.GetValue( target, Properties.ClickDragContainer ) as FrameworkElement;
+		}
+
+		[DependencyProperty( Properties.ClickDragContainer )]
+		public static void SetClickDragContainer( FrameworkElement target, FrameworkElement value )
+		{
+			DependencyProperties.SetValue( target, Properties.ClickDragContainer, value );
+		}
+
+		[DependencyPropertyChanged( Properties.ClickDragContainer )]
+		static void OnClickDragContainerChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+		{
+			var element = d as FrameworkElement;
+			var container = e.NewValue as FrameworkElement;
+			ClickDragContainers.Update( d, container );
+
+			if ( element == null || container == null )
+			{
+				return;
+			}			
+
+			// Rehook current hooked events to the new container.
+			// TODO: For this to work the logic for dragging should be separated from the other behaviors.
+			/*if ( DependencyProperties.GetValue( element, Properties.LeftClickDragCommand ) != null )
+			{
+				HookMouseLeft( element, container );
+			}
+			if ( DependencyProperties.GetValue( element, Properties.RightClickDragCommand ) != null )
+			{
+				HookMouseRight( element, container );
+			}*/
+		}
+
+		#endregion	// ClickDragContainer
+
+
 		#region LeftClickDrag Command
 
 		[DependencyProperty( Properties.LeftClickDragCommand )]
@@ -349,22 +393,32 @@ namespace Whathecode.System.Xaml.Behaviors
 			element.MouseMove += OnMouseMoved;
 		}
 
-		static void HookMouseLeft( IInputElement element )
+		static void HookMouseLeft( IInputElement unhook, IInputElement hook = null )
 		{
+			if ( hook == null )
+			{
+				hook = unhook;
+			}
+
 			// Make sure to only hook event once.
-			element.MouseLeftButtonDown -= MouseButtonDown;
-			element.MouseLeftButtonDown += MouseButtonDown;
-			element.MouseLeftButtonUp -= MouseButtonUp;			
-			element.MouseLeftButtonUp += MouseButtonUp;
+			unhook.MouseLeftButtonDown -= MouseButtonDown;
+			hook.MouseLeftButtonDown += MouseButtonDown;
+			unhook.MouseLeftButtonUp -= MouseButtonUp;			
+			hook.MouseLeftButtonUp += MouseButtonUp;
 		}
 
-		static void HookMouseRight( IInputElement element )
+		static void HookMouseRight( IInputElement unhook, IInputElement hook = null )
 		{
+			if ( hook == null )
+			{
+				hook = unhook;
+			}
+
 			// Make sure to only hook event once.
-			element.MouseRightButtonDown -= MouseButtonDown;
-			element.MouseRightButtonDown += MouseButtonDown;
-			element.MouseRightButtonUp -= MouseButtonUp;
-			element.MouseRightButtonUp += MouseButtonUp;
+			unhook.MouseRightButtonDown -= MouseButtonDown;
+			hook.MouseRightButtonDown += MouseButtonDown;
+			unhook.MouseRightButtonUp -= MouseButtonUp;
+			hook.MouseRightButtonUp += MouseButtonUp;
 		}
 
 		static void OnMouseMoved( object sender, MouseEventArgs e )
