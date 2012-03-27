@@ -11,6 +11,7 @@ using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercion;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Validators;
 using Whathecode.System.Windows.Threading;
+using Whathecode.System.Linq;
 
 
 namespace Whathecode.System.Windows.DependencyPropertyFactory
@@ -149,7 +150,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 				group new
 				{
 					MemberInfo = item.Key,
-					Attribute = attribute
+					Attribute = (DependencyPropertyAttribute)attribute
 				} by attribute.GetId();
 			foreach ( var item in attachedProperties )
 			{
@@ -166,9 +167,20 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					// TODO: Do typechecking of parameters?
 					if ( setter != null && getter.Name.Substring( GetPrefix.Length ) == setter.Name.Substring( SetPrefix.Length ) )
 					{
-						// TODO: Check whether attributes settings correspond?
-						var attribute = (DependencyPropertyAttribute)attachedProperty.First().Attribute;
-						DependencyPropertyInfo info = GetAttachedDependencyPropertyInfo( getter, setter, attribute );
+						// Extract settings.
+						var attributes = attachedProperty.Select( a => a.Attribute );
+						var id = (T)attachedProperty.First().Attribute.GetId();						
+						// TODO: Allow checking whether or not the default value is set or not.
+						var defaultValues = attributes.Where( a => a.DefaultValue != null ).Select( a => a.DefaultValue );
+						var readOnlySettings = attributes.Where( a => a.IsReadOnlySet() ).Select( a => a.IsReadOnlySet() ? a.IsReadOnly() : new bool?() );
+						if ( !defaultValues.AllEqual() || !readOnlySettings.AllEqual() )
+						{
+							throw new InvalidImplementationException(
+								"All set options of \"" + typeof( DependencyPropertyAttribute )  + "\" should correspond with attributes with the same ID." +
+									" Preferably only set options on one of the attributes." );
+						}
+
+						DependencyPropertyInfo info = GetAttachedDependencyPropertyInfo( getter, setter, id, defaultValues.FirstOrDefault(), readOnlySettings.FirstOrDefault() );
 
 						// HACK: For collections, use a dependency property with non-matching name so the getter is called the first time,
 						//       so it can be initialized and doesn't need to be initialized through XAML.
@@ -237,7 +249,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
 		static DependencyPropertyInfo GetAttachedDependencyPropertyInfo(
 			MethodInfo getter, MethodInfo setter,
-			DependencyPropertyAttribute attribute )
+			T id, object defaultValue, bool? isReadOnly )
 		{
 			// TODO: Enforce naming conventions.
 
@@ -248,10 +260,10 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 				Name = getter.Name.Substring( GetPrefix.Length ),
 				Type = propertyType,
 				// When no default value is set, use the default value.
-				DefaultValue = attribute.DefaultValue ?? propertyType.CreateDefault(),
+				DefaultValue = defaultValue ?? propertyType.CreateDefault(),
 				// By default, readonly when no setter available.
-				ReadOnly = attribute.IsReadOnlySet() ? attribute.IsReadOnly() : setter == null,
-				Id = (T)attribute.GetId()
+				ReadOnly = isReadOnly ?? setter == null,
+				Id = id
 			};
 		}
 

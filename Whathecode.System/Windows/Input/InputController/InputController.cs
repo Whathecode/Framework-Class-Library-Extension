@@ -44,20 +44,16 @@ namespace Whathecode.System.Windows.Input.InputController
 
 		public void Update()
 		{
-			if ( Enabled )
+			if ( !Enabled )
 			{
-				foreach ( var trigger in _toRemove )
-				{
-					Triggers.Remove( trigger );
-				}
-				_toRemove.Clear();
-
-				// TODO: Why is there sometimes a InvalidOperationException here? (Triggers collection modified.)
-				foreach ( var trigger in Triggers )
-				{
-					trigger.Update();
-				}
+				return;
 			}
+
+			_toRemove.ForEach( t => Triggers.Remove( t ) );
+			_toRemove.Clear();
+
+			// TODO: Why is there sometimes a InvalidOperationException here? (Triggers collection modified.)
+			Triggers.ForEach( t => t.Update() );
 		}
 	}
 }

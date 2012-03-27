@@ -113,18 +113,33 @@ namespace Whathecode.System.Linq
 		}
 
 		/// <summary>
-		///   Returns whether the sequence contains a certain amount of elements.
+		///   Returns whether the sequence contains exactly a certain amount of elements.
 		/// </summary>
 		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
 		/// <param name = "source">The source for this extension method.</param>
-		/// <param name = "count">The amount of elements the sequence should contain.</param>
-		/// <returns>True when the sequence contains the specified amount of elements, false otherwise.</returns>
+		/// <param name = "count">The exact amount of elements the sequence should contain.</param>
+		/// <returns>True when the sequence contains exactly the specified amount of elements, false otherwise.</returns>
 		public static bool CountOf<T>( this IEnumerable<T> source, int count )
 		{
 			Contract.Requires( source != null );
 			Contract.Requires( count >= 0 );
 
-			return source.Take( count + 1 ).Count() == count;
+			return source.Take( count + 1 ).Count() == count;				
+		}
+
+		/// <summary>
+		///   Returns whether the sequence contains at least a certain amount of elements.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "count">The amount of elements the sequence should at leastcontain.</param>
+		/// <returns>True when the sequence contains at least the specified amount of elements, false otherwise.</returns>
+		public static bool CountOfAtLeast<T>( this IEnumerable<T> source, int count )
+		{
+			Contract.Requires( source != null );
+			Contract.Requires( count >= 0 );
+
+			return source.Take( count ).Count() == count;
 		}
 
 		/// <summary>
@@ -136,7 +151,7 @@ namespace Whathecode.System.Linq
 		/// <returns>true if the source sequence contains all elements; otherwise, false.</returns>
 		public static bool ContainsAll<T>( this IEnumerable<T> source, IEnumerable<T> elements )
 		{
-			return elements.All( e => source.Contains( e ) );
+			return elements.All( source.Contains );
 		}
 
 		/// <summary>
@@ -144,11 +159,33 @@ namespace Whathecode.System.Linq
 		/// </summary>
 		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
 		/// <param name = "source">The source for this extension method.</param>
-		/// <param name = "elements">The elements to compare with.</param>
+		/// <param name = "search">The elements to compare with.</param>
 		/// <returns>true if both sequences contain the same elements; otherwise, false.</returns>
-		public static bool ContainsOnly<T>( this IEnumerable<T> source, IEnumerable<T> elements )
+		public static bool ContainsOnly<T>( this IEnumerable<T> source, IEnumerable<T> search )
 		{
-			return source.Intersect( elements ).Count() == source.Count();				
+			var elements = source.ToList();
+			return elements.Intersect( search ).Count() == elements.Count;				
+		}
+
+		/// <summary>
+		///   Determines whether all values in a sequence are equal.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <returns>True when all values in the sequence or equal, false otherwise.</returns>
+		public static bool AllEqual<T>( this IEnumerable<T> source )
+		{
+			Contract.Requires( source != null );
+
+			// ReSharper disable PossibleMultipleEnumeration
+			if ( !source.Any() )	// This only attempts to retrieve the first item, not an expensive operation.
+			{
+				return true;
+			}
+
+			T first = source.First();
+			return source.Skip( 1 ).All( o => o.Equals( first ) );
+			// ReSharper restore PossibleMultipleEnumeration
 		}
 	}
 }

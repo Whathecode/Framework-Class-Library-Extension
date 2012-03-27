@@ -15,7 +15,7 @@ namespace Whathecode.System.Extensions
 		public static double DistanceTo( this Point source, Point to )
 		{
 			// Pythagoras to get distance.
-			return Math.Sqrt( Math.Pow( to.X - source.X, 2 ) + Math.Pow( to.Y + source.Y, 2 ) );
+			return Math.Sqrt( Math.Pow( to.X - source.X, 2 ) + Math.Pow( to.Y - source.Y, 2 ) );
 		}
 	}
 }
