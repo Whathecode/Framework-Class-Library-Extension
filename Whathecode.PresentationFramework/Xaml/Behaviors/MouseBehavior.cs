@@ -48,6 +48,10 @@ namespace Whathecode.System.Xaml.Behaviors
 			public MouseState Mouse;
 			public ClickDragState State;
 			public MousePosition StartPosition;
+			public Vector Displacement
+			{
+				get { return Mouse.Position.Relative - StartPosition.Relative; }
+			}
 		}
 
 		public enum ClickDragState
