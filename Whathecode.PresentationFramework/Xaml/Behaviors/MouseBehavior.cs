@@ -95,7 +95,8 @@ namespace Whathecode.System.Xaml.Behaviors
 		static readonly Dictionary<object, ClickDragInfo> LeftClickDragInfo = new Dictionary<object, ClickDragInfo>();
 		static readonly Dictionary<object, ClickDragInfo> RightClickDragInfo = new Dictionary<object, ClickDragInfo>();
 
-		static Point _startPosition;
+		static Point _previousPosition;
+		static double _distanceDragged;
 
 		#region LeftMouseUp Command
 
@@ -423,7 +424,11 @@ namespace Whathecode.System.Xaml.Behaviors
 			if ( mouseState.IsRightButtonDown )
 			{
 				RightClickDragInfo.TryUseValue( sender, info => executeCommand( info, GetRightClickDragCommand( element ) ) );
-			}		
+			}
+
+			Point newPosition = mouseState.Position.Relative;
+			_distanceDragged += _previousPosition.DistanceTo( newPosition );
+			_previousPosition = newPosition;
 
 			e.Handled = true;
 		}
@@ -486,7 +491,8 @@ namespace Whathecode.System.Xaml.Behaviors
 					clickInfo.Add( sender, info );
 				}
 			}
-			_startPosition = mouseState.Position.Relative;
+			_previousPosition = mouseState.Position.Relative;
+			_distanceDragged = 0;
 
 			// Trigger click drag commands.
 			ICommand clickDragCommand = e.ChangedButton == MouseButton.Left
@@ -539,8 +545,7 @@ namespace Whathecode.System.Xaml.Behaviors
 			}
 
 			// Trigger click commands.
-			double distance = _startPosition.DistanceTo( mouseState.Position.Relative );
-			if ( distance < MaxClickDragDistance )
+			if ( _distanceDragged < MaxClickDragDistance )
 			{
 				ClickDragInfo clickInfo;
 				ICommand leftClickCommand = GetLeftClickCommand( element );
