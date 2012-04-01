@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Runtime.Serialization;
 using Whathecode.System.Algorithm;
 using Whathecode.System.Operators;
 
@@ -13,9 +14,11 @@ namespace Whathecode.System.Arithmetic.Range
 	/// </summary>
 	/// <typeparam name = "TMath">The type used to specify the interval, and used for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
+	[DataContract]
 	public class Interval<TMath> : ICloneable
 		where TMath : IComparable<TMath>
 	{
+		[DataMember]
 		readonly bool _isReversed;
 		readonly static bool _isIntegralType;
 
@@ -23,21 +26,25 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <summary>
 		///   The start of the interval.
 		/// </summary>
+		[DataMember]
 		public TMath Start { get; private set; }
 
 		/// <summary>
 		///   The end of the interval.
 		/// </summary>
+		[DataMember]
 		public TMath End { get; private set; }
 
 		/// <summary>
 		///   Is the value at the start of the interval included in the interval.
 		/// </summary>
+		[DataMember]
 		public bool IsStartIncluded { get; private set; }
 
 		/// <summary>
 		///   Is the value at the end of the interval included in the interval.
 		/// </summary>
+		[DataMember]
 		public bool IsEndIncluded { get; private set; }
 
 		/// <summary>
