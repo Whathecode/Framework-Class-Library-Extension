@@ -570,19 +570,13 @@ namespace Whathecode.System.Xaml.Behaviors
 				? LeftClickDragInfo
 				: RightClickDragInfo;
 			ClickDragInfo dragInfo;
-			bool isButtonDown = e.ChangedButton == MouseButton.Left
-				? mouseState.IsLeftButtonDown
-				: mouseState.IsRightButtonDown;
 			if ( clickDragCommand != null && dragInfos.TryGetValue( sender, out dragInfo ) )
 			{
 				element.ReleaseMouseCapture();
 
-				if ( isButtonDown )
-				{
-					dragInfo.Mouse = mouseState;
-					dragInfo.State = ClickDragState.Stop;
-					clickDragCommand.Execute( dragInfo );
-				}
+				dragInfo.Mouse = mouseState;
+				dragInfo.State = ClickDragState.Stop;
+				clickDragCommand.Execute( dragInfo );
 
 				dragInfos.Remove( sender );
 			}

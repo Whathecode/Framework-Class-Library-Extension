@@ -40,8 +40,6 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 		[NonSerialized]
 		NotifyPropertyFactory<TProperties> _propertyFactory;
 
-		readonly List<NotifyPropertyAspect<TProperties>> _propertyAspects = new List<NotifyPropertyAspect<TProperties>>();
-
 		[IntroduceMember( Visibility = Visibility.Private )]
 		public NotifyPropertyFactory<TProperties> PropertyFactory
 		{
@@ -49,14 +47,18 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 			private set { _propertyFactory = value; }
 		}
 
+		readonly List<NotifyPropertyAspect<TProperties>> _notifyPropertyAspects = new List<NotifyPropertyAspect<TProperties>>();
+
 		[IntroduceMember( OverrideAction = MemberOverrideAction.Ignore )]
 		public event PropertyChangedEventHandler PropertyChanged;
 
 
 		public object CreateInstance( AdviceArgs adviceArgs )
 		{
-			_instance = adviceArgs.Instance;
-			return MemberwiseClone();
+			var newAspect = (ViewModelAspect<TProperties, TCommands>)MemberwiseClone();
+			newAspect._instance = adviceArgs.Instance;
+
+			return newAspect;
 		}
 
 		public void RuntimeInitializeInstance()
@@ -64,10 +66,7 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 			CommandFactory = new CommandFactory<TCommands>( _instance );
 			PropertyFactory = new NotifyPropertyFactory<TProperties>( _instance, () => PropertyChanged );
 
-			foreach ( var propertyAspect in _propertyAspects )
-			{
-				propertyAspect.Factory = PropertyFactory;
-			}
+			_notifyPropertyAspects.ForEach( p => p.SetPropertyFactory( _instance, PropertyFactory ) );
 		}
 
 		public IEnumerable<AspectInstance> ProvideAspects( object targetElement )
@@ -81,7 +80,7 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 			{
 				var attribute = member.Value[ 0 ];
 				var propertyAspect = new NotifyPropertyAspect<TProperties>( (TProperties)attribute.GetId() );
-				_propertyAspects.Add( propertyAspect );
+				_notifyPropertyAspects.Add( propertyAspect );
 
 				yield return new AspectInstance( member.Key, propertyAspect );
 			}

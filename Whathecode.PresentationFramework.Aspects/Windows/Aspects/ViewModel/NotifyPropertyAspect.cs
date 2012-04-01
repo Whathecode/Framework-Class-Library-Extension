@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using PostSharp.Aspects;
 using PostSharp.Reflection;
 using Whathecode.System.ComponentModel.NotifyPropertyFactory;
@@ -15,36 +16,33 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 	{
 		readonly T _property;
 
-		[NonSerialized]
-		NotifyPropertyFactory<T> _factory;
-
-		public NotifyPropertyFactory<T> Factory
-		{
-			get { return _factory; }
-			set { _factory = value; }
-		}
+		readonly Dictionary<object, NotifyPropertyFactory<T>> _factories = new Dictionary<object, NotifyPropertyFactory<T>>();
 
 
 		public NotifyPropertyAspect( T property )
 		{
-			_property = property;
+			_property = property;			
 		}
 
 
 		public void RuntimeInitialize( LocationInfo locationInfo )
 		{
 			// Nothing to do.
-			// The Factory property is initialized by the 'parent' ViewModelAspect.
+		}
+
+		public void SetPropertyFactory( object instance, NotifyPropertyFactory<T> factory )
+		{
+			_factories.Add( instance, factory );
 		}
 
 		public void OnGetValue( LocationInterceptionArgs args )
 		{
-			args.Value = Factory.GetValue( _property );
+			args.Value = _factories[ args.Instance ].GetValue( _property );
 		}
 
 		public void OnSetValue( LocationInterceptionArgs args )
 		{
-			Factory.SetValue( _property, args.Value );
+			_factories[ args.Instance ].SetValue( _property, args.Value );
 		}
 	}
 }
