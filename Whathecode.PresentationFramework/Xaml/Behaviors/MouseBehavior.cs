@@ -98,6 +98,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		static Point _previousPosition;
 		static double _distanceDragged;
 
+
 		#region LeftMouseUp Command
 
 		[DependencyProperty( Properties.LeftMouseUpCommand )]
@@ -402,19 +403,16 @@ namespace Whathecode.System.Xaml.Behaviors
 
 			// Trigger MovedCommand.
 			ICommand movedCommand = GetMovedCommand( element );
-			if ( movedCommand != null )
-			{
-				movedCommand.Execute( mouseState );
-			}
+			movedCommand.SafeExecute( mouseState );
 
 			// Trigger click drag commands.
 			Action<ClickDragInfo, ICommand> executeCommand = ( info, command ) =>
 			{
-				if ( command != null && info.State != ClickDragState.Stop )
+				if ( info.State != ClickDragState.Stop )
 				{
 					info.Mouse = mouseState;
 					info.State = ClickDragState.Moving;
-					command.Execute( info );
+					command.SafeExecute( info );
 				}
 			};
 			if ( mouseState.IsLeftButtonDown )
@@ -460,14 +458,14 @@ namespace Whathecode.System.Xaml.Behaviors
 
 			// Trigger down commands.
 			ICommand leftDownCommand = GetLeftMouseDownCommand( element );
-			if ( leftDownCommand != null && e.ChangedButton == MouseButton.Left )
+			if ( e.ChangedButton == MouseButton.Left )
 			{
-				leftDownCommand.Execute( mouseState );
+				leftDownCommand.SafeExecute( mouseState );
 			}
 			ICommand rightDownCommand = GetRightMouseDownCommand( element );
-			if ( rightDownCommand != null && e.ChangedButton == MouseButton.Right )
+			if ( e.ChangedButton == MouseButton.Right )
 			{
-				rightDownCommand.Execute( mouseState );
+				rightDownCommand.SafeExecute( mouseState );
 			}
 
 			// Track click commands.
@@ -515,7 +513,7 @@ namespace Whathecode.System.Xaml.Behaviors
 					State = ClickDragState.Start,
 					StartPosition = mouseState.Position
 				};
-				clickDragCommand.Execute( info );
+				clickDragCommand.SafeExecute( info );
 
 				if ( !dragInfo.ContainsKey( sender ) )
 				{
@@ -534,14 +532,14 @@ namespace Whathecode.System.Xaml.Behaviors
 
 			// Trigger up commands.
 			ICommand leftUpCommand = GetLeftMouseUpCommand( element );
-			if ( leftUpCommand != null && e.ChangedButton == MouseButton.Left )
+			if ( e.ChangedButton == MouseButton.Left )
 			{
-				leftUpCommand.Execute( mouseState );
+				leftUpCommand.SafeExecute( mouseState );
 			}
 			ICommand rightUpCommand = GetRightMouseUpCommand( element );
-			if ( rightUpCommand != null && e.ChangedButton == MouseButton.Right )
+			if ( e.ChangedButton == MouseButton.Right )
 			{
-				rightUpCommand.Execute( mouseState );
+				rightUpCommand.SafeExecute( mouseState );
 			}
 
 			// Trigger click commands.
@@ -549,14 +547,14 @@ namespace Whathecode.System.Xaml.Behaviors
 			{
 				ClickDragInfo clickInfo;
 				ICommand leftClickCommand = GetLeftClickCommand( element );
-				if ( leftClickCommand != null && e.ChangedButton == MouseButton.Left && LeftClickInfo.TryGetValue( sender, out clickInfo ) )
+				if ( e.ChangedButton == MouseButton.Left && LeftClickInfo.TryGetValue( sender, out clickInfo ) )
 				{
-					leftClickCommand.Execute( mouseState );
+					leftClickCommand.SafeExecute( mouseState );
 				}
 				ICommand rightClickCommand = GetRightClickCommand( element );
-				if ( rightClickCommand != null && e.ChangedButton == MouseButton.Right && RightClickInfo.TryGetValue( sender, out clickInfo ) )
+				if ( e.ChangedButton == MouseButton.Right && RightClickInfo.TryGetValue( sender, out clickInfo ) )
 				{
-					rightClickCommand.Execute( mouseState );
+					rightClickCommand.SafeExecute( mouseState );
 				}
 			}
 			LeftClickInfo.Clear();
@@ -570,18 +568,26 @@ namespace Whathecode.System.Xaml.Behaviors
 				? LeftClickDragInfo
 				: RightClickDragInfo;
 			ClickDragInfo dragInfo;
-			if ( clickDragCommand != null && dragInfos.TryGetValue( sender, out dragInfo ) )
+			if ( dragInfos.TryGetValue( sender, out dragInfo ) )
 			{
 				element.ReleaseMouseCapture();
 
 				dragInfo.Mouse = mouseState;
 				dragInfo.State = ClickDragState.Stop;
-				clickDragCommand.Execute( dragInfo );
+				clickDragCommand.SafeExecute( dragInfo );
 
 				dragInfos.Remove( sender );
 			}
 
 			e.Handled = true;
+		}
+
+		static void SafeExecute( this ICommand command, object parameter )
+		{
+			if ( command != null && command.CanExecute( null ) )
+			{
+				command.Execute( parameter );
+			}
 		}
 	}
 }

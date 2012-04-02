@@ -21,7 +21,7 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 
 		public NotifyPropertyAspect( T property )
 		{
-			_property = property;			
+			_property = property;
 		}
 
 

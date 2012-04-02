@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 
 namespace Whathecode.System.Extensions
@@ -14,6 +15,8 @@ namespace Whathecode.System.Extensions
 		/// <param name = "action">The action to perform.</param>
 		public static void ForEach<T>( this IEnumerable<T> source, Action<T> action )
 		{
+			Contract.Requires( source != null && action != null );
+
 			foreach ( var item in source )
 			{
 				action( item );
