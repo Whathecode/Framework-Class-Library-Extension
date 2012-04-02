@@ -56,7 +56,7 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 			{
 				// Get dictionary containing commands from command factory.
 				const string commandsProperty = CommandFactory<object>.CommandsProperty;
-				IDictionary dictionary = factory.GetPropertyValue( commandsProperty ) as IDictionary;
+				var dictionary = factory.GetPropertyValue( commandsProperty ) as IDictionary;
 				if ( dictionary == null )
 				{
 					throw new InvalidCastException( "Expected that \"" + commandsProperty + "\" property is IDictionary." );
@@ -80,7 +80,7 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 
 		void TriggerAction()
 		{
-			if ( _command != null )
+			if ( _command != null && _command.CanExecute( null ) )
 			{
 				_command.Execute( null );
 			}
