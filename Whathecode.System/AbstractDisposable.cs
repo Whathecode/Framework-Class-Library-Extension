@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 
 namespace Whathecode.System
@@ -7,7 +8,8 @@ namespace Whathecode.System
 	///   A base implementation for the Disposable pattern, implementing <see cref="IDisposable" />.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	abstract class AbstractDisposable : IDisposable
+	[DataContract]
+	public abstract class AbstractDisposable : IDisposable
 	{
 		public event Action OnDisposed;
 		bool _isDisposed = false;
