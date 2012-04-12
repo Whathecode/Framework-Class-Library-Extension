@@ -360,7 +360,8 @@ namespace Whathecode.System.Arithmetic.Range
 
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			// TODO: Would a custom hash code be useful if this type is made mutable?
+			return base.GetHashCode();
 		}
 
 		#endregion  // Get operations.

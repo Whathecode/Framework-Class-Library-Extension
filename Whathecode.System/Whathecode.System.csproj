@@ -163,6 +163,7 @@
     <Compile Include="DateTimePart.cs" />
     <Compile Include="EnumHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
+    <Compile Include="Extensions\Extensions.TimeSpan.cs" />
     <Compile Include="IO\PathHelper.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Operators\CastOperator.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Collections\Generic\TupleList.cs" />
     <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
     <Compile Include="TimeSpanHelper.cs" />
+    <Compile Include="TimeSpanPart.cs" />
     <Compile Include="TypeHelper.cs" />
     <Compile Include="Variable.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AbstractCombineCondition.cs" />
