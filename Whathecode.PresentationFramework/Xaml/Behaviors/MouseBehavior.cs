@@ -11,7 +11,7 @@ using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 namespace Whathecode.System.Xaml.Behaviors
 {
 	/// <summary>
-	///   Properties which can be attached to a <see cref = "FrameworkElement">FrameworkElement</see> to detect mouse behavior.
+	///   Properties which can be attached to a <see cref = "FrameworkElement" /> to detect mouse behavior.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	public static class MouseBehavior
