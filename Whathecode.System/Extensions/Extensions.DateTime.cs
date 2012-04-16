@@ -49,5 +49,35 @@ namespace Whathecode.System.Extensions
 				part >= DateTimePart.Second ? source.Second : 0,
 				part >= DateTimePart.Millisecond ? source.Millisecond : 0 );
 		}
+
+		/// <summary>
+		///   Safely subtract a given timespan from a <see cref="DateTime" />, preventing an <see cref="ArgumentOutOfRangeException" /> from occurring.
+		///   When the subtraction results in an invalid <see cref="DateTime" />, the nearest valid <see cref="DateTime" /> is used.
+		/// </summary>
+		/// <param name = "source">The <see cref="DateTime" /> to subtract from.</param>
+		/// <param name = "time">The amount of time to subtract from the <see cref="DateTime" />.</param>
+		public static DateTime SafeSubtract( this DateTime source, TimeSpan time )
+		{
+			long minTicks = DateTime.MinValue.Ticks;
+
+			return source.Ticks - time.Ticks < minTicks
+				? DateTime.MinValue
+				: source - time;
+		}
+
+		/// <summary>
+		///   Safely add a given timespan to a <see cref="DateTime" />, preventing an <see cref="ArgumentOutOfRangeException" /> from occurring.
+		///   When the addition results in an invalid <see cref="DateTime" />, the nearest valid <see cref="DateTime" /> is used.
+		/// </summary>
+		/// <param name = "source">The <see cref="DateTime" /> to add to.</param>
+		/// <param name = "time">The amount of time to add to the <see cref="DateTime" />.</param>
+		public static DateTime SafeAdd( this DateTime source, TimeSpan time )
+		{
+			long maxTicks = DateTime.MaxValue.Ticks;
+
+			return source.Ticks + time.Ticks > maxTicks
+				? DateTime.MaxValue
+				: source + time;
+		}
 	}
 }
