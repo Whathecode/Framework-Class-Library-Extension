@@ -23,6 +23,21 @@ namespace Whathecode.System.Arithmetic.Range
 		readonly static bool _isIntegralType;
 
 
+		static Interval<TMath> _empty = null;
+		public static Interval<TMath> Empty
+		{
+			get
+			{
+				if ( _empty == null )
+				{
+					TMath zero = CastOperator<double, TMath>.Cast( 0 );
+					_empty = new Interval<TMath>( zero, false, zero, false );
+				}
+
+				return _empty;
+			}
+		}
+
 		/// <summary>
 		///   The start of the interval.
 		/// </summary>
@@ -229,6 +244,33 @@ namespace Whathecode.System.Arithmetic.Range
 				: value.CompareTo( biggest ) > 0
 					? biggest
 					: value;
+		}
+
+		/// <summary>
+		///   Limit a given range to this range.
+		///   When part of the given range lies outside of this range, it isn't included in the resulting range.
+		/// </summary>
+		/// <param name = "range">The range to limit to this range.</param>
+		/// <returns>The given range, which excludes all parts lying outside of this range.</returns>
+		public Interval<TMath> Clamp( Interval<TMath> range )
+		{
+			var intersection = Intersection( range );
+			if ( intersection == null )
+			{
+				return Empty;
+			}
+
+			TMath smallest = _isReversed ? End : Start;
+			TMath biggest = _isReversed ? Start : End;
+			TMath clampSmallest = range._isReversed ? End : Start;
+			TMath clampBiggest = range._isReversed ? Start : End;
+			bool smaller = smallest.CompareTo( clampSmallest ) < 0;
+			bool bigger = biggest.CompareTo( clampBiggest ) > 0;
+			return new Interval<TMath>(
+				smaller ? clampSmallest : smallest,
+				smaller ? intersection.IsStartIncluded : IsStartIncluded,
+				bigger ? clampBiggest : biggest,
+				bigger ? intersection.IsEndIncluded : IsEndIncluded );
 		}
 
 		/// <summary>

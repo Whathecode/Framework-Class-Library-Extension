@@ -142,7 +142,6 @@
     <Compile Include="Windows\Media\Media3D\PitchRollYawRotation.cs" />
     <Compile Include="Windows\SizeHelper.cs" />
     <Compile Include="Xaml\Behaviors\MouseBehavior.cs" />
-    <Compile Include="Xaml\Behaviors\PropertyBehavior.cs" />
     <Compile Include="Xaml\PropertyObserver.cs" />
     <Compile Include="Xaml\PropertyObservers.cs" />
   </ItemGroup>
