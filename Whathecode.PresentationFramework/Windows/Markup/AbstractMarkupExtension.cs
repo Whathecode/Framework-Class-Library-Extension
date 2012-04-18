@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Markup;
 
 
@@ -27,9 +28,19 @@ namespace Whathecode.System.Windows.Markup
 			object targetObject = targetResolver.TargetObject;
 			object targetProperty = targetResolver.TargetProperty;
 
-			ServiceProvider = serviceProvider;
+			if ( ServiceProvider == null )
+			{
+				// HACK: The service provider provided by SharedDP objects doesn't seem to work?
+				ServiceProvider = serviceProvider;
+			}
 
-			return ProvideValue( targetObject, targetProperty );
+			if ( targetObject is DependencyObject )
+			{
+				return ProvideValue( targetObject, targetProperty );				
+			}			
+
+			// Required to resolve SharedDP when Binding is used in templates.
+			return this;
 		}
 
 		/// <summary>

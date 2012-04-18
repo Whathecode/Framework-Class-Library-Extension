@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
+using System.Xaml;
 using Whathecode.System.Windows.Threading;
 
 
@@ -15,6 +17,13 @@ namespace Whathecode.System.Windows.Markup
 		protected DependencyObject DependencyObject { get; private set; }
 
 		protected DependencyProperty DependencyProperty { get; private set; }
+
+
+		/// <summary>
+		///   Gets or sets the name of the element to use as the binding source object.
+		/// </summary>
+		public string ElementName { get; set; }
+
 
 		/// <summary>
 		///   Provides a value for a dependency property of a dependency object.
@@ -39,6 +48,13 @@ namespace Whathecode.System.Windows.Markup
 					"and the target property should be a DependencyProperty." );
 			}
 
+			// Find element with specified name if ElementName is set.
+			if ( ElementName != null )
+			{
+				var nameScope = NameScope.GetNameScope( (DependencyObject)GetRootObject() );
+				DependencyObject = (DependencyObject)nameScope.FindName( ElementName );
+			}
+
 			return ProvideValue( DependencyObject, DependencyProperty );
 		}
 
@@ -47,6 +63,12 @@ namespace Whathecode.System.Windows.Markup
 			Action updateAction = () => DependencyObject.SetValue( DependencyProperty, value );
 
 			DispatcherHelper.SafeDispatch( DependencyObject.Dispatcher, updateAction );
+		}
+
+		protected object GetRootObject()
+		{
+			var rootProvider = (IRootObjectProvider)ServiceProvider.GetService( typeof( IRootObjectProvider ) );
+			return rootProvider.RootObject;
 		}
 	}
 }

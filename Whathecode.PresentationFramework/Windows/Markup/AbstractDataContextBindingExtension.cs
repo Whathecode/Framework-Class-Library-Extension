@@ -43,9 +43,8 @@ namespace Whathecode.System.Windows.Markup
 			else
 			{
 				// Use the root object in case the DependencyObject isn't a FrameworkElement. (e.g. Freezable)
-				// TODO: This might be an overly simplistic implementation. What about custom DataContext's lower in the tree?				
-				var rootProvider = (IRootObjectProvider)ServiceProvider.GetService( typeof( IRootObjectProvider ) );
-				_frameworkElement = rootProvider.RootObject as FrameworkElement;
+				// TODO: This might be an overly simplistic implementation. What about custom DataContext's lower in the tree?
+				_frameworkElement = GetRootObject() as FrameworkElement;
 			}			
 			if ( _frameworkElement == null )
 			{
