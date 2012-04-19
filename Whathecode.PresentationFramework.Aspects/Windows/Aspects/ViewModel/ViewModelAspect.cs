@@ -71,7 +71,7 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 
 		public IEnumerable<AspectInstance> ProvideAspects( object targetElement )
 		{
-			Type targetType = (Type)targetElement;
+			var targetType = (Type)targetElement;
 
 			Dictionary<MemberInfo, NotifyPropertyAttribute[]> attributedProperties
 				= targetType.GetAttributedMembers<NotifyPropertyAttribute>( MemberTypes.Property );
@@ -84,8 +84,6 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 
 				yield return new AspectInstance( member.Key, propertyAspect );
 			}
-
-			yield break;
 		}
 	}
 }
