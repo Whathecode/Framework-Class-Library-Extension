@@ -85,8 +85,9 @@ namespace Whathecode.System.Windows.Data
 
 		/// <summary>
 		///   Gets or sets the name of the element to use as the binding source object.
+		///   TODO: Is there a cleaner way than hiding 'ElementName' from the base class?
 		/// </summary>
-		public string ElementName
+		public new string ElementName
 		{
 			get { return _binding.ElementName; }
 			set { _binding.ElementName = value; }

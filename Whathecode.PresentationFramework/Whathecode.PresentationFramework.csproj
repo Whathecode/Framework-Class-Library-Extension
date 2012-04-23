@@ -123,6 +123,7 @@
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Validators\RegexValidationAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Coercion\AbstractControlCoercion.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\DependencyPropertyFactory.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Extensions.cs" />
     <Compile Include="Windows\Input\AbstractCommand.cs" />
     <Compile Include="Windows\Input\AbstractDelegateCommand.cs" />
     <Compile Include="Windows\Input\CommandFactory\Attributes\CommandCanExecuteAttribute.cs" />

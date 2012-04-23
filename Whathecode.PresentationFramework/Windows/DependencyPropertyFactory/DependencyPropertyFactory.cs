@@ -129,7 +129,16 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 				}
 			}
 
-			// TODO: Check whether callback attributes are applied to non-static functions. They should be static!
+			// Check whether callback attributes are applied to non-static functions. They should be static!
+			var callbackMethods =
+				from method in OwnerType.GetMethods( ReflectionHelper.AllClassMembers )
+				from attribute in (Attribute[])method.GetCustomAttributes( typeof( AbstractDependencyPropertyCallbackAttribute ), false )
+				select method;
+			if ( !callbackMethods.All( m => m.IsStatic ) )
+			{
+				throw new InvalidImplementationException(
+					"Not all dependency property callback functions are defined as static in type '" + OwnerType.Name + "'." );
+			}
 
 			// Create dependency properties.
 			var properties =
@@ -171,16 +180,21 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 						var attributes = attachedProperty.Select( a => a.Attribute );
 						var id = (T)attachedProperty.First().Attribute.GetId();						
 						// TODO: Allow checking whether or not the default value is set or not.
-						var defaultValues = attributes.Where( a => a.DefaultValue != null ).Select( a => a.DefaultValue );
-						var readOnlySettings = attributes.Where( a => a.IsReadOnlySet() ).Select( a => a.IsReadOnlySet() ? a.IsReadOnly() : new bool?() );
+						var defaultValues =
+							attributes.Where( a => a.DefaultValue != null ).Select( a => a.DefaultValue );
+						var readOnlySettings =
+							attributes.Where( a => a.IsReadOnlySet() ).Select( a => a.IsReadOnlySet() ? a.IsReadOnly() : new bool?() );
 						if ( !defaultValues.AllEqual() || !readOnlySettings.AllEqual() )
 						{
 							throw new InvalidImplementationException(
-								"All set options of \"" + typeof( DependencyPropertyAttribute )  + "\" should correspond with attributes with the same ID." +
-									" Preferably only set options on one of the attributes." );
+								"All set options of \"" + typeof( DependencyPropertyAttribute )  +
+								"\" should correspond with attributes with the same ID." +
+								" Preferably only set options on one of the attributes." );
 						}
 
-						DependencyPropertyInfo info = GetAttachedDependencyPropertyInfo( getter, setter, id, defaultValues.FirstOrDefault(), readOnlySettings.FirstOrDefault() );
+						DependencyPropertyInfo info = GetAttachedDependencyPropertyInfo(
+							getter, setter,
+							id, defaultValues.FirstOrDefault(), readOnlySettings.FirstOrDefault() );
 
 						// HACK: For collections, use a dependency property with non-matching name so the getter is called the first time,
 						//       so it can be initialized and doesn't need to be initialized through XAML.

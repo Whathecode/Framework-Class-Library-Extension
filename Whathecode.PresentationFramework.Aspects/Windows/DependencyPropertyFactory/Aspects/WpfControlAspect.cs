@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
+using PS = PostSharp.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 
@@ -39,7 +39,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 		static List<DependencyPropertyAspect<T>> _propertyAspects = new List<DependencyPropertyAspect<T>>();
 
 
-		[IntroduceMember( Visibility = Visibility.Private )]
+		[IntroduceMember( Visibility = PS.Visibility.Private )]
 		public ConcreteDependencyPropertyFactory PropertyFactory
 		{
 			get { return _propertyFactory; }
