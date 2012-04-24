@@ -223,5 +223,24 @@ namespace Whathecode.System.Windows.Interop
 		/// </remarks>
 		[DllImport( Dll )]
 		public static extern bool ShowWindow( IntPtr windowHandle, WindowState showCommand );
+
+		/// <summary>
+		///   Retrieves the status of the specified virtual key.
+		///   The status specifies whether the key is up, down, or toggled (on, off—alternating each time the key is pressed).
+		/// </summary>
+		/// <remarks>
+		///   The key status returned from this function changes as a thread reads key messages from its message queue.
+		///   The status does not reflect the interrupt-level state associated with the hardware.
+		///   Use the GetAsyncKeyState function to retrieve that information.
+		/// </remarks>
+		/// <returns>
+		///   The return value specifies the status of the specified virtual key, as follows:
+		///   - If the high-order bit is 1, the key is down; otherwise, it is up.
+		///   - If the low-order bit is 1, the key is toggled. A key, such as the CAPS LOCK key, is toggled if it is turned on.
+		///     The key is off and untoggled if the low-order bit is 0.
+		///     A toggle key's indicator light (if any) on the keyboard will be on when the key is toggled, and off when the key is untoggled.
+		/// </returns>
+		[DllImport( Dll )]
+		public static extern short GetKeyState( int virtualkey );
 	}
 }
