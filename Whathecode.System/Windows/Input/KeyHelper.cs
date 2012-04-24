@@ -1,6 +1,5 @@
 ﻿using System.Windows.Input;
 using Whathecode.System.Windows.Interop;
-using W = System.Windows.Input;
 
 
 namespace Whathecode.System.Windows.Input
@@ -8,14 +7,14 @@ namespace Whathecode.System.Windows.Input
 	/// <summary>
 	///   Provides static methods which allow for more direct access to the keyboard.
 	/// </summary>
-	public static class KeyInterop
+	public static class KeyHelper
 	{
 		/// <summary>
-		///   Returns whether or not a given key is down.
+		///   Returns whether or not Caps Lock is enabled.
 		/// </summary>
-		public static bool IsKeyDown( Key key )
+		public static bool IsCapsLockEnabled()
 		{
-			short state = User32.GetKeyState( W.KeyInterop.VirtualKeyFromKey( key ) );
+			short state = User32.GetKeyState( KeyInterop.VirtualKeyFromKey( Key.CapsLock ) );
 			return ((ushort)state & 0xFFFF) != 0;
 		}
 	}

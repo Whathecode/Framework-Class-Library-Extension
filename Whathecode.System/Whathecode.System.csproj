@@ -244,7 +244,7 @@
     <Compile Include="Windows\Input\InputController\Trigger\EventTrigger.cs" />
     <Compile Include="Extensions\Extensions.Point.cs" />
     <Compile Include="Windows\Input\InputController\Trigger\SequenceTrigger.cs" />
-    <Compile Include="Windows\Input\KeyInterop.cs" />
+    <Compile Include="Windows\Input\KeyHelper.cs" />
     <Compile Include="Windows\Interop\User32.cs" />
     <Compile Include="Windows\Interop\User32.Types.cs" />
     <Compile Include="Windows\Interop\WindowInfo.cs" />
