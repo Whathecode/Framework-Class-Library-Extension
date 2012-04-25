@@ -63,9 +63,17 @@ namespace Whathecode.System.Arithmetic
 		/// <summary>
 		///   Calculate the rate of change based on the samples currently added.
 		/// </summary>
-		/// <returns>The rate of change of the passed values, calculated over the indicated interval.</returns>
+		/// <returns>
+		///   The rate of change of the passed values, calculated over the indicated interval.
+		///   If no samples are available, the rate of change is considered to be 0.
+		/// </returns>
 		public TValue GetCurrentRateOfChange()
 		{
+			if ( _samples.Count == 0 )
+			{
+				return CastOperator<double, TValue>.Cast( 0 );
+			}
+
 			Tuple<TValue, TOver> first = _samples.First();
 			Tuple<TValue, TOver> last = _samples.Last();
 
