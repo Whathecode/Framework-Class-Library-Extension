@@ -50,7 +50,15 @@ namespace Whathecode.System.Aspects
 				= Expression.Lambda( eventInfo.EventHandlerType, Expression.Empty(), "EmptyDelegate", true, parameters ).Compile();
 
 			// Create a delegate which adds the empty handler to an instance.
-			_addEmptyEventHandler = instance => eventInfo.AddEventHandler( instance, emptyDelegate );
+			MethodInfo addMethod = eventInfo.GetAddMethod( true );
+			if ( addMethod.IsPublic )
+			{
+				_addEmptyEventHandler = instance => eventInfo.AddEventHandler( instance, emptyDelegate );
+			}
+			else
+			{
+				_addEmptyEventHandler = instance => addMethod.Invoke( instance, new[] { emptyDelegate } );
+			}
 		}
 	}
 }
