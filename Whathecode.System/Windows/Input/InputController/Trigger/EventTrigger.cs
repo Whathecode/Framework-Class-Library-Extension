@@ -15,13 +15,16 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 		/// </summary>
 		readonly AbstractCondition _inputCondition;
 
-		bool _isTriggeredLastUpdate;
-		DateTime _lastTriggerTime = new DateTime( 0 );
-
 		/// <summary>
 		///   Enable/disable this trigger. Default is true.
 		/// </summary>
 		public bool Enabled { get; set; }
+
+		/// <summary>
+		///   Specifies whether or not the trigger can be repeated multiple times in a row. Default is false.
+		///   If false, the condition needs to be lost, prior to being able to be triggered again.
+		/// </summary>
+		public bool IsRepeatingTrigger { get; set; }
 
 		/// <summary>
 		///   The minimum interval in milliseconds in between action triggers. Action isn't triggered faster than this.
@@ -50,34 +53,50 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 		}
 
 
+		bool _canTrigger = true;
+		bool _wasTriggered;
+		DateTime _lastTriggerTime = new DateTime( 0 );
 		internal void Update()
 		{
 			_inputCondition.Update();
 
-			if ( Enabled )
+			if ( !Enabled )
 			{
-				if ( _inputCondition.Validates() )
-				{
-					_isTriggeredLastUpdate = true;
+				return;
+			}
 
-					DateTime now = DateTime.Now;
-					if ( (now - _lastTriggerTime).TotalMilliseconds >= MinimumTriggerInterval.TotalMilliseconds )
-					{
-						if ( ConditionsMet != null )
-						{
-							ConditionsMet();
-						}
-						_lastTriggerTime = now;
-					}
-				}
-				else if ( _isTriggeredLastUpdate )
+			if ( _inputCondition.Validates() )
+			{
+				if ( !_canTrigger )
 				{
-					_isTriggeredLastUpdate = false;
-					_lastTriggerTime = DateTime.MinValue;
-					if ( ConditionLostEvent != null )
+					return;
+				}
+
+				_wasTriggered = true;
+
+				DateTime now = DateTime.Now;
+				if ( (now - _lastTriggerTime).TotalMilliseconds >= MinimumTriggerInterval.TotalMilliseconds )
+				{
+					if ( ConditionsMet != null )
 					{
-						ConditionLostEvent();
+						ConditionsMet();
 					}
+					_lastTriggerTime = now;
+				}
+
+				if ( !IsRepeatingTrigger )
+				{
+					_canTrigger = false;
+				}
+			}
+			else if ( _wasTriggered )
+			{
+				_canTrigger = true;
+				_wasTriggered = false;
+				_lastTriggerTime = DateTime.MinValue;
+				if ( ConditionLostEvent != null )
+				{
+					ConditionLostEvent();
 				}
 			}
 		}

@@ -239,6 +239,7 @@
     <Compile Include="Windows\Input\InputController\Condition\AbstractCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\AndCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\DelegateCondition.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\ExclusiveCondition.cs" />
     <Compile Include="Windows\Input\InputController\Condition\OrCondition.cs" />
     <Compile Include="Windows\Input\InputController\InputController.cs" />
     <Compile Include="Windows\Input\InputController\Trigger\EventTrigger.cs" />
