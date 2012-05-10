@@ -62,7 +62,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		}
 
 		[Flags]
-		enum Properties
+		public enum Properties
 		{
 			LeftMouseUpCommand,
 			RightMouseUpCommand,
@@ -397,7 +397,7 @@ namespace Whathecode.System.Xaml.Behaviors
 
 		static void OnMouseMoved( object sender, MouseEventArgs e )
 		{
-			var element = (FrameworkElement)sender;
+			var element = (FrameworkElement)sender;			
 
 			MouseState mouseState = GetMouseState( e, element );
 
