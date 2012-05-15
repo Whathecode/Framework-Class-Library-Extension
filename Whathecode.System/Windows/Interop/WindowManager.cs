@@ -32,5 +32,22 @@ namespace Whathecode.System.Windows.Interop
 
 			return windows;
 		}
+
+		/// <summary>
+		///   Retrieves the window which currently has focus.
+		/// </summary>
+		/// <returns>The <see cref="WindowInfo" /> of the window which currently has focus.</returns>
+		public static WindowInfo GetForegroundWindow()
+		{
+			IntPtr windowHandle = User32.GetForegroundWindow();
+			while ( windowHandle == IntPtr.Zero )
+			{
+				// The foreground window can be NULL in certain circumstances, such as when a window is losing activation.
+				// Wait for a new window to get focus.
+				windowHandle = User32.GetForegroundWindow();
+			}
+
+			return new WindowInfo( windowHandle );
+		}
 	}
 }

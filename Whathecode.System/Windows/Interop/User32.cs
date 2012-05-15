@@ -15,6 +15,8 @@ namespace Whathecode.System.Windows.Interop
 		const string Dll = "user32.dll";
 
 
+		#region Window Functions.
+
 		/// <summary>
 		///   An application-defined callback function used with the EnumWindows or EnumDesktopWindows function.
 		///   It receives top-level window handles. The WNDENUMPROC type defines a pointer to this callback function.
@@ -225,6 +227,22 @@ namespace Whathecode.System.Windows.Interop
 		public static extern bool ShowWindow( IntPtr windowHandle, WindowState showCommand );
 
 		/// <summary>
+		///   Retrieves a handle to the foreground window (the window with which the user is currently working).
+		///   The system assigns a slightly higher priority to the thread that creates the foreground window than it does to other threads.
+		/// </summary>
+		/// <returns>
+		///   The return value is a handle to the foreground window.
+		///   The foreground window can be NULL in certain circumstances, such as when a window is losing activation.
+		/// </returns>
+		[DllImport( Dll )]
+		public static extern IntPtr GetForegroundWindow();
+
+		#endregion // Window Functions.
+
+
+		#region Keyboard Functions.
+
+		/// <summary>
 		///   Retrieves the status of the specified virtual key.
 		///   The status specifies whether the key is up, down, or toggled (on, off—alternating each time the key is pressed).
 		/// </summary>
@@ -242,5 +260,17 @@ namespace Whathecode.System.Windows.Interop
 		/// </returns>
 		[DllImport( Dll )]
 		public static extern short GetKeyState( int virtualkey );
+
+		/// <summary>
+		///   Copies the status of the 256 virtual keys to the specified buffer.
+		/// </summary>
+		/// <param name = "keyStates">The 256-byte array that receives the status data for each virtual key.</param>
+		/// <returns>
+		///   If the function fails, the return value is false; otherwise true. To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern bool GetKeyboardState( byte[] keyStates );
+
+		#endregion // Keyboard Functions.
 	}
 }

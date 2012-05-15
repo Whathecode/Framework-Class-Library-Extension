@@ -165,6 +165,7 @@
     <Compile Include="EnumHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
     <Compile Include="Extensions\Extensions.TimeSpan.cs" />
+    <Compile Include="Extensions\Extensions.Vector.cs" />
     <Compile Include="IO\PathHelper.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Operators\CastOperator.cs" />
