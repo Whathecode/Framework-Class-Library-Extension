@@ -161,6 +161,7 @@
     <Compile Include="Arithmetic\MathOperator.cs" />
     <Compile Include="Arithmetic\RateOfChange.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
+    <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyChangedAttribute.cs" />
     <Compile Include="DateTimePart.cs" />
     <Compile Include="EnumHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using Whathecode.System.ComponentModel.NotifyPropertyFactory.Attributes;
 using Whathecode.System.Extensions;
@@ -37,6 +38,11 @@ namespace Whathecode.System.ComponentModel.NotifyPropertyFactory
 		/// </summary>
 		readonly Dictionary<TEnum, object> _properties = new Dictionary<TEnum, object>();
 
+		/// <summary>
+		///   Holds the callback functions for when the object wants to be notified of changes itself.
+		/// </summary>
+		readonly Dictionary<TEnum, Action<object, object>> _localChangedHandlers = new Dictionary<TEnum, Action<object, object>>();
+
 
 		/// <summary>
 		///   Create a new factory which can create properties that notify when they are changed.
@@ -54,6 +60,20 @@ namespace Whathecode.System.ComponentModel.NotifyPropertyFactory
 			{
 				PropertyInfo property = (PropertyInfo)attribute.Key;
 				TEnum id = (TEnum)attribute.Value[ 0 ].GetId();
+
+				// Hook up optional changed handler.
+				Action<object, object> changedHandler = (
+					from method in OwnerType.GetMethods( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance )
+					let methodAttributes = method.GetCustomAttributes( typeof( NotifyPropertyChangedAttribute ), false )
+					where methodAttributes != null && methodAttributes.Length == 1
+					let changed = (NotifyPropertyChangedAttribute)methodAttributes[ 0 ]
+					where changed.GetId().Equals( id )
+					select DelegateHelper.CreateDelegate<Action<object, object>>( method, _owner, DelegateHelper.CreateOptions.Downcasting )
+					).FirstOrDefault();
+				if ( changedHandler != null )
+				{
+					_localChangedHandlers[ id ] = changedHandler;
+				}
 
 				// Initialize property with default value.
 				_properties.Add( id, property.PropertyType.CreateDefault() );
@@ -91,13 +111,21 @@ namespace Whathecode.System.ComponentModel.NotifyPropertyFactory
 		{
 			if ( !_properties[ property ].ReferenceOrBoxedValueEquals( value ) )
 			{
-				_properties[ property ] = value;
+				object oldValue = _properties[ property ];
+				_properties[ property ] = value;			
 
+				// Trigger the INotifyPropertyChanged handler.
 				PropertyChangedEventHandler handler = _propertyChanged();
 				if ( handler != null )
 				{
 					handler( _owner, new PropertyChangedEventArgs( _names[ property ] ) );
 				}
+
+				// Trigger the local changed handler, if any.
+				if ( _localChangedHandlers.ContainsKey( property ) )
+				{
+					_localChangedHandlers[ property ]( oldValue, value );
+				}	
 			}
 		}
 	}
