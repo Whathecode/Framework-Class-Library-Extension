@@ -57,7 +57,7 @@ namespace Whathecode.System.Aspects
 			}
 			else
 			{
-				_addEmptyEventHandler = instance => addMethod.Invoke( instance, new[] { emptyDelegate } );
+				_addEmptyEventHandler = instance => addMethod.Invoke( instance, new object[] { emptyDelegate } );
 			}
 		}
 	}

@@ -44,8 +44,20 @@ namespace Whathecode.Tests.System.Aspects
 			}
 		}
 
+		[InitializeEventHandlers]
+		class GenericTestClass<T>
+			where T : class
+		{
+			public event Action<T> Action;
+			public void InvokeActionUnsafe()
+			{
+				Action( null );
+			}
+		}
+
 
 		/// <summary>
+		///   TODO: Verify whether this works properly in all cases.
 		///   Determines whether this constructor calls another constructor which is specified in this class.
 		///   Base constructors aren't considered.
 		/// </summary>
@@ -71,13 +83,15 @@ namespace Whathecode.Tests.System.Aspects
 		[TestMethod]
 		public void NullEventHandlersTest()
 		{
-			CallsOtherConstructor( typeof( TestClass ).GetConstructors()[ 0 ] );
-
 			// When the aspect works, this shouldn't throw NullReferenceException's.
+
 			var test = new TestClass();
 			test.InvokeActionUnsafe();
 			test.InvokeParameterActionUnsafe();
-			test.InvokeEventHandlerUnsafe();			
+			test.InvokeEventHandlerUnsafe();
+
+			var generic = new GenericTestClass<object>();
+			generic.InvokeActionUnsafe();
 		}
 
 		[TestMethod]
@@ -103,7 +117,7 @@ namespace Whathecode.Tests.System.Aspects
 		[TestMethod]
 		public void GarbageCollectorTest()
 		{
-			TestClass testClass = new TestClass();
+			var testClass = new TestClass();
 			AssertHelper.IsGarbageCollected( ref testClass );
 		}
 	}
