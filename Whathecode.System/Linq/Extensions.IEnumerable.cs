@@ -19,7 +19,7 @@ namespace Whathecode.System.Linq
 		/// <returns>An <see cref="IEnumerable{T}" /> that contains distinct elements from the source sequence.</returns>
 		public static IEnumerable<T> Distinct<T, TSelect>( this IEnumerable<T> source, Func<T, TSelect> selector )
 		{
-			HashSet<TSelect> unique = new HashSet<TSelect>();
+			var unique = new HashSet<TSelect>();
 
 			using ( IEnumerator<T> iterator = source.GetEnumerator() )
 			{
@@ -69,17 +69,33 @@ namespace Whathecode.System.Linq
 		/// <summary>
 		///   Returns a specified number of random elements without returning a same element twice.
 		/// </summary>
+		/// <remarks>
+		///   This method initializes a random number generator.
+		///   In case you call this method often within small timespans, use the overload which allows you to pass a random number generator yourself.
+		/// </remarks>
 		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
 		/// <param name = "source">The source for this extension method.</param>
 		/// <param name = "count">The number of elements to return.</param>
 		/// <returns>A sequence of random elements from the given sequence.</returns>
 		public static IEnumerable<T> TakeRandom<T>( this IEnumerable<T> source, int count )
 		{
+			return TakeRandom( source, count, new Random() );
+		}
+
+		/// <summary>
+		///   Returns a specified number of random elements without returning a same element twice.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "count">The number of elements to return.</param>
+		/// <param name = "random">The random number generator used to take random elements.</param>
+		/// <returns>A sequence of random elements from the given sequence.</returns>
+		public static IEnumerable<T> TakeRandom<T>( this IEnumerable<T> source, int count, Random random )
+		{
 			Contract.Requires( source != null );
 			Contract.Requires( count <= source.Count() );
 
 			List<T> remainingElements = source.ToList();
-			Random random = new Random();
 
 			for ( int taken = 0; taken < count; ++taken )
 			{
