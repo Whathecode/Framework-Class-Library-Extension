@@ -1,1 +1,0 @@
-http://www.codeproject.com/KB/cs/genericnumerics.aspx
