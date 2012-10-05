@@ -240,7 +240,7 @@ namespace Whathecode.System.Windows.Interop
 		#endregion // Window Functions.
 
 
-		#region Keyboard Functions.
+		#region Input Functions.
 
 		/// <summary>
 		///   Retrieves the status of the specified virtual key.
@@ -271,6 +271,31 @@ namespace Whathecode.System.Windows.Interop
 		[DllImport( Dll, SetLastError = true )]
 		public static extern bool GetKeyboardState( byte[] keyStates );
 
-		#endregion // Keyboard Functions.
+		/// <summary>
+		///   Synthesizes keystrokes, mouse motions, and button clicks.
+		/// </summary>
+		/// <param name = "inputCount">The number of structures in the inputs array.</param>
+		/// <param name = "inputs">An array of INPUT structures. Each structure represents an event to be inserted into the keyboard or mouse input stream.</param>
+		/// <param name = "structureSize">The size, in bytes, of an INPUT structure. If structureSize is not the size of an INPUT structure, the function fails.</param>
+		/// <remarks>
+		///   This function is subject to UIPI. Applications are permitted to inject input only into applications that are at an equal or lesser integrity level.
+		///   The SendInput function inserts the events in the INPUT structures serially into the keyboard or mouse input stream.
+		///   These events are not interspersed with other keyboard or mouse input events inserted either by the user (with the keyboard or mouse) or by calls to keybd_event, mouse_event, or other calls to SendInput.
+		///   This function does not reset the keyboard's current state. Any keys that are already pressed when the function is called might interfere with the events that this function generates.
+		///   To avoid this problem, check the keyboard's state with the GetAsyncKeyState function and correct as necessary.
+		///   Because the touch keyboard uses the surrogate macros defined in winnls.h to send input to the system, a listener on the keyboard event hook must decode input originating from the touch keyboard.
+		///   For more information, see Surrogates and Supplementary Characters.
+		///   An accessibility application can use SendInput to inject keystrokes corresponding to application launch shortcut keys that are handled by the shell.
+		///   This functionality is not guaranteed to work for other types of applications.
+		/// </remarks>
+		/// <returns>
+		///   The function returns the number of events that it successfully inserted into the keyboard or mouse input stream.
+		///   If the function returns zero, the input was already blocked by another thread. To get extended error information, call GetLastWin32Error.
+		///   This function fails when it is blocked by UIPI. Note that neither GetLastWin32Error nor the return value will indicate the failure was caused by UIPI blocking.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern uint SendInput( uint inputCount, Input[] inputs, int structureSize );
+
+		#endregion // Input Functions.
 	}
 }
