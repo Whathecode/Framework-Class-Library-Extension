@@ -9,7 +9,7 @@
     <ProjectGuid>{C96C8AD1-A0C2-4E02-B562-C345F0A53BB0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Whathecode.System.Aspects.Tests</RootNamespace>
+    <RootNamespace>Whathecode.Tests.System.Aspects</RootNamespace>
     <AssemblyName>Whathecode.System.Aspects.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -76,7 +76,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aspects\InitializeEventHandlersAttributeTest.cs" />
+    <Compile Include="InitializeEventHandlersAttributeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
