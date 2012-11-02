@@ -163,7 +163,7 @@ namespace Whathecode.System.Windows.Interop
 			/// <summary>
 			///   Displays the window as a minimized window. This value is similar to ShowMinimized, except the window is not activated.
 			/// </summary>
-			ShowMInimizedNoActivate = 7,
+			ShowMinimizedNoActivate = 7,
 			/// <summary>
 			///   Displays the window in its current size and position. This value is similar to Show, except the window is not activated.
 			/// </summary>
@@ -184,6 +184,130 @@ namespace Whathecode.System.Windows.Interop
 			///   This flag should only be used when minimizing windows from a different thread.
 			/// </summary>
 			ForceMinimize = 11
+		}
+
+		/// <summary>
+		///   The relationship between the specified window and the window whose handle is to be retrieved. This parameter can be one of the following values.
+		/// </summary>
+		public enum WindowRelationship
+		{
+			/// <summary>
+			///   The retrieved handle identifies the window of the same type that is highest in the Z order.
+			///   If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a top-level window, the handle identifies a top-level window.
+			///   If the specified window is a child window, the handle identifies a sibling window.
+			/// </summary>
+			First = 0,
+			/// <summary>
+			///   The retrieved handle identifies the window of the same type that is lowest in the Z order.
+			///   If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a top-level window, the handle identifies a top-level window.
+			///   If the specified window is a child window, the handle identifies a sibling window.
+			/// </summary>
+			Last = 1,
+			/// <summary>
+			///   The retrieved handle identifies the window below the specified window in the Z order.
+			///   If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a top-level window, the handle identifies a top-level window.
+			///   If the specified window is a child window, the handle identifies a sibling window.
+			/// </summary>
+			Next = 2,
+			/// <summary>
+			///   The retrieved handle identifies the window above the specified window in the Z order.
+			///   If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a top-level window, the handle identifies a top-level window.
+			///   If the specified window is a child window, the handle identifies a sibling window.
+			/// </summary>
+			Previous = 3,
+			/// <summary>
+			///   The retrieved handle identifies the specified window's owner window, if any.
+			/// </summary>
+			Owner = 4,
+			/// <summary>
+			///   The retrieved handle identifies the child window at the top of the Z order, if the specified window is a parent window; otherwise, the retrieved handle is IntPtr.Zero.
+			///   The function examines only child windows of the specified window. It does not examine descendant windows.
+			/// </summary>
+			Child = 5
+		}
+
+		/// <summary>
+		///   Can be used by DeferWindowPos to determine the Z order of the window being positioned, when set as the insertAfterWindow parameter.
+		/// </summary>
+		public enum InsertAfterWindow
+		{
+			/// <summary>
+			///   Places the window at the bottom of the Z order. If the windowHandle parameter identifies a topmost window, the window loses its topmost status and is placed at the bottom of all other windows.
+			/// </summary>
+			Bottom = 1,
+			/// <summary>
+			///   Places the window above all non-topmost windows (that is, behind all topmost windows). This flag has no effect if the window is already a non-topmost window.
+			/// </summary>
+			BehindTopMost = -2,
+			/// <summary>
+			///   Places the window at the top of the Z order.
+			/// </summary>
+			Top = 0,
+			/// <summary>
+			///   Places the window above all non-topmost windows. The window maintains its topmost position even when it is deactivated.
+			/// </summary>
+			TopMost = -1
+		}
+
+		/// <summary>
+		///   A combination of the following values affect the size and position of the windows when using DeferWindowPos.
+		/// </summary>
+		[Flags]
+		public enum DeferWindowPosCommands
+		{
+			None = 0x0000,
+			/// <summary>
+			///   Retains the current size (ignores the width and height parameters).
+			/// </summary>
+			NoResize = 0x0001,
+			/// <summary>
+			///   Retains the current position (ignores the x and y parameters).
+			/// </summary>
+			NoMove = 0x0002,
+			/// <summary>
+			///   Retains the current Z order (ignores the insertAfterWindow parameter).
+			/// </summary>
+			NoZOrder = 0x0004,
+			/// <summary>
+			///   Does not redraw changes. If this flag is set, no repainting of any kind occurs.
+			///   This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved.
+			///   When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing.
+			/// </summary>
+			NoRedraw = 0x0008,
+			/// <summary>
+			///   Does not activate the window.
+			///   If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the insertAfterWindow parameter).
+			/// </summary>
+			NoActivate = 0x0010,
+			/// <summary>
+			///   Draws a frame (defined in the window's class description) around the window.
+			/// </summary>
+			DrawFrame = 0x0020,
+			/// <summary>
+			///   Sends a WM_NCCALCSIZE message to the window, even if the window's size is not being changed. If this flag is not specified, WM_NCCALCSIZE is sent only when the window's size is being changed.
+			/// </summary>
+			FrameChanged = 0x0020,
+			/// <summary>
+			///   Displays the window.
+			/// </summary>
+			ShowWindow = 0x0040,
+			/// <summary>
+			///   Hides the window.
+			/// </summary>
+			HideWindow = 0x0080,
+			/// <summary>
+			///   Discards the entire contents of the client area.
+			///   If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.
+			/// </summary>
+			NoCopyBits = 0x0100,
+			/// <summary>
+			///   Does not change the owner window's position in the Z order.
+			/// </summary>
+			NoOwnerZOrder = 0x0200,
+			/// <summary>
+			///   Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
+			/// </summary>
+			NoSendChanging = 0x0400
 		}
 
 		#endregion // Window types

@@ -21,7 +21,7 @@ namespace Whathecode.System.Windows.Interop
 			{ User32.WindowState.ShowMinimized, WindowState.Minimized }
 		};
 
-		readonly IntPtr _handle;
+		internal readonly IntPtr Handle;
 
 
 		/// <summary>
@@ -30,7 +30,7 @@ namespace Whathecode.System.Windows.Interop
 		/// <param name="handle">The handle of the window to create a WindowInfo object for.</param>
 		public WindowInfo( IntPtr handle )
 		{
-			_handle = handle;
+			Handle = handle;
 		}
 
 
@@ -41,7 +41,7 @@ namespace Whathecode.System.Windows.Interop
 		public List<WindowInfo> GetChildWindows()
 		{
 			var windows = new List<WindowInfo>();
-			User32.EnumChildWindows( _handle,
+			User32.EnumChildWindows( Handle,
 				( handle, lparam ) =>
 				{
 					windows.Add( new WindowInfo( handle ) );
@@ -58,7 +58,7 @@ namespace Whathecode.System.Windows.Interop
 		public string GetClassName()
 		{
 			var buffer = new StringBuilder( MaxClassnameLength );
-			if ( User32.GetClassName( _handle, buffer, buffer.Capacity ) == 0 )
+			if ( User32.GetClassName( Handle, buffer, buffer.Capacity ) == 0 )
 			{
 				MarshalHelper.ThrowLastWin32ErrorException();
 			}
@@ -73,7 +73,7 @@ namespace Whathecode.System.Windows.Interop
 		public Process GetProcess()
 		{
 			int processId = 0;
-			if ( User32.GetWindowThreadProcessId( _handle, ref processId ) == 0 )
+			if ( User32.GetWindowThreadProcessId( Handle, ref processId ) == 0 )
 			{
 				MarshalHelper.ThrowLastWin32ErrorException();
 			}
@@ -88,9 +88,9 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public string GetTitle()
 		{
-			int length = User32.GetWindowTextLength( _handle );
+			int length = User32.GetWindowTextLength( Handle );
 			var buffer = new StringBuilder( length + 1 );
-			if ( User32.GetWindowText( _handle, buffer, buffer.Capacity ) == 0 )
+			if ( User32.GetWindowText( Handle, buffer, buffer.Capacity ) == 0 )
 			{
 				// The window might as well have no title/empty title,
 				// but no exception will be thrown in that scenario since no error code is set.
@@ -118,7 +118,7 @@ namespace Whathecode.System.Windows.Interop
 		User32.WindowPlacement GetWindowPlacement()
 		{
 			User32.WindowPlacement placement = User32.WindowPlacement.Default;
-			if ( !User32.GetWindowPlacement( _handle, ref placement ) )
+			if ( !User32.GetWindowPlacement( Handle, ref placement ) )
 			{
 				MarshalHelper.ThrowLastWin32ErrorException();
 			}
@@ -131,7 +131,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public void Hide()
 		{
-			User32.ShowWindow( _handle, User32.WindowState.Hide );
+			User32.ShowWindow( Handle, User32.WindowState.Hide );
 		}
 
 		/// <summary>
@@ -140,7 +140,7 @@ namespace Whathecode.System.Windows.Interop
 		/// <returns>True when the window no longer exists; false otherwise.</returns>
 		public bool IsDestroyed()
 		{
-			return !User32.IsWindow( _handle );
+			return !User32.IsWindow( Handle );
 		}
 
 		/// <summary>
@@ -148,7 +148,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public bool IsVisible()
 		{
-			return User32.IsWindowVisible( _handle );
+			return User32.IsWindowVisible( Handle );
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public void Maximize()
 		{
-			User32.ShowWindow( _handle, User32.WindowState.ShowMaximized );
+			User32.ShowWindow( Handle, User32.WindowState.ShowMaximized );
 		}
 
 		/// <summary>
@@ -164,7 +164,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public void Minimize()
 		{
-			User32.ShowWindow( _handle, User32.WindowState.Minimize );
+			User32.ShowWindow( Handle, User32.WindowState.Minimize );
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace Whathecode.System.Windows.Interop
 		public void Show( bool activate = true )
 		{
 			User32.ShowWindow(
-				_handle,
+				Handle,
 				activate ? User32.WindowState.Show : User32.WindowState.ShowNoActivate );
 		}
 
@@ -189,7 +189,7 @@ namespace Whathecode.System.Windows.Interop
 				return false;
 			}
 
-			return _handle == otherWindow._handle;
+			return Handle == otherWindow.Handle;
 		}
 
 		public bool Equals( WindowInfo other )
@@ -199,12 +199,12 @@ namespace Whathecode.System.Windows.Interop
 				return false;
 			}
 
-			return ReferenceEquals( this, other ) || other._handle.Equals( _handle );
+			return ReferenceEquals( this, other ) || other.Handle.Equals( Handle );
 		}
 
 		public override int GetHashCode()
 		{
-			return _handle.GetHashCode();
+			return Handle.GetHashCode();
 		}
 
 		public override string ToString()

@@ -70,6 +70,33 @@ namespace Whathecode.System.Windows.Interop
 		public static extern bool EnumWindows( EnumWindowsProc callback, IntPtr lParam );
 
 		/// <summary>
+		///   Examines the Z order of the child windows associated with the specified parent window and retrieves a handle to the child window at the top of the Z order.
+		/// </summary>
+		/// <param name="windowHandle">A handle to the parent window whose child windows are to be examined. If this parameter is IntPtr.Zero, the function returns a handle to the window at the top of the Z order.</param>
+		/// <returns>
+		///   If the function succeeds, the return value is a handle to the child window at the top of the Z order. If the specified window has no child windows, the return value is IntPtr.Zero.
+		///   To get extended error information, use the GetLastWin32Error function.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern IntPtr GetTopWindow( IntPtr windowHandle );
+
+		/// <summary>
+		///   Retrieves a handle to a window that has the specified relationship (Z-Order or owner) to the specified window.
+		/// </summary>
+		/// <remarks>
+		///   The EnumChildWindows function is more reliable than calling GetWindow in a loop.
+		///   An application that calls GetWindow to perform this task risks being caught in an infinite loop or referencing a handle to a window that has been destroyed.
+		/// </remarks>
+		/// <param name="windowHandle">A handle to a window. The window handle retrieved is relative to this window, based on the value of the relationship parameter.</param>
+		/// <param name="relationship">The relationship between the specified window and the window whose handle is to be retrieved. This parameter can be one of the following values.</param>
+		/// <returns>
+		///   If the function succeeds, the return value is a window handle. If no window exists with the specified relationship to the specified window, the return value is IntPtr.Zero.
+		///   To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern IntPtr GetWindow( IntPtr windowHandle, WindowRelationship relationship );
+
+		/// <summary>
 		///   Retrieves the name of the class to which the specified window belongs.
 		/// </summary>
 		/// <param name="windowHandle">A handle to the window and, indirectly, the class to which the window belongs.</param>
@@ -236,6 +263,95 @@ namespace Whathecode.System.Windows.Interop
 		/// </returns>
 		[DllImport( Dll )]
 		public static extern IntPtr GetForegroundWindow();
+
+		/// <summary>
+		///   Allocates memory for a multiple-window- position structure and returns the handle to the structure.
+		/// </summary>
+		/// <remarks>
+		///   The multiple-window-position structure is an internal structure; an application cannot access it directly.
+		///   DeferWindowPos fills the multiple-window-position structure with information about the target position for one or more windows about to be moved.
+		///   The EndDeferWindowPos function accepts the handle to this structure and repositions the windows by using the information stored in the structure.
+		///   If any of the windows in the multiple-window- position structure have the DeferWindowPosCommands.HideWindow or DeferWindowPosCommands.ShowWindow flag set, none of the windows are repositioned.
+		///   If the system must increase the size of the multiple-window- position structure beyond the initial size specified by the numberOfWindows parameter but cannot allocate enough memory to do so,
+		///   the system fails the entire window positioning sequence (BeginDeferWindowPos, DeferWindowPos, and EndDeferWindowPos).
+		///   By specifying the maximum size needed, an application can detect and process failure early in the process.
+		/// </remarks>
+		/// <param name="numberOfWindows">The initial number of windows for which to store position information. The DeferWindowPos function increases the size of the structure, if necessary.</param>
+		/// <returns>
+		///   If the function succeeds, the return value identifies the multiple-window-position structure.
+		///   If insufficient system resources are available to allocate the structure, the return value is IntPtr.Zero. To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern IntPtr BeginDeferWindowPos( int numberOfWindows );
+
+		/// <summary>
+		///   Updates the specified multiple-window – position structure for the specified window. The function then returns a handle to the updated structure.
+		///   The EndDeferWindowPos function uses the information in this structure to change the position and size of a number of windows simultaneously.
+		///   The BeginDeferWindowPos function creates the structure.
+		/// </summary>
+		/// <remarks>
+		///   If a call to DeferWindowPos fails, the application should abandon the window-positioning operation and not call EndDeferWindowPos.
+		/// 
+		///   If DeferWindowPosCommands.NoZOrder is not specified, the system places the window identified by the windowHandle parameter in the position following the window identified by the instertAfterWindow parameter.
+		///   If insertAfterWindow is IntPtr.Zero or InsertAfterWindow.Top, the system places the windowHandle window at the top of the Z order.
+		///   If insertAfterWindow is set to InsertAfterWindow.Bottom, the system places the windowHandle window at the bottom of the Z order.
+		/// 
+		///   All coordinates for child windows are relative to the upper-left corner of the parent window's client area.
+		/// 
+		///   A window can be made a topmost window either by setting insertAfterWindow to the InsertAfterWindow.TopMost flag and ensuring that the DeferWindowPosCommands.NoZOrder flag is not set,
+		///   or by setting the window's position in the Z order so that it is above any existing topmost windows.
+		///   When a non-topmost window is made topmost, its owned windows are also made topmost. Its owners, however, are not changed.
+		/// 
+		///   If neither the DeferWindowPosCommands.NoActivate nor DeferWindowPosCommands.NoZOrder flag is specified
+		///   (that is, when the application requests that a window be simultaneously activated and its position in the Z order changed),
+		///   the value specified in insertAfterWindow is used only in the following circumstances:
+		///     - Neither the InsertAfterWindow.TopMost nor InsertAfterWindow.BehindTopMost flag is specified in insertAfterWindow.
+		///     - The window identified by windowHandle is not the active window.
+		/// 
+		///   An application cannot activate an inactive window without also bringing it to the top of the Z order.
+		///   An application can change an activated window's position in the Z order without restrictions, or it can activate a window and then move it to the top of the topmost or non-topmost windows.
+		/// 
+		///   A topmost window is no longer topmost if it is repositioned to the bottom (InsertAfterWindow.Bottom) of the Z order or after any non-topmost window.
+		///   When a topmost window is made non-topmost, its owners and its owned windows are also made non-topmost windows.
+		/// 
+		///   A non-topmost window may own a topmost window, but not vice versa.
+		///   Any window (for example, a dialog box) owned by a topmost window is itself made a topmost window to ensure that all owned windows stay above their owner.
+		/// </remarks>
+		/// <param name="windowsPositionInfo">
+		///   A handle to a multiple-window – position structure that contains size and position information for one or more windows.
+		///   This structure is returned by BeginDeferWindowPos or by the most recent call to DeferWindowPos.
+		/// </param>
+		/// <param name="windowHandle">A handle to the window for which update information is stored in the structure. All windows in a multiple-window – position structure must have the same parent.</param>
+		/// <param name="insertAfterWindow">
+		///   A handle to the window that precedes the positioned window in the Z order. This parameter must be a window handle or a value of <see cref="InsertAfterWindow" />.
+		///   This parameter is ignored if the DeferWindowPosCommands.NoZOrder flag is set in the flags parameter.
+		/// </param>
+		/// <param name="x">The x-coordinate of the window's upper-left corner.</param>
+		/// <param name="y">The y-coordinate of the window's upper-left corner.</param>
+		/// <param name="width">The window's new width, in pixels.</param>
+		/// <param name="height">The window's new height, in pixels.</param>
+		/// <param name="flags">Affect the size and position of the window being positioned.</param>
+		/// <returns></returns>
+		[DllImport( Dll )]
+		public static extern IntPtr DeferWindowPos(
+			IntPtr windowsPositionInfo, IntPtr windowHandle, IntPtr insertAfterWindow,
+			int x, int y, int width, int height,
+			[MarshalAs( UnmanagedType.U4 )]DeferWindowPosCommands flags );
+
+		/// <summary>
+		///   Simultaneously updates the position and size of one or more windows in a single screen-refreshing cycle.
+		/// </summary>
+		/// <remarks>The EndDeferWindowPos function sends the WM_WINDOWPOSCHANGING and WM_WINDOWPOSCHANGED messages to each window identified in the internal structure.</remarks>
+		/// <param name="windowPositionInfo">
+		///   A handle to a multiple-window – position structure that contains size and position information for one or more windows.
+		///   This internal structure is returned by the BeginDeferWindowPos function or by the most recent call to the DeferWindowPos function.
+		/// </param>
+		/// <returns>
+		///   If the function succeeds, the return value is true.
+		///   If the function fails, the return value is false. To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
+		public static extern bool EndDeferWindowPos( IntPtr windowPositionInfo );
 
 		#endregion // Window Functions.
 
