@@ -101,6 +101,12 @@ namespace Whathecode.System.Windows.Interop
 		/// <param name="changeVisibility">When set to true only the visiblity of windows can be changed. When set to false, only the other parameters can be changed.</param>
 		static void RepositionWindows( IList<RepositionWindowInfo> windows, bool changeZOrder, bool changeVisibility )
 		{
+			if ( windows.Count == 0 )
+			{
+				// Nothing to reposition.
+				return;
+			}
+
 			IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windows.Count );
 
 			for ( int i = 0; i < windows.Count; ++i )
