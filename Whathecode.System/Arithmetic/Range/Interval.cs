@@ -20,10 +20,12 @@ namespace Whathecode.System.Arithmetic.Range
 	{
 		[DataMember]
 		readonly bool _isReversed;
-		readonly static bool _isIntegralType;
+		// ReSharper disable StaticFieldInGenericType
+		readonly static bool IsIntegralType;
+		// ReSharper restore StaticFieldInGenericType
 
 
-		static Interval<TMath> _empty = null;
+		static Interval<TMath> _empty;
 		public static Interval<TMath> Empty
 		{
 			get
@@ -85,7 +87,7 @@ namespace Whathecode.System.Arithmetic.Range
 
 		static Interval()
 		{
-			_isIntegralType = TypeHelper.IsIntegralNumericType<TMath>();			
+			IsIntegralType = TypeHelper.IsIntegralNumericType<TMath>();			
 		}
 
 		/// <summary>
@@ -134,7 +136,7 @@ namespace Whathecode.System.Arithmetic.Range
 			double addition = value * (_isReversed ? -1 : 1); // Subtraction is required for a reversed interval.
 
 			// Ensure nearest neighbour rounding for integral types.
-			if ( _isIntegralType )
+			if ( IsIntegralType )
 			{
 				addition = Math.Round( addition );
 			}
@@ -262,8 +264,8 @@ namespace Whathecode.System.Arithmetic.Range
 
 			TMath smallest = _isReversed ? End : Start;
 			TMath biggest = _isReversed ? Start : End;
-			TMath clampSmallest = range._isReversed ? End : Start;
-			TMath clampBiggest = range._isReversed ? Start : End;
+			TMath clampSmallest = range._isReversed ? range.End : range.Start;
+			TMath clampBiggest = range._isReversed ? range.Start : range.End;
 			bool smaller = smallest.CompareTo( clampSmallest ) < 0;
 			bool bigger = biggest.CompareTo( clampBiggest ) > 0;
 			return new Interval<TMath>(
@@ -470,7 +472,7 @@ namespace Whathecode.System.Arithmetic.Range
 		public void Move( TMath amount )
 		{
 			Start = Operator<TMath>.Add( Start, amount );
-			End = Operator<TMath>.Add( End, amount ); ;
+			End = Operator<TMath>.Add( End, amount );
 		}
 
 		/// <summary>

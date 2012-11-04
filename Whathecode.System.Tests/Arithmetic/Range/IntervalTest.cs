@@ -18,7 +18,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		[TestMethod]
 		public void LiesInIntervalTest()
 		{
-			Interval<int> single = new Interval<int>( 0, 0 );
+			var single = new Interval<int>( 0, 0 );
 			LiesInInterval( single, 0, true );
 			LiesInInterval( single, 1, false );
 
@@ -29,12 +29,12 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		static void LiesInIntervalTestHelper<TMath>( TMath start, TMath end, TMath inside, TMath outside )
 			where TMath : IComparable<TMath>
 		{
-			Interval<TMath> included = new Interval<TMath>( start, end );
+			var included = new Interval<TMath>( start, end );
 			LiesInInterval( included, inside, true );
 			LiesInInterval( included, start, true ); // On edge.
 			LiesInInterval( included, outside, false ); // Outside.
 
-			Interval<TMath> excluded = new Interval<TMath>( start, false, end, false );
+			var excluded = new Interval<TMath>( start, false, end, false );
 			LiesInInterval( excluded, start, false ); // Left edge.
 			LiesInInterval( excluded, end, false ); // Right edge.
 		}
@@ -66,14 +66,14 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			where TMath : IComparable<TMath>
 		{
 			// Create required intervals.
-			Interval<TMath> ab = new Interval<TMath>( a, b );
-			Interval<TMath> bc = new Interval<TMath>( b, c );
-			Interval<TMath> cd = new Interval<TMath>( c, d );
-			Interval<TMath> de = new Interval<TMath>( d, e );
-			Interval<TMath> ad = new Interval<TMath>( a, d );
-			Interval<TMath> ac = new Interval<TMath>( a, c );
-			Interval<TMath> bd = new Interval<TMath>( b, d );
-			Interval<TMath> bcExcluded = new Interval<TMath>( b, false, c, false );
+			var ab = new Interval<TMath>( a, b );
+			var bc = new Interval<TMath>( b, c );
+			var cd = new Interval<TMath>( c, d );
+			var de = new Interval<TMath>( d, e );
+			var ad = new Interval<TMath>( a, d );
+			var ac = new Interval<TMath>( a, c );
+			var bd = new Interval<TMath>( b, d );
+			var bcExcluded = new Interval<TMath>( b, false, c, false );
 
 			// None overlapping intervals.
 			Intersects( ab, de, false ); // Left.
@@ -124,14 +124,14 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			where TMath : IComparable<TMath>
 		{
 			// Create required intervals.
-			Interval<TMath> ab = new Interval<TMath>( a, b );
-			Interval<TMath> bc = new Interval<TMath>( b, c );
-			Interval<TMath> cd = new Interval<TMath>( c, d );
-			Interval<TMath> de = new Interval<TMath>( d, e );
-			Interval<TMath> ad = new Interval<TMath>( a, d );
-			Interval<TMath> ac = new Interval<TMath>( a, c );
-			Interval<TMath> bd = new Interval<TMath>( b, d );
-			Interval<TMath> bcExcluded = new Interval<TMath>( b, false, c, false );
+			var ab = new Interval<TMath>( a, b );
+			var bc = new Interval<TMath>( b, c );
+			var cd = new Interval<TMath>( c, d );
+			var de = new Interval<TMath>( d, e );
+			var ad = new Interval<TMath>( a, d );
+			var ac = new Interval<TMath>( a, c );
+			var bd = new Interval<TMath>( b, d );
+			var bcExcluded = new Interval<TMath>( b, false, c, false );
 
 			// None overlapping intervals.
 			Subtract( ab, de, ab ); // Left.
@@ -168,7 +168,8 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			Subtract( bd, ac, new Interval<TMath>( c, false, d, true ) ); // Left overlap.
 		}
 
-		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, Interval<TMath> result )
+		// ReSharper disable UnusedParameter.Local
+		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, Interval<TMath> result )		
 			where TMath : IComparable<TMath>
 		{
 			List<Interval<TMath>> results = from.Subtract( subtract );
@@ -176,6 +177,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			Assert.IsTrue( results.Count == 1 );
 			Assert.IsTrue( results[ 0 ].Equals( result ) );
 		}
+		// ReSharper restore UnusedParameter.Local
 
 		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, List<Interval<TMath>> results )
 			where TMath : IComparable<TMath>
@@ -207,20 +209,20 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			where TMath : IComparable<TMath>
 		{
 			// Single range.
-			Interval<TMath> single = new Interval<TMath>( a, a );
+			var single = new Interval<TMath>( a, a );
 			Assert.AreEqual( 1.0, single.GetPercentageFor( a ) );
 			Assert.AreEqual( 0.0, single.GetPercentageFor( aMinusA ) );
 
 
 			// Normal ranges. ( start < end )
-			Interval<TMath> right = new Interval<TMath>( a, aPlusA );
-			Interval<TMath> left = new Interval<TMath>( aMinusA, a );
-			Interval<TMath> big = new Interval<TMath>( aMinusA, aPlusA );
+			var right = new Interval<TMath>( a, aPlusA );
+			var left = new Interval<TMath>( aMinusA, a );
+			var big = new Interval<TMath>( aMinusA, aPlusA );
 
 			// Reversed ranges. ( end < start )
-			Interval<TMath> reversedRight = new Interval<TMath>( aPlusA, a );
-			Interval<TMath> reversedLeft = new Interval<TMath>( a, aMinusA );
-			Interval<TMath> reversedBig = new Interval<TMath>( aPlusA, aMinusA );
+			var reversedRight = new Interval<TMath>( aPlusA, a );
+			var reversedLeft = new Interval<TMath>( a, aMinusA );
+			var reversedBig = new Interval<TMath>( aPlusA, aMinusA );
 
 
 			// Should lie at start.
@@ -276,15 +278,17 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			MapHelper<int, double>( 0, 10, 100, 0, 5, 50 );
 		}
 
+		// ReSharper disable UnusedParameter.Local
 		static void MapHelper<TMath, TRange>( TMath from, TMath to, TRange mapFrom, TRange mapTo, TMath valueToMap, TRange expected )
 			where TMath : IComparable<TMath>
 			where TRange : IComparable<TRange>
 		{
-			Interval<TMath> interval = new Interval<TMath>( from, to );
+			var interval = new Interval<TMath>( from, to );
 			TRange result = interval.Map( valueToMap, new Interval<TRange>( mapFrom, mapTo ) );
 
 			Assert.IsTrue( result.Equals( expected ) );
 		}
+		// ReSharper restore UnusedParameter.Local
 
 		#endregion  // Map Tests
 
@@ -301,12 +305,27 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			// Reversed intervals.
 			ClampHelper( 10, 0, 100, -100, 5 );
 			ClampHelper( 10.0, 0.0, 100.0, -100.0, 5.0 );
+
+			// Ranges.
+			var interval = new Interval<int>( 0, 10 );
+			var mid = new Interval<int>( 1, 9 );
+			Assert.AreEqual( interval.Clamp( mid ), mid );
+			var left = new Interval<int>( 0, 5 );			
+			Assert.AreEqual( interval.Clamp( left ), left );
+			var leftCrossover = new Interval<int>( -1, 5 );
+			Assert.AreEqual( interval.Clamp( leftCrossover ), left );
+			var right = new Interval<int>( 5, 10 );
+			Assert.AreEqual( interval.Clamp( right ), right );
+			var rightCrossover = new Interval<int>( 5, 11 );
+			Assert.AreEqual( interval.Clamp( rightCrossover ), right );
+			var outside = new Interval<int>( -1, 11 );
+			Assert.AreEqual( interval.Clamp( outside ), interval );
 		}
 
 		static void ClampHelper<TMath>( TMath start, TMath end, TMath leftOfRange, TMath rightOfRange, TMath inRange )
 			where TMath : IComparable<TMath>
 		{
-			Interval<TMath> interval = new Interval<TMath>( start, end );
+			var interval = new Interval<TMath>( start, end );
 
 			// In range.
 			Assert.AreEqual( interval.Clamp( inRange ), inRange );
