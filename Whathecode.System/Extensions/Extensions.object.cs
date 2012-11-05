@@ -22,10 +22,11 @@ namespace Whathecode.System.Extensions
 		/// <summary>
 		///   Returns whether the object equals any of the given values.
 		/// </summary>
+		/// <typeparam name = "T">Type of the objects to compare.</typeparam>
 		/// <param name = "source">The source for this extension method.</param>
 		/// <param name = "toCompare">The objects to compare with.</param>
 		/// <returns>True when the object equals any of the passed objects, false otherwise.</returns>
-		public static bool EqualsAny( this object source, params object[] toCompare )
+		public static bool EqualsAny<T>( this T source, params T[] toCompare )
 		{
 			return toCompare.Any( o => o.Equals( source ) );
 		}
