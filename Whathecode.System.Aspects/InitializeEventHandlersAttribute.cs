@@ -7,6 +7,8 @@ using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Extensibility;
+using Whathecode.System.Collections.Generic;
+using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System.Aspects
@@ -23,13 +25,13 @@ namespace Whathecode.System.Aspects
 	public class InitializeEventHandlersAttribute : EventLevelAspect
 	{
 		[NonSerialized]
-		Action<object> _addEmptyEventHandler;
+		CachedDictionary<Type, Action<object>> _addEmptyEventHandlers;
 
 
 		[OnMethodEntryAdvice, MethodPointcut( "SelectConstructors" )]
 		public void OnConstructorEntry( MethodExecutionArgs args )
 		{
-			_addEmptyEventHandler( args.Instance );
+			_addEmptyEventHandlers[ args.Instance.GetType() ]( args.Instance );
 		}
 
 		// ReSharper disable UnusedMember.Local
@@ -43,22 +45,24 @@ namespace Whathecode.System.Aspects
 		{
 			base.RuntimeInitialize( eventInfo );
 
-			// Construct a suitable empty event handler.
-			MethodInfo delegateInfo = DelegateHelper.MethodInfoFromDelegateType( eventInfo.EventHandlerType );
-			ParameterExpression[] parameters = delegateInfo.GetParameters().Select( p => Expression.Parameter( p.ParameterType ) ).ToArray();
-			Delegate emptyDelegate
-				= Expression.Lambda( eventInfo.EventHandlerType, Expression.Empty(), "EmptyDelegate", true, parameters ).Compile();
+			_addEmptyEventHandlers = new CachedDictionary<Type, Action<object>>( type =>
+			{
+				EventInfo runtimeEvent = type.GetEvents().Where( e => e.Name == eventInfo.Name ).First();
 
-			// Create a delegate which adds the empty handler to an instance.
-			MethodInfo addMethod = eventInfo.GetAddMethod( true );
-			if ( addMethod.IsPublic )
-			{
-				_addEmptyEventHandler = instance => eventInfo.AddEventHandler( instance, emptyDelegate );
-			}
-			else
-			{
-				_addEmptyEventHandler = instance => addMethod.Invoke( instance, new object[] { emptyDelegate } );
-			}
+				MethodInfo delegateInfo = DelegateHelper.MethodInfoFromDelegateType( runtimeEvent.EventHandlerType );
+				ParameterExpression[] parameters = delegateInfo.GetParameters().Select( p => Expression.Parameter( p.ParameterType ) ).ToArray();
+				Delegate emptyDelegate
+					= Expression.Lambda( runtimeEvent.EventHandlerType, Expression.Empty(), "EmptyDelegate", true, parameters ).Compile();
+
+				// Adds the empty handler to the instance.
+				MethodInfo addMethod = runtimeEvent.GetAddMethod( true );
+				if ( addMethod.IsPublic )
+				{
+					return instance => runtimeEvent.AddEventHandler( instance, emptyDelegate );
+				}
+
+				return instance => addMethod.Invoke( instance, new object[] { emptyDelegate } );
+			} );
 		}
 	}
 }
