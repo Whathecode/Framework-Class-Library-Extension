@@ -14,8 +14,8 @@ namespace Whathecode.Tests.System.Windows.Input.InputController.Trigger
 		[TestMethod]
 		public void OneTriggerTest()
 		{
-			EventTrigger trigger = new EventTrigger( AlwaysTrue );
-			SequenceTrigger sequenceTrigger = new SequenceTrigger( trigger );
+			var trigger = new EventTrigger( AlwaysTrue ) { IsRepeatingTrigger = true };
+			var sequenceTrigger = new SequenceTrigger( trigger );
 			int triggerCount = 0;
 			trigger.ConditionsMet += () => ++triggerCount;
 			InputController.AddTrigger( sequenceTrigger );
@@ -31,10 +31,10 @@ namespace Whathecode.Tests.System.Windows.Input.InputController.Trigger
 		[TestMethod]
 		public void MultipleTriggerTest()
 		{
-			EventTrigger trigger1 = new EventTrigger( AlwaysTrue );
-			EventTrigger trigger2 = new EventTrigger( AlwaysTrue );
-			EventTrigger trigger3 = new EventTrigger( AlwaysTrue );
-			SequenceTrigger sequenceTrigger = new SequenceTrigger( trigger1, trigger2, trigger3 );
+			var trigger1 = new EventTrigger( AlwaysTrue ) { IsRepeatingTrigger = true };
+			var trigger2 = new EventTrigger( AlwaysTrue ) { IsRepeatingTrigger = true };
+			var trigger3 = new EventTrigger( AlwaysTrue ) { IsRepeatingTrigger = true };
+			var sequenceTrigger = new SequenceTrigger( trigger1, trigger2, trigger3 );
 			int trigger1Count = 0;
 			int trigger2Count = 0;
 			int trigger3Count = 0;
