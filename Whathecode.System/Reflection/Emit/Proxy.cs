@@ -57,8 +57,8 @@ namespace Whathecode.System.Reflection.Emit
 				}
 
 				// Create methods.
-				MethodInfo[] innerMethods = innerMatchingType.GetFlattenedInterfaceMethods( ReflectionHelper.AllInstanceMembers ).ToArray();
-				MethodInfo[] toCreateMethods = typeToCreate.GetFlattenedInterfaceMethods( ReflectionHelper.AllInstanceMembers ).ToArray();
+				MethodInfo[] innerMethods = innerMatchingType.GetFlattenedInterfaceMethods( ReflectionHelper.FlattenedInstanceMembers ).ToArray();
+				MethodInfo[] toCreateMethods = typeToCreate.GetFlattenedInterfaceMethods( ReflectionHelper.FlattenedInstanceMembers ).ToArray();
 				foreach ( var method in innerMethods
 					.Zip( toCreateMethods,
 						( matching, toCreate ) => new
@@ -93,7 +93,7 @@ namespace Whathecode.System.Reflection.Emit
 							{
 								Type[] parameterTypes = method.Matching.GetParameters().Select( p => p.ParameterType ).ToArray();
 								MethodInfo methodToCall
-									= innerType.GetMethod( method.ToCreate.Name, ReflectionHelper.AllInstanceMembers, parameterTypes );
+									= innerType.GetMethod( method.ToCreate.Name, ReflectionHelper.FlattenedInstanceMembers, parameterTypes );
 								castArgs = methodToCall.GetParameters()
 									.Select( ( p, index ) => args[ index ].Cast( typeof( object ) ).Cast( p.ParameterType ) ).ToArray();
 							}

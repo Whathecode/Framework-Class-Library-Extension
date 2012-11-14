@@ -131,7 +131,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
 			// Check whether callback attributes are applied to non-static functions. They should be static!
 			var callbackMethods =
-				from method in OwnerType.GetMethods( ReflectionHelper.AllClassMembers )
+				from method in OwnerType.GetMethods( ReflectionHelper.FlattenedClassMembers )
 				from attribute in (Attribute[])method.GetCustomAttributes( typeof( AbstractDependencyPropertyCallbackAttribute ), false )
 				select method;
 			if ( !callbackMethods.All( m => m.IsStatic ) )

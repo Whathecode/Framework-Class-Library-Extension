@@ -16,13 +16,31 @@ namespace Whathecode.Tests.System.Aspects
 	[TestClass]
 	public class InitializeEventHandlersAttributeTest
 	{
-		[InitializeEventHandlersAttribute]
+		[InitializeEventHandlers]
 		class TestClass
 		{
 			public event Action Action;
 			public void InvokeActionUnsafe()
 			{
 				Action();
+			}
+
+			event Action Private;
+			public void InvokePrivateUnsafe()
+			{
+				Private();
+			}
+
+			protected event Action Protected;
+			public void InvokeProtectedUnsafe()
+			{
+				Protected();
+			}
+
+			static event Action Static;
+			public void InvokeStaticUnsafe()
+			{
+				Static();
 			}
 
 			public event Action<object, object> ParameterAction;
@@ -55,6 +73,50 @@ namespace Whathecode.Tests.System.Aspects
 			}
 		}
 
+		[InitializeEventHandlers]
+		static class StaticTestClass
+		{
+			static event Action Action;
+
+			public static void InvokeActionUnsafe()
+			{
+				Action();
+			}
+		}
+
+		[InitializeEventHandlers]
+		class InitializeOnlyOnce
+		{
+			event Action Action;
+
+			static event Action Static;
+
+			public InitializeOnlyOnce()
+				: this( 0 )
+			{
+			}
+
+			// ReSharper disable UnusedParameter.Local
+			public InitializeOnlyOnce( int a )
+			// ReSharper restore UnusedParameter.Local
+			{
+			}
+
+			public int GetActionInitializedCount()
+			{
+				return Action.GetInvocationList().Length;
+			}
+
+			public int GetStaticInitializedCount()
+			{
+				return Static.GetInvocationList().Length;
+			}
+		}
+
+		class InheritedClass : InitializeOnlyOnce
+		{
+		}
+
 
 		/// <summary>
 		///   TODO: Verify whether this works properly in all cases.
@@ -80,20 +142,43 @@ namespace Whathecode.Tests.System.Aspects
 				);
 		}
 
+		/// <summary>
+		///   Tests originally uninitialized event handlers.
+		/// </summary>
 		[TestMethod]
 		public void NullEventHandlersTest()
 		{
 			// When the aspect works, this shouldn't throw NullReferenceException's.
 
-			var test = new TestClass();
-			test.InvokeActionUnsafe();
-			test.InvokeParameterActionUnsafe();
-			test.InvokeEventHandlerUnsafe();
+			// Make sure it works for multiple instances.
+			Array.ForEach( new[] { new TestClass(), new TestClass() }, test =>
+			{
+				test.InvokeActionUnsafe();
+				test.InvokePrivateUnsafe();
+				test.InvokeProtectedUnsafe();
+				test.InvokeStaticUnsafe();
+				test.InvokeParameterActionUnsafe();
+				test.InvokeEventHandlerUnsafe();				
+			} );
 
 			var generic = new GenericTestClass<object>();
 			generic.InvokeActionUnsafe();
+			var generic2 = new GenericTestClass<string>();
+			generic2.InvokeActionUnsafe();
 		}
 
+		/// <summary>
+		///   Tests originally uninitialized static event handlers.
+		/// </summary>
+		[TestMethod]
+		public void StaticEventHandlersTest()
+		{
+			StaticTestClass.InvokeActionUnsafe();
+		}
+
+		/// <summary>
+		///   Tests an already initialized event handler.
+		/// </summary>
 		[TestMethod]
 		public void InitializedEventHandlerTest()
 		{
@@ -101,6 +186,9 @@ namespace Whathecode.Tests.System.Aspects
 			test.InvokeInitialized();
 		}
 
+		/// <summary>
+		///   Tests whether multiple event handlers work.
+		/// </summary>
 		[TestMethod]
 		public void InvokeHandlersTest()
 		{
@@ -112,6 +200,21 @@ namespace Whathecode.Tests.System.Aspects
 			test.InvokeActionUnsafe();
 
 			Assert.IsTrue( handler1 && handler2 );
+		}
+
+		[TestMethod]
+		public void InitializeOnlyOnceTest()
+		{
+			var oneConstructor = new InitializeOnlyOnce( 1 );
+			Assert.AreEqual( 1, oneConstructor.GetActionInitializedCount() );
+
+			var multipleConstructors = new InitializeOnlyOnce();
+			Assert.AreEqual( 1, multipleConstructors.GetActionInitializedCount() );
+
+			var inherited = new InheritedClass();
+			Assert.AreEqual( 1, inherited.GetActionInitializedCount() );
+			var inherited2 = new InheritedClass();
+			Assert.AreEqual( 1, inherited2.GetStaticInitializedCount() );
 		}
 
 		[TestMethod]

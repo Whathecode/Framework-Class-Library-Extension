@@ -62,7 +62,7 @@ namespace Whathecode.System.Reflection
 			else
 			{
 				// Get all wanted attribute types for all members.
-				AttributedMembers = (from member in newType.GetMembers( ReflectionHelper.AllClassMembers )
+				AttributedMembers = (from member in newType.GetMembers( ReflectionHelper.FlattenedClassMembers )
 					from type in GetAttributeTypes()
 					from attribute in (Attribute[])member.GetCustomAttributes( type, false )
 					group attribute by member).ToDictionary( g => g.Key, g => g.ToArray() );

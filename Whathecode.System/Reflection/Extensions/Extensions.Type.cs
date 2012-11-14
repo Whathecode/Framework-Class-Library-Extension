@@ -333,7 +333,7 @@ namespace Whathecode.System.Reflection.Extensions
 		public static IEnumerable<MemberInfo> GetMembers( this Type source, Type type )
 		{
 			return
-				from m in source.GetMembers( ReflectionHelper.AllClassMembers )
+				from m in source.GetMembers( ReflectionHelper.FlattenedClassMembers )
 				where m is FieldInfo || m is PropertyInfo || m is EventInfo
 				where m.GetMemberType().IsOfGenericType( type )
 				select m;
@@ -356,7 +356,7 @@ namespace Whathecode.System.Reflection.Extensions
 			this Type source,
 			MemberTypes memberTypes = MemberTypes.All,
 			bool inherit = false,
-			BindingFlags bindingFlags = ReflectionHelper.AllClassMembers )
+			BindingFlags bindingFlags = ReflectionHelper.FlattenedClassMembers )
 			where TAttribute : Attribute
 		{
 			return (

@@ -10,15 +10,24 @@ namespace Whathecode.System.Reflection
 	public static class ReflectionHelper
 	{
 		/// <summary>
-		///   BindingFlags to return all instance members of a class.
+		///   BindingFlags to return all instance members of a class, not including members up the hierarchy.
 		/// </summary>
-		public const BindingFlags AllInstanceMembers
-			= BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+		public const BindingFlags InstanceMembers = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
 		/// <summary>
-		///   BindingFlags to return all members of a class (static and instance).
+		///   BindingFlags to return all members of a class (static and instance), not including members up the hierarchy.
 		/// </summary>
-		public const BindingFlags AllClassMembers = AllInstanceMembers | BindingFlags.Static;
+		public const BindingFlags ClassMembers = InstanceMembers | BindingFlags.Static;
+
+		/// <summary>
+		///   BindingFlags to return all instance members of a class, including members up the entire hierarchy.
+		/// </summary>
+		public const BindingFlags FlattenedInstanceMembers = BindingFlags.FlattenHierarchy | InstanceMembers;
+
+		/// <summary>
+		///   BindingFlags to return all members of a class (static and instance), including members up the entire class hierarchy.
+		/// </summary>
+		public const BindingFlags FlattenedClassMembers = BindingFlags.FlattenHierarchy | ClassMembers;
 
 		/// <summary>
 		///   BindingFlags to return all values of an enum type.

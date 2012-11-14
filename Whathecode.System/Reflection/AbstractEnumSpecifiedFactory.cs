@@ -111,7 +111,7 @@ namespace Whathecode.System.Reflection
 			where TAttributeType : IdAttribute
 		{
 			return (
-				from member in OwnerType.GetMembers( ReflectionHelper.AllClassMembers )
+				from member in OwnerType.GetMembers( ReflectionHelper.FlattenedClassMembers )
 				from attribute in (IdAttribute[])member.GetCustomAttributes( typeof( TAttributeType ), false )
 				where attribute.GetId().Equals( id )
 				group attribute by member
