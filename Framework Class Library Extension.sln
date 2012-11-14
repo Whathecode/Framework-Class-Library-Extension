@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whathecode.System", "Whathecode.System\Whathecode.System.csproj", "{6FF11324-46A9-4AE3-A802-4CFD47C59BA6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterpolationTest", "InterpolationTest\InterpolationTest.csproj", "{BBB43537-008A-4710-987D-69C0F3BDBD8E}"
