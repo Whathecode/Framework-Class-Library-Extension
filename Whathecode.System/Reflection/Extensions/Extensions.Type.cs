@@ -260,6 +260,17 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
+		///   Verify whether the given type is static. Only classes can be static.
+		/// </summary>
+		/// <param name = "source">The source of this extension method.</param>
+		/// <returns>True when the given type is a static class, false otherwise.</returns>
+		public static bool IsStatic( this Type source )
+		{
+			// Static classes are declared abstract and sealed at the IL level.
+			return source.IsAbstract && source.IsSealed;
+		}
+
+		/// <summary>
 		///   Verify whether the type supports a certain operator.
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
