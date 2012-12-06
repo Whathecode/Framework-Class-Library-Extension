@@ -1,8 +1,8 @@
 ﻿namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 {
 	/// <summary>
-	///   A helper struct for AbsoluteKeyPointCollection which allows linking key points to values which
-	///   are used by AbsoluteKeyPointCollection.
+	///   A helper struct for <see cref="AbsoluteKeyPointCollection{TValue, TMath}" /> which allows linking key points to values which
+	///   are used by <see cref="AbsoluteKeyPointCollection{TValue, TMath}" />.
 	/// </summary>
 	/// <typeparam name = "TKey">The type used for the values to which the added key points are linked.</typeparam>
 	/// <typeparam name = "TValue">The type of the key points.</typeparam>

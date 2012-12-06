@@ -48,7 +48,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 
 			// Get interpolated key point values.
 			int keyPointValueCount = interpolated.Length - 1;
-			TMath[] keyPointValues = new TMath[keyPointValueCount];
+			var keyPointValues = new TMath[keyPointValueCount];
 			Array.Copy( interpolated, 1, keyPointValues, 0, keyPointValueCount );
 
 			return new AbsoluteKeyPoint<TKey, TValue>(

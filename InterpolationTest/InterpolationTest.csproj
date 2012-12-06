@@ -158,6 +158,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Whathecode.PresentationFramework\Whathecode.PresentationFramework.csproj">
+      <Project>{9C755F97-8302-4415-AC95-FABFCDCE14B2}</Project>
+      <Name>Whathecode.PresentationFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Whathecode.System\Whathecode.System.csproj">
       <Project>{6FF11324-46A9-4AE3-A802-4CFD47C59BA6}</Project>
       <Name>Whathecode.System</Name>

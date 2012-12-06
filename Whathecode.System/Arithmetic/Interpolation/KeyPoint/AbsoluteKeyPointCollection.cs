@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Whathecode.System.Arithmetic.Interpolation.TypeProvider;
 using Whathecode.System.Arithmetic.Range;
 using Whathecode.System.Collections.Algorithm;

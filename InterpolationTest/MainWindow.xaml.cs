@@ -22,7 +22,7 @@ namespace InterpolationTest
 			InitializeComponent();
 
 			// Create a set of known points.
-			CumulativeKeyPointCollection<Point, double> keyPoints = new CumulativeKeyPointCollection<Point, double>(
+			var keyPoints = new CumulativeKeyPointCollection<Point, double>(
 				new PointInterpolationProvider()
 				)
 			{
@@ -38,7 +38,7 @@ namespace InterpolationTest
 			AbstractInterpolation<Point, double> interpolation = new CardinalSplineInterpolation<Point, double>( keyPoints );
 
 			// Create a set of interpolated points between the known points.
-			List<Point> interpolatedPoints = new List<Point>();
+			var interpolatedPoints = new List<Point>();
 			double curPercentage = 0;
 			while ( curPercentage < 1 )
 			{
@@ -50,12 +50,12 @@ namespace InterpolationTest
 			IEnumerable<LineSegment> lines = interpolatedPoints.Select( p => new LineSegment( p, true ) );
 
 			// Create graph.
-			PathFigure graphFigure = new PathFigure( keyPoints[ 0 ], lines, false );
-			PathGeometry graphGeometry = new PathGeometry( new List<PathFigure>
+			var graphFigure = new PathFigure( keyPoints[ 0 ], lines, false );
+			var graphGeometry = new PathGeometry( new List<PathFigure>
 			{
 				graphFigure
 			} );
-			Path graph = new Path
+			var graph = new Path
 			{
 				Stroke = Brushes.Black,
 				Data = graphGeometry
@@ -66,12 +66,14 @@ namespace InterpolationTest
 			const double pointSize = 5;
 			foreach ( var p in keyPoints )
 			{
-				Rectangle rect = new Rectangle();
+				var rect = new Rectangle
+				{
+					Width = pointSize,
+					Height = pointSize,
+					Fill = Brushes.Red
+				};
 				Canvas.SetLeft( rect, p.X - pointSize / 2 );
 				Canvas.SetTop( rect, p.Y - pointSize / 2 );
-				rect.Width = pointSize;
-				rect.Height = pointSize;
-				rect.Fill = Brushes.Red;
 				DrawCanvas.Children.Add( rect );
 			}
 
@@ -80,10 +82,10 @@ namespace InterpolationTest
 			const double tangentLenght = 100;
 			Point startTangent = interpolation.Interpolate( tangentAtPercentage );
 			Point tangent = interpolation.TangentAt( tangentAtPercentage );
-			Vector3D normalized = new Vector3D( tangent.X, tangent.Y, 0 );
+			var normalized = new Vector3D( tangent.X, tangent.Y, 0 );
 			normalized.Normalize();
 			tangent = new Point( normalized.X, normalized.Y );
-			Line tangentLine = new Line
+			var tangentLine = new Line
 			{
 				X1 = startTangent.X,
 				Y1 = startTangent.Y,

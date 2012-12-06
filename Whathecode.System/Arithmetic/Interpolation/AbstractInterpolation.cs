@@ -103,18 +103,6 @@ namespace Whathecode.System.Arithmetic.Interpolation
 		}
 
 		/// <summary>
-		///   Get interpolated data at a certain position in the range.
-		/// </summary>
-		/// <param name = "at">The position of which to get the interpolated data.</param>
-		/// <returns>The interpolated data.</returns>
-		public TValue ValueAt( TMath at )
-		{
-			double percentage = KeyPoints.DataRange.GetPercentageFor( at );
-
-			return Interpolate( percentage );
-		}
-
-		/// <summary>
 		///   Get the tangent at a given percentage within the range of the key points.
 		/// </summary>
 		/// <param name = "percentage"></param>
