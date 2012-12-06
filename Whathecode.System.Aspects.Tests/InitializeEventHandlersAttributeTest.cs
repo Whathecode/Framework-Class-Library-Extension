@@ -85,6 +85,17 @@ namespace Whathecode.Tests.System.Aspects
 		}
 
 		[InitializeEventHandlers]
+		static class StaticGenericTestClass<T>
+		{
+			static event Action<T> Action;
+
+			public static void InvokeActionUnsafe()
+			{
+				Action( default( T ) );
+			}
+		}
+
+		[InitializeEventHandlers]
 		class InitializeOnlyOnce
 		{
 			event Action Action;
@@ -174,6 +185,7 @@ namespace Whathecode.Tests.System.Aspects
 		public void StaticEventHandlersTest()
 		{
 			StaticTestClass.InvokeActionUnsafe();
+			StaticGenericTestClass<int>.InvokeActionUnsafe();
 		}
 
 		/// <summary>
