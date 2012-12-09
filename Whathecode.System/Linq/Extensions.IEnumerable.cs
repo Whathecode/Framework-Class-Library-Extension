@@ -108,6 +108,8 @@ namespace Whathecode.System.Linq
 
 		/// <summary>
 		///   Returns all combinations of a chosen amount of selected elements in the sequence.
+		///   TODO: Since the enumerable always needs to be enumerated to an array,
+		///         would it make sense only to allow this extension method for lists/arrays?
 		/// </summary>
 		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
 		/// <param name = "source">The source for this extension method.</param>
@@ -119,10 +121,12 @@ namespace Whathecode.System.Linq
 			Contract.Requires( source != null );
 			Contract.Requires( select >= 0 );
 
+			var list = source as T[] ?? source.ToArray();
+
 			return select == 0
 				? new[] { new T[0] }
-				: source.SelectMany( ( element, index ) =>
-					source
+				: list.SelectMany( ( element, index ) =>
+					list
 						.Skip( repetition ? index : index + 1 )
 						.Combinations( select - 1, repetition )
 						.Select( c => new[] { element }.Concat( c ) ) );
@@ -140,7 +144,7 @@ namespace Whathecode.System.Linq
 			Contract.Requires( source != null );
 			Contract.Requires( count >= 0 );
 
-			return source.Take( count + 1 ).Count() == count;				
+			return source.Take( count + 1 ).Count() == count;
 		}
 
 		/// <summary>
@@ -165,6 +169,18 @@ namespace Whathecode.System.Linq
 		/// <param name = "source">The source for this extension method.</param>
 		/// <param name = "elements">The elements to locate in the sequence.</param>
 		/// <returns>true if the source sequence contains all elements; otherwise, false.</returns>
+		public static bool ContainsAll<T>( this IEnumerable<T> source, params T[] elements )
+		{
+			return source.ContainsAll( (IEnumerable<T>)elements );
+		}
+
+		/// <summary>
+		///   Determines whether a sequence contains a set of specified elements by using the default equality comparer.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "elements">The elements to locate in the sequence.</param>
+		/// <returns>true if the source sequence contains all elements; otherwise, false.</returns>
 		public static bool ContainsAll<T>( this IEnumerable<T> source, IEnumerable<T> elements )
 		{
 			return elements.All( source.Contains );
@@ -177,10 +193,22 @@ namespace Whathecode.System.Linq
 		/// <param name = "source">The source for this extension method.</param>
 		/// <param name = "search">The elements to compare with.</param>
 		/// <returns>true if both sequences contain the same elements; otherwise, false.</returns>
+		public static bool ContainsOnly<T>( this IEnumerable<T> source, params T[] search )
+		{
+			return source.ContainsOnly( (IEnumerable<T>)search );
+		}
+
+		/// <summary>
+		///   Determines whether a sequence contains the same set of elements than another sequence by using the default equality comparer.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "search">The elements to compare with.</param>
+		/// <returns>true if both sequences contain the same elements; otherwise, false.</returns>
 		public static bool ContainsOnly<T>( this IEnumerable<T> source, IEnumerable<T> search )
 		{
 			var elements = source.ToList();
-			return elements.Intersect( search ).Count() == elements.Count;				
+			return elements.Intersect( search ).Count() == elements.Count;
 		}
 
 		/// <summary>
