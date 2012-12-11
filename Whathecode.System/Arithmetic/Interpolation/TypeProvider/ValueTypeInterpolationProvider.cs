@@ -25,7 +25,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 			return Operator<T>.Subtract( from, to );
 		}
 
-		public override T CreateInstance( T[] interpolated )
+		public override T CreateInstance( T position, T[] interpolated )
 		{
 			return interpolated[ 0 ];
 		}

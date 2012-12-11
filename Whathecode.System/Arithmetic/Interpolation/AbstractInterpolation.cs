@@ -41,18 +41,20 @@ namespace Whathecode.System.Arithmetic.Interpolation
 		/// </summary>
 		/// <param name = "smallerIndex">The index of the smaller value.</param>
 		/// <param name = "biggerIndex">The index of the larger value.</param>
+		/// <param name = "position">The position within the data range of the key points.</param>
 		/// <param name = "percentage">The percentage in between the two values.</param>
 		/// <returns>The interpolated value between the two values.</returns>
-		protected abstract TValue Interpolate( int smallerIndex, int biggerIndex, double percentage );
+		protected abstract TValue Interpolate( int smallerIndex, int biggerIndex, TMath position, double percentage );
 
 		/// <summary>
 		///   Get the tangent in between two values, with the given neighbouring indices.
 		/// </summary>
 		/// <param name = "smallerIndex">The index of the smaller value.</param>
 		/// <param name = "biggerIndex">The index of the larger value.</param>
+		/// <param name= "position">The position within the data range of the key points.</param>
 		/// <param name = "percentage">The percentage in between the two values.</param>
 		/// <returns>A value representing the tangent between the two values.</returns>
-		protected abstract TValue TangentAt( int smallerIndex, int biggerIndex, double percentage );
+		protected abstract TValue TangentAt( int smallerIndex, int biggerIndex, TMath position, double percentage );
 
 		#endregion
 
@@ -96,10 +98,25 @@ namespace Whathecode.System.Arithmetic.Interpolation
 				result = Interpolate(
 					KeyPoints.IndexAtPosition( searchResult.Smaller ),
 					KeyPoints.IndexAtPosition( searchResult.Bigger ),
+					position,
 					new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( CastOperator<TMath, double>.Cast( position ) ) );
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		///   Get interpolated data at a certain position in the range.
+		///   TODO: This position is based on the distance measure as provided by the type interpolation provider.
+		///         This might only make sense for AbsoluteKeyPointCollection's.
+		/// </summary>
+		/// <param name = "at">The position of which to get the interpolated data.</param>
+		/// <returns>The interpolated data.</returns>
+		public TValue ValueAt( TMath at )
+		{
+			double percentage = KeyPoints.DataRange.GetPercentageFor( at );
+
+			return Interpolate( percentage );
 		}
 
 		/// <summary>
@@ -124,6 +141,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			TValue result = TangentAt(
 				KeyPoints.IndexAtPosition( searchResult.Smaller ),
 				KeyPoints.IndexAtPosition( searchResult.Bigger ),
+				position,
 				new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( CastOperator<TMath, double>.Cast( position ) ) );
 
 			return result;
@@ -139,7 +157,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			: base( keyPoints ) {}
 
 
-		protected override TValue Interpolate( int smallerIndex, int biggerIndex, double percentage )
+		protected override TValue Interpolate( int smallerIndex, int biggerIndex, TMath position, double percentage )
 		{
 			Contract.Requires( smallerIndex >= 0 );
 			Contract.Requires( smallerIndex + 1 == biggerIndex );
@@ -148,7 +166,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			return default(TValue);
 		}
 
-		protected override TValue TangentAt( int smallerIndex, int biggerIndex, double percentage )
+		protected override TValue TangentAt( int smallerIndex, int biggerIndex, TMath position, double percentage )
 		{
 			Contract.Requires( smallerIndex >= 0 );
 			Contract.Requires( smallerIndex + 1 == biggerIndex );

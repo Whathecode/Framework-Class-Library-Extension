@@ -123,7 +123,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			}
 
 			// Create new key point.
-			KeyPoint newKeyPoint = new KeyPoint
+			var newKeyPoint = new KeyPoint
 			{
 				Position = position,
 				Value = value

@@ -43,7 +43,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 		}
 
 
-		protected override TValue Interpolate( int smallerIndex, int biggerIndex, double percentage )
+		protected override TValue Interpolate( int smallerIndex, int biggerIndex, TMath position, double percentage )
 		{
 			AbstractTypeInterpolationProvider<TValue, TMath> typeProvider = KeyPoints.TypeProvider;
 
@@ -59,9 +59,9 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			double baseFunction01 = (-2 * t3) + (3 * t2);
 			double baseFunction11 = t3 - t2;
 
-			// Interpolate
+			// Interpolate.
 			double tension = 1 - Tension;
-			TMath[] interpolated = new TMath[typeProvider.AmountOfDimensions];
+			var interpolated = new TMath[ typeProvider.AmountOfDimensions ];
 			for ( int i = 0; i < typeProvider.AmountOfDimensions; ++i )
 			{
 				// Calculate tangents.
@@ -79,10 +79,10 @@ namespace Whathecode.System.Arithmetic.Interpolation
 				interpolated[ i ] = CastOperator<double, TMath>.Cast( result );
 			}
 
-			return typeProvider.CreateInstance( interpolated );
+			return typeProvider.CreateInstance( position, interpolated );
 		}
 
-		protected override TValue TangentAt( int smallerIndex, int biggerIndex, double percentage )
+		protected override TValue TangentAt( int smallerIndex, int biggerIndex, TMath position, double percentage )
 		{
 			AbstractTypeInterpolationProvider<TValue, TMath> typeProvider = KeyPoints.TypeProvider;
 
@@ -99,7 +99,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 
 			// Get tangent by calculating derivative.
 			double tension = 1 - Tension;
-			TMath[] tangent = new TMath[typeProvider.AmountOfDimensions];
+			var tangent = new TMath[typeProvider.AmountOfDimensions];
 			for ( int i = 0; i < typeProvider.AmountOfDimensions; ++i )
 			{
 				// Original: (((2*t^3)-(3*t^2)+1)*b) + (((-2*t^3)+(3*t^2))*c) + ((t^3-(2*t^2)+t)*(n*(c-a))) + ((t^3-t^2)*(n*(d-b)))
@@ -120,7 +120,7 @@ namespace Whathecode.System.Arithmetic.Interpolation
 				tangent[ i ] = CastOperator<double, TMath>.Cast( result );
 			}
 
-			return typeProvider.CreateInstance( tangent );
+			return typeProvider.CreateInstance( position, tangent );
 		}
 
 		/// <summary>

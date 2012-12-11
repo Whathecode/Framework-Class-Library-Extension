@@ -54,9 +54,10 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 		/// <summary>
 		///   Create a new instance based on a given set of values for the dimensions.
 		/// </summary>
+		/// <param name= "position">The position within the data range of the key points.</param>
 		/// <param name = "interpolated">All the values for the dimensions.</param>
 		/// <returns>An instance of TValue with it's dimensions set to the given values.</returns>
-		public abstract TValue CreateInstance( TMath[] interpolated );
+		public abstract TValue CreateInstance( TMath position, TMath[] interpolated );
 
 		#endregion
 

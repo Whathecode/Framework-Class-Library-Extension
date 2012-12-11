@@ -36,7 +36,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider.Windows
 			return from.DistanceTo( to );
 		}
 
-		public override Point CreateInstance( double[] interpolated )
+		public override Point CreateInstance( double position, double[] interpolated )
 		{
 			return new Point( interpolated[ 0 ], interpolated[ 1 ] );
 		}

@@ -1,5 +1,4 @@
-﻿using System;
-using Whathecode.System.Arithmetic.Interpolation.KeyPoint;
+﻿using Whathecode.System.Arithmetic.Interpolation.KeyPoint;
 using Whathecode.System.Operators;
 
 
@@ -23,7 +22,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 		///   Create a new interpolation provider which can interpolate over AbsoluteKeyPoints.
 		/// </summary>
 		public AbsoluteKeyPointInterpolationProvider( AbstractTypeInterpolationProvider<TValue, TMath> keyPointInterpolationProvider )
-			: base( keyPointInterpolationProvider.AmountOfDimensions + 1 )
+			: base( keyPointInterpolationProvider.AmountOfDimensions )
 		{
 			_keyPointInterpolationProvider = keyPointInterpolationProvider;
 		}
@@ -31,34 +30,27 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 
 		public override TMath GetDimensionValue( AbsoluteKeyPoint<TKey, TValue> value, int dimension )
 		{
-			return dimension == 0
+			/*return dimension == 0
 				? KeyToMath( value.Key ) // First dimension is the key.                   
-				: _keyPointInterpolationProvider.GetDimensionValue( value.KeyPoint, dimension - 1 ); // The value of the key point.
+				: _keyPointInterpolationProvider.GetDimensionValue( value.KeyPoint, dimension - 1 ); // The value of the key point.*/
+
+			return _keyPointInterpolationProvider.GetDimensionValue( value.KeyPoint, dimension );
 		}
 
 		public override TMath RelativePosition( AbsoluteKeyPoint<TKey, TValue> from, AbsoluteKeyPoint<TKey, TValue> to )
 		{
-			return KeyToMath( Operator<TKey>.Subtract( from.Key, to.Key ) );
+			TKey key = Operator<TKey>.Subtract( @from.Key, to.Key );
+			return CastOperator<double, TMath>.Cast( CastOperator<TKey, double>.Cast( key ) );
 		}
 
-		public override AbsoluteKeyPoint<TKey, TValue> CreateInstance( TMath[] interpolated )
+		public override AbsoluteKeyPoint<TKey, TValue> CreateInstance( TMath position, TMath[] interpolated )
 		{
 			// Get interpolated key.
-			TKey key = CastOperator<double, TKey>.Cast( CastOperator<TMath, double>.Cast( interpolated[ 0 ] ) );
-
-			// Get interpolated key point values.
-			int keyPointValueCount = interpolated.Length - 1;
-			var keyPointValues = new TMath[keyPointValueCount];
-			Array.Copy( interpolated, 1, keyPointValues, 0, keyPointValueCount );
+			TKey key = CastOperator<double, TKey>.Cast( CastOperator<TMath, double>.Cast( position ) );
 
 			return new AbsoluteKeyPoint<TKey, TValue>(
 				key,
-				_keyPointInterpolationProvider.CreateInstance( keyPointValues ) );
-		}
-
-		static TMath KeyToMath( TKey value )
-		{
-			return CastOperator<double, TMath>.Cast( CastOperator<TKey, double>.Cast( value ) );
+				_keyPointInterpolationProvider.CreateInstance( position, interpolated ) );
 		}
 	}
 }

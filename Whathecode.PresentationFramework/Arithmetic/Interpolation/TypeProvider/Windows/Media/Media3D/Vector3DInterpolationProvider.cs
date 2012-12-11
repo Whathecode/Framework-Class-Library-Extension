@@ -31,7 +31,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider.Windows.Media.
 			return from.DistanceTo( to );
 		}
 
-		public override Vector3D CreateInstance( double[] interpolated )
+		public override Vector3D CreateInstance( double position, double[] interpolated )
 		{
 			return new Vector3D( interpolated[ 0 ], interpolated[ 1 ], interpolated[ 2 ] );
 		}

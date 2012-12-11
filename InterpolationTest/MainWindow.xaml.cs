@@ -7,7 +7,10 @@ using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using Whathecode.System.Arithmetic.Interpolation;
 using Whathecode.System.Arithmetic.Interpolation.KeyPoint;
+using Whathecode.System.Arithmetic.Interpolation.TypeProvider;
 using Whathecode.System.Arithmetic.Interpolation.TypeProvider.Windows;
+using Whathecode.System.Arithmetic.Interpolation.TypeProvider.Windows.Media.Media3D;
+using Whathecode.System.Collections.Generic;
 
 
 namespace InterpolationTest
@@ -20,6 +23,23 @@ namespace InterpolationTest
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			// TODO: Remove test data.
+			var testKeyPoints =
+				new AbsoluteKeyPointCollection<AbsoluteKeyPoint<uint, Vector3D>, double>(
+					new AbsoluteKeyPointInterpolationProvider<uint, Vector3D, double>( new Vector3DInterpolationProvider() ),
+					AbsoluteKeyPoint<uint, Vector3D>.ReferenceKeyPoint );
+			new TupleList<uint, double, double, double>()
+			{
+				{ 0, 0, 0, 0 },
+				{ 37, -2.4, -2.4, 0 },
+				{ 106, -1.39857597600416, -1.39857597600416, 0 },
+				{ 203, 4.52847072568262, 1.32847072568262, 0 },
+				{ 259, 4.53544596213088, 1.33679720481086, 0 },
+				{ 4495, 0, 0, 0 }
+			}.ForEach( i => testKeyPoints.Add( new AbsoluteKeyPoint<uint, Vector3D>( i.Item1, new Vector3D( i.Item2, i.Item3, i.Item4 ) ) ) );
+			var testInterpolate = new CardinalSplineInterpolation<AbsoluteKeyPoint<uint, Vector3D>, double>( testKeyPoints );
+			var negativeValueTest = testInterpolate.ValueAt( 229 );
 
 			// Create a set of known points.
 			var keyPoints = new CumulativeKeyPointCollection<Point, double>(
@@ -78,7 +98,7 @@ namespace InterpolationTest
 			}
 
 			// Draw tangent at a desired location.
-			const double tangentAtPercentage = 0.7;
+			const double tangentAtPercentage = 0.95;
 			const double tangentLenght = 100;
 			Point startTangent = interpolation.Interpolate( tangentAtPercentage );
 			Point tangent = interpolation.TangentAt( tangentAtPercentage );
