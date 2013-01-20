@@ -97,6 +97,35 @@ namespace Whathecode.System.Windows.Interop
 		public static extern IntPtr GetWindow( IntPtr windowHandle, WindowRelationship relationship );
 
 		/// <summary>
+		///   Retrieves information about the specified window. The function also retrieves the value at a specified offset into the extra window memory.
+		///   
+		///   Note: To write code that is compatible with both 32-bit and 64-bit versions of Windows, use GetWindowLongPtr.
+		///         When compiling for 32-bit Windows, GetWindowLongPtr is defined as a call to the GetWindowLong function.
+		/// </summary>
+		/// <remarks>Reserve extra window memory by specifying a nonzero value in the cbWndExtra member of the WNDCLASSEX structure used with the RegisterClassEx function.</remarks>
+		/// <param name="windowHandle">A handle to the window and, indirectly, the class to which the window belongs.</param>
+		/// <param name="index">
+		///    The zero-based offset to the value to be retrieved. Valid values are in the range zero through the number of bytes of extra window memory, minus the size of an integer.
+		///    To retrieve any other value, specify one of the values as specified in <see cref="GetWindowLongOptions" />.
+		/// </param>
+		/// <returns>
+		///   If the function succeeds, the return value is the requested value.
+		///   If the function fails, the return value is zero. To get extended error information, call GetLastWin32Error.
+		///   If SetWindowLong or SetWindowLongPtr has not been called previously, GetWindowLongPtr returns zero for values in the extra window or class memory.
+		/// </returns>
+		public static IntPtr GetWindowLongPtr( IntPtr windowHandle, int index )
+		{
+			// GetWindowLongPtr is only supported by Win64. By checking the pointer size the correct function can be called.
+			return IntPtr.Size == 8
+				? GetWindowLongPtr64( windowHandle, index )
+				: GetWindowLongPtr32( windowHandle, index );
+		}
+		[DllImport( Dll, EntryPoint="GetWindowLong", SetLastError = true )]
+		static extern IntPtr GetWindowLongPtr32( IntPtr windowHandle, int index );
+		[DllImport( Dll, EntryPoint="GetWindowLongPtr", SetLastError = true )]
+		static extern IntPtr GetWindowLongPtr64( IntPtr windowHandle, int index );
+
+		/// <summary>
 		///   Retrieves the name of the class to which the specified window belongs.
 		/// </summary>
 		/// <param name="windowHandle">A handle to the window and, indirectly, the class to which the window belongs.</param>
@@ -331,8 +360,12 @@ namespace Whathecode.System.Windows.Interop
 		/// <param name="width">The window's new width, in pixels.</param>
 		/// <param name="height">The window's new height, in pixels.</param>
 		/// <param name="flags">Affect the size and position of the window being positioned.</param>
-		/// <returns></returns>
-		[DllImport( Dll )]
+		/// <returns>
+		///   The return value identifies the updated multiple-window – position structure. The handle returned by this function may differ from the handle passed to the function.
+		///   The new handle that this function returns should be passed during the next call to the DeferWindowPos or EndDeferWindowPos function.
+		///   If insufficient system resources are available for the function to succeed, the return value is NULL. To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true )]
 		public static extern IntPtr DeferWindowPos(
 			IntPtr windowsPositionInfo, IntPtr windowHandle, IntPtr insertAfterWindow,
 			int x, int y, int width, int height,

@@ -152,6 +152,18 @@ namespace Whathecode.System.Windows.Interop
 		}
 
 		/// <summary>
+		///   Determines whether or not the window is set to be topmost, in which case it always stays on top of any other non-topmost windows.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsTopmost()
+		{
+			int extraOptions = (int)User32.GetWindowLongPtr( Handle, (int)User32.GetWindowLongOptions.ExtendedStyles );
+			int topmost = (int)User32.ExtendedWindowStyles.Topmost;
+
+			return ( (extraOptions & topmost) == topmost );
+		}
+
+		/// <summary>
 		///   Activates the window and displays it as a maximized window.
 		/// </summary>
 		public void Maximize()

@@ -107,6 +107,7 @@ namespace Whathecode.System.Windows.Interop
 				return;
 			}
 
+			// TODO: Handle situations where BeginDeferWindowPos or DeferWindowPos returns null when no resources are available.
 			IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windows.Count );
 
 			for ( int i = 0; i < windows.Count; ++i )
@@ -144,7 +145,7 @@ namespace Whathecode.System.Windows.Interop
 					commands );
 			}
 
-			User32.EndDeferWindowPos( windowsPositionInfo );			
+			User32.EndDeferWindowPos( windowsPositionInfo );
 		}
 	}
 }
