@@ -30,10 +30,6 @@ namespace Whathecode.System.Arithmetic.Interpolation.TypeProvider
 
 		public override TMath GetDimensionValue( AbsoluteKeyPoint<TKey, TValue> value, int dimension )
 		{
-			/*return dimension == 0
-				? KeyToMath( value.Key ) // First dimension is the key.                   
-				: _keyPointInterpolationProvider.GetDimensionValue( value.KeyPoint, dimension - 1 ); // The value of the key point.*/
-
 			return _keyPointInterpolationProvider.GetDimensionValue( value.KeyPoint, dimension );
 		}
 
