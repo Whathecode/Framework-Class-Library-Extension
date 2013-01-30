@@ -193,9 +193,10 @@
   <ItemGroup>
     <Compile Include="AbstractDisposable.cs" />
     <Compile Include="ActionHelper.cs" />
-    <Compile Include="Algorithm\IGate.cs" />
+    <Compile Include="Algorithm\AbstractGate.cs" />
     <Compile Include="Algorithm\Loop.LoopIteration.cs" />
     <Compile Include="Algorithm\SkipGate.cs" />
+    <Compile Include="Algorithm\TimeGate.cs" />
     <Compile Include="Arithmetic\Interpolation\CardinalSplineInterpolation.cs" />
     <Compile Include="Arithmetic\Interpolation\KeyPoint\AbsoluteKeyPoint.cs" />
     <Compile Include="Arithmetic\Interpolation\KeyPoint\AbsoluteKeyPointCollection.cs" />
