@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Text;
 using Whathecode.System.Runtime.InteropServices;
 
@@ -11,6 +12,7 @@ namespace Whathecode.System.Windows.Interop
 	///   Information about an application window.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
+	[DataContract]
 	public class WindowInfo
 	{
 		const int MaxClassnameLength = 128;	// TODO: Is there an actual maximum class name length?
@@ -21,6 +23,7 @@ namespace Whathecode.System.Windows.Interop
 			{ User32.WindowState.ShowMinimized, WindowState.Minimized }
 		};
 
+		[DataMember]
 		internal readonly IntPtr Handle;
 
 
@@ -80,7 +83,7 @@ namespace Whathecode.System.Windows.Interop
 
 			return processId == 0
 				? null
-				: Process.GetProcessById(processId);
+				: Process.GetProcessById( processId );
 		}
 
 		/// <summary>
