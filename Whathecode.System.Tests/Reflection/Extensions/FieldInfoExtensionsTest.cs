@@ -31,25 +31,25 @@ namespace Whathecode.Tests.System.Reflection.Extensions
 		public void CreateGetterDelegateTest()
 		{
 			// Public/private.
-			Func<string> publicGetter = _publicField.CreateGetterDelegate<string>( _fields );
+			Func<string> publicGetter = _publicField.CreateGetter<string>().ClosedOver( _fields );
 			Assert.AreEqual( Fields.TestString, publicGetter() );
 			Func<string> privateGetter = _type
 				.GetField("_private", BindingFlags.Instance | BindingFlags.NonPublic )
-				.CreateGetterDelegate<string>( _fields );
+				.CreateGetter<string>().ClosedOver( _fields );
 			Assert.AreEqual( Fields.TestString, privateGetter() );
 
 			// Delegate types which don't correspond, but allowed variance.
-			Func<object> upcasting = _publicField.CreateGetterDelegate<object>( _fields );
+			Func<object> upcasting = _publicField.CreateGetter<string>().ClosedOver( _fields );
 			Assert.AreEqual( Fields.TestString, upcasting() );
 
 			// Delegate types which don't correspond, and no variance possible.
-			AssertHelper.ThrowsException<ArgumentException>( () => _type.GetField( "StringObject" ).CreateGetterDelegate<string>( _fields ) );
+			AssertHelper.ThrowsException<ArgumentException>( () => _type.GetField( "StringObject" ).CreateGetter<string>().ClosedOver( _fields ) );
 		}
 
 		[TestMethod]
 		public void CreateOpenInstanceGetterDelegateTest()
 		{
-			Func<Fields, string> openInstance = _publicField.CreateOpenInstanceGetterDelegate<Fields, string>();
+			Func<Fields, string> openInstance = _publicField.CreateGetter<string>().OpenInstance<Fields>();
 			Assert.AreEqual( Fields.TestString, openInstance( _fields ) );
 		}
 	}

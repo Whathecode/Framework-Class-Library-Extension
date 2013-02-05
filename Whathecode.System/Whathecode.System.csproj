@@ -271,6 +271,8 @@
     <Compile Include="Reflection\AbstractAttributeReflectionFactory.cs" />
     <Compile Include="Reflection\AbstractEnumSpecifiedFactory.cs" />
     <Compile Include="Reflection\Emit\Proxy.cs" />
+    <Compile Include="Reflection\Expressions\GetterExpression.cs" />
+    <Compile Include="Reflection\Expressions\SetterExpression.cs" />
     <Compile Include="Reflection\Extensions\Extensions.EventInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.MemberInfo.cs" />
     <Compile Include="Reflection\Extensions\Extensions.MethodInfo.cs" />

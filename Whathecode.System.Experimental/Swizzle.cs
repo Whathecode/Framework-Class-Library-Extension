@@ -72,14 +72,14 @@ namespace Whathecode.System.Experimental
 				if ( member is FieldInfo )
 				{
 					var field = (FieldInfo)member;
-					getter = field.CreateOpenInstanceGetterDelegate<T, TProperty>();
-					setter = field.CreateOpenInstanceReturningSetterDelegate<T, TProperty>();
+					getter = field.CreateGetter<TProperty>().OpenInstance<T>();
+					setter = field.CreateSetter<TProperty>().Returning().OpenInstance<T>();
 				}
 				else if ( member is PropertyInfo )
 				{
 					var property = (PropertyInfo)member;
-					getter = property.CreateOpenInstanceGetterDelegate<T, TProperty>();
-					setter = property.CreateOpenInstanceReturningSetterDelegate<T, TProperty>();
+					getter = property.CreateGetter<TProperty>().OpenInstance<T>();
+					setter = property.CreateSetter<TProperty>().Returning().OpenInstance<T>();
 				}
 				else
 				{
@@ -93,6 +93,8 @@ namespace Whathecode.System.Experimental
 		}
 	}
 
+	public delegate Swizzle<T, TProperty> GetSwizzle<T, TProperty>( T v );
+
 	public class Swizzle<T, TProperty> : IEnumerable<TProperty>
 	{
 		readonly T _instance;
@@ -103,6 +105,12 @@ namespace Whathecode.System.Experimental
 		{
 			_instance = instance;
 			_properties = properties;
+		}
+
+		public Swizzle( T instance, params Expression<Func<T, TProperty>>[] properties )
+		{
+			_instance = instance;
+			_properties = PropertyListFactory<T>.Create( properties );
 		}
 
 

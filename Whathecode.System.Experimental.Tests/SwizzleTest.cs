@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Linq.Expressions;
+using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Whathecode.System.Experimental;
 
@@ -8,19 +10,7 @@ namespace Whathecode.Tests.System.Experimental
 	[TestClass]
 	public class SwizzleTest
 	{
-		[TestMethod]
-		public void SwizzleStructTest()
-		{
-			var v1 = new Vector( 1, 2 );
-			var v2 = new Vector( 0, 0 );
-
-			v2 = v2.XY().Set( v1.YX() );
-
-			Assert.AreEqual( v1.Y, v2.X );
-			Assert.AreEqual( v1.X, v2.Y );
-			Assert.AreEqual( 2, v2.X );
-			Assert.AreEqual( 1, v2.Y );
-		}
+		#region Common Test Members
 
 		public class Class
 		{
@@ -34,20 +24,66 @@ namespace Whathecode.Tests.System.Experimental
 			}
 		}
 
-		[TestMethod]
-		public void SwizzleClassTest()
+		Vector _v1, _v2;
+		Class _c1, _c2;
+
+		[TestInitialize]
+		public void InitializeTest()
 		{
-			var c1 = new Class( 1, 2 );
-			var c2 = new Class( 0, 0 );
+			_v1 = new Vector( 1, 2 );
+			_v2 = new Vector();
+			_c1 = new Class( 1, 2 );
+			_c2 = new Class( 0, 0 );
+		}
 
-			c2.XY().Set( c1.YX() );
+		public void AssertHelper<TProperty>( TProperty x1, TProperty y1, TProperty x2, TProperty y2, TProperty x, TProperty y )
+		{
+			Assert.AreEqual( x1, y2 );
+			Assert.AreEqual( y1, x2 );
+			Assert.AreEqual( y, x2 );
+			Assert.AreEqual( x, y2 );
+		}
 
-			Assert.AreEqual( c1.Y, c2.X );
-			Assert.AreEqual( c1.X, c2.Y );
-			Assert.AreEqual( 2, c2.X );
-			Assert.AreEqual( 1, c2.Y );
+		#endregion  // Common Test Members
+
+
+		[TestMethod]
+		public void InPlaceConstructionTest()
+		{
+			// Test structs as well as reference types.
+			InPlaceConstruction<Vector, double>( _v1, _v2, v => v.X, v => v.Y, 1, 2 );
+			InPlaceConstruction<Class, int>( _c1, _c2, c => c.X, c => c.Y, 1, 2 );
+		}
+		
+		public void InPlaceConstruction<T, TProperty>( T t1, T t2, Expression<Func<T, TProperty>> getXExpr, Expression<Func<T, TProperty>> getYExpr, TProperty x, TProperty y )
+		{
+			var t2_xy = new Swizzle<T, TProperty>( t2, getXExpr, getYExpr );
+			var t1_yx = new Swizzle<T, TProperty>( t1, getYExpr, getXExpr );
+			t2 = t2_xy.Set( t1_yx );
+
+			Func<T, TProperty> getX = getXExpr.Compile();
+			Func<T, TProperty> getY = getYExpr.Compile();
+			AssertHelper( getX( t1 ), getY( t1 ), getX( t2 ), getY( t2 ), x, y );
+		}
+
+		[TestMethod]
+		public void UsingDelegatesTest()
+		{
+			GetSwizzle<Vector, double> XY = i => new Swizzle<Vector, double>( i, v => v.X, v => v.Y );
+			GetSwizzle<Vector, double> YX = i => new Swizzle<Vector, double>( i, v => v.Y, v => v.X );
+
+			_v2 = XY( _v2 ).Set( YX( _v1 ) );
+			AssertHelper( _v1.X, _v1.Y, _v2.X, _v2.Y, 1, 2 );
+		}
+
+		[TestMethod]
+		public void UsingExtensionMethodsTest()
+		{
+			_v2 = _v2.XY().Set( _v1.YX() );
+			AssertHelper( _v1.X, _v1.Y, _v2.X, _v2.Y, 1, 2 );
 		}
 	}
+
 
 	static class VectorExtensions
 	{
@@ -61,18 +97,6 @@ namespace Whathecode.Tests.System.Experimental
 		public static Swizzle<Vector, double> YX( this Vector source )
 		{
 			return new Swizzle<Vector, double>( source, _yx );
-		}
-
-		static PropertyList<SwizzleTest.Class, int> _cxy = PropertyListFactory<SwizzleTest.Class>.Create( c => c.X, c => c.Y );
-		public static Swizzle<SwizzleTest.Class, int> XY( this SwizzleTest.Class source )
-		{
-			return new Swizzle<SwizzleTest.Class, int>( source, _cxy );
-		}
-
-		static PropertyList<SwizzleTest.Class, int> _cyx = PropertyListFactory<SwizzleTest.Class>.Create( c => c.Y, c => c.X );
-		public static Swizzle<SwizzleTest.Class, int> YX( this SwizzleTest.Class source )
-		{
-			return new Swizzle<SwizzleTest.Class, int>( source, _cyx );
 		}
 	}
 }

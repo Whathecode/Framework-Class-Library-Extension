@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Whathecode.System.Reflection.Expressions;
 
 
 namespace Whathecode.System.Reflection.Extensions
@@ -8,64 +9,23 @@ namespace Whathecode.System.Reflection.Extensions
 	public static partial class Extensions
 	{
 		/// <summary>
-		///   Creates a delegate of a specified type that retrieves a field value of an instance.
+		///   Create an expression from which field getters can be created.
 		/// </summary>
 		/// <typeparam name="TField">The type of the field.</typeparam>
-		/// <param name="field">The field which to create a delegate for.</param>
-		/// <param name="instance"></param>
-		/// <returns>A delegate which can be used to retrieve the field value of the passed instance.</returns>
-		public static Func<TField> CreateGetterDelegate<TField>( this FieldInfo field, object instance )
+		/// <param name="field">The info about the field.</param>
+		public static GetterExpression<TField> CreateGetter<TField>( this FieldInfo field )
 		{
-			var constantInstance = Expression.Constant( instance );
-			return Expression.Lambda<Func<TField>>( Expression.Field( constantInstance, field ) ).Compile();
+			return new GetterExpression<TField>( field );
 		}
 
 		/// <summary>
-		///   Creates a delegate of a specified type that retrieves a field value of an instance passed as parameter.
+		///   Create an expression from which field setters can be created.
 		/// </summary>
-		/// <typeparam name="TInstance">The type of the instance.</typeparam>
-		/// <typeparam name="TField">The field type.</typeparam>
-		/// <param name="field">The field which to create a delegate for.</param>
-		/// <returns>A delegate which can be used to retrieve a field value of an instance.</returns>
-		public static Func<TInstance, TField> CreateOpenInstanceGetterDelegate<TInstance, TField>( this FieldInfo field )
+		/// <typeparam name="TField">The type of the field.</typeparam>
+		/// <param name="field">The info about the field.</param>
+		public static SetterExpression<TField> CreateSetter<TField>( this FieldInfo field )
 		{
-			var instance = Expression.Parameter( field.DeclaringType );
-			return Expression.Lambda<Func<TInstance, TField>>( Expression.Field( instance, field ), instance ).Compile();
-		}
-
-		/// <summary>
-		///   Creates a delegate of a specified type that sets a field value of an instance passed as parameter.
-		/// </summary>
-		/// <typeparam name="TInstance">The type of the instance.</typeparam>
-		/// <typeparam name="TField">The field type.</typeparam>
-		/// <param name="field">The field which to create a delegate for.</param>
-		/// <returns>A delegate which can be used to set a field value of an instance.</returns>
-		public static Action<TInstance, TField> CreateOpenInstanceSetterDelegate<TInstance, TField>( this FieldInfo field )
-		{
-			var instance = Expression.Parameter( field.DeclaringType );
-			var value = Expression.Parameter( field.FieldType );
-			var fieldExpr = Expression.Field( instance, field );
-			return Expression.Lambda<Action<TInstance, TField>>( Expression.Assign( fieldExpr, value ), instance, value ).Compile();
-		}
-
-		/// <summary>
-		///   Creates a delegate of a specified type that sets a field value of an instance passed as parameter and returns the updated instance.
-		/// </summary>
-		/// <typeparam name="TInstance">The type of the instance.</typeparam>
-		/// <typeparam name="TField">The field type.</typeparam>
-		/// <param name="field">The field which to create a delegate for.</param>
-		/// <returns>A delegate which can be used to set a field value of an instance, after which the instance is returned.</returns>
-		public static Func<TInstance, TField, TInstance> CreateOpenInstanceReturningSetterDelegate<TInstance, TField>( this FieldInfo field )
-		{
-			var instance = Expression.Parameter( field.DeclaringType );
-			var value = Expression.Parameter( field.FieldType );
-			var fieldExpr = Expression.Field( instance, field );
-			return Expression.Lambda<Func<TInstance, TField, TInstance>>(
-				Expression.Block(
-					Expression.Assign( fieldExpr, value ),
-					instance
-				),
-				instance, value ).Compile();
+			return new SetterExpression<TField>( field );
 		}
 	}
 }
