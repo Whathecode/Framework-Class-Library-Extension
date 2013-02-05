@@ -32,5 +32,40 @@ namespace Whathecode.System.Reflection.Extensions
 			var instance = Expression.Parameter( field.DeclaringType );
 			return Expression.Lambda<Func<TInstance, TField>>( Expression.Field( instance, field ), instance ).Compile();
 		}
+
+		/// <summary>
+		///   Creates a delegate of a specified type that sets a field value of an instance passed as parameter.
+		/// </summary>
+		/// <typeparam name="TInstance">The type of the instance.</typeparam>
+		/// <typeparam name="TField">The field type.</typeparam>
+		/// <param name="field">The field which to create a delegate for.</param>
+		/// <returns>A delegate which can be used to set a field value of an instance.</returns>
+		public static Action<TInstance, TField> CreateOpenInstanceSetterDelegate<TInstance, TField>( this FieldInfo field )
+		{
+			var instance = Expression.Parameter( field.DeclaringType );
+			var value = Expression.Parameter( field.FieldType );
+			var fieldExpr = Expression.Field( instance, field );
+			return Expression.Lambda<Action<TInstance, TField>>( Expression.Assign( fieldExpr, value ), instance, value ).Compile();
+		}
+
+		/// <summary>
+		///   Creates a delegate of a specified type that sets a field value of an instance passed as parameter and returns the updated instance.
+		/// </summary>
+		/// <typeparam name="TInstance">The type of the instance.</typeparam>
+		/// <typeparam name="TField">The field type.</typeparam>
+		/// <param name="field">The field which to create a delegate for.</param>
+		/// <returns>A delegate which can be used to set a field value of an instance, after which the instance is returned.</returns>
+		public static Func<TInstance, TField, TInstance> CreateOpenInstanceReturningSetterDelegate<TInstance, TField>( this FieldInfo field )
+		{
+			var instance = Expression.Parameter( field.DeclaringType );
+			var value = Expression.Parameter( field.FieldType );
+			var fieldExpr = Expression.Field( instance, field );
+			return Expression.Lambda<Func<TInstance, TField, TInstance>>(
+				Expression.Block(
+					Expression.Assign( fieldExpr, value ),
+					instance
+				),
+				instance, value ).Compile();
+		}
 	}
 }
