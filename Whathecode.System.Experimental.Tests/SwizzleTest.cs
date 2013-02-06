@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Whathecode.System.Diagnostics;
 using Whathecode.System.Experimental;
 
 
@@ -69,6 +70,7 @@ namespace Whathecode.Tests.System.Experimental
 		[TestMethod]
 		public void UsingDelegatesTest()
 		{
+			// Warning: This method is slow, since the swizzle needs to be recreated each time.
 			GetSwizzle<Vector, double> XY = i => new Swizzle<Vector, double>( i, v => v.X, v => v.Y );
 			GetSwizzle<Vector, double> YX = i => new Swizzle<Vector, double>( i, v => v.Y, v => v.X );
 
@@ -82,6 +84,21 @@ namespace Whathecode.Tests.System.Experimental
 			_v2 = _v2.XY().Set( _v1.YX() );
 			AssertHelper( _v1.X, _v1.Y, _v2.X, _v2.Y, 1, 2 );
 		}
+
+		/*[TestMethod]
+		public void Benchmark()
+		{
+			var xyList = PropertyListFactory<Vector>.Create( v => v.X, v => v.Y );
+			GetSwizzle<Vector, double> XY = i => new Swizzle<Vector, double>( i, xyList );
+
+			var yxList = PropertyListFactory<Vector>.Create( v => v.Y, v => v.X );
+			GetSwizzle<Vector, double> YX = i => new Swizzle<Vector, double>( i, yxList );
+
+			const int TIMES = 100000;
+			string normal = RunTime.From( "No Swizzle", () => _v2 = new Vector( _v1.Y, _v1.X ), TIMES ).ToString();
+			string extensionMethods = RunTime.From( "Extension Methods", () => _v2 = _v2.XY().Set( _v1.YX() ), TIMES ).ToString();
+			string delegates = RunTime.From( "Delegates", () => _v2 = XY( _v2 ).Set( YX( _v1 ) ), TIMES ).ToString();
+		}*/
 	}
 
 
