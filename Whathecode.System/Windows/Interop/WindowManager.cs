@@ -107,45 +107,48 @@ namespace Whathecode.System.Windows.Interop
 				return;
 			}
 
-			// TODO: Handle situations where BeginDeferWindowPos or DeferWindowPos returns null when no resources are available.
-			IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windows.Count );
-
-			for ( int i = 0; i < windows.Count; ++i )
+			bool succeeded = false;
+			while ( !succeeded )
 			{
-				RepositionWindowInfo window = windows[ i ];
+				IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windows.Count );
 
-				// Activating windows is outside of the scope of this function, otherwise it gets too complex.
-				var commands = User32.DeferWindowPosCommands.NoActivate;
-
-				if ( changeVisibility && window.HasVisibilityChanged() )
+				for ( int i = 0; i < windows.Count; ++i )
 				{
-					commands |= window.Visible ? User32.DeferWindowPosCommands.ShowWindow : User32.DeferWindowPosCommands.HideWindow;
+					RepositionWindowInfo window = windows[ i ];
+
+					// Activating windows is outside of the scope of this function, otherwise it gets too complex.
+					var commands = User32.DeferWindowPosCommands.NoActivate;
+
+					if ( changeVisibility && window.HasVisibilityChanged() )
+					{
+						commands |= window.Visible ? User32.DeferWindowPosCommands.ShowWindow : User32.DeferWindowPosCommands.HideWindow;
+					}
+
+					if ( changeVisibility || !window.HasSizeChanged() )
+					{
+						commands |= User32.DeferWindowPosCommands.NoResize;
+					}
+					if ( changeVisibility || !window.HasPositionChanged() )
+					{
+						commands |= User32.DeferWindowPosCommands.NoMove;
+					}
+					if ( changeVisibility || (i == 0 || !changeZOrder) )
+					{
+						commands |= User32.DeferWindowPosCommands.NoZOrder;
+						commands |= User32.DeferWindowPosCommands.NoOwnerZOrder;
+					}
+
+					windowsPositionInfo = User32.DeferWindowPos(
+						windowsPositionInfo,
+						window.ToPosition.Handle,
+						i == 0 ? IntPtr.Zero : windows[ i - 1 ].ToPosition.Handle,
+						window.X, window.Y,
+						window.Width, window.Height,
+						commands );
 				}
 
-				if ( changeVisibility || !window.HasSizeChanged() )
-				{
-					commands |= User32.DeferWindowPosCommands.NoResize;
-				}
-				if ( changeVisibility || !window.HasPositionChanged() )
-				{
-					commands |= User32.DeferWindowPosCommands.NoMove;
-				}
-				if ( changeVisibility || (i == 0 || !changeZOrder) )
-				{
-					commands |= User32.DeferWindowPosCommands.NoZOrder;
-					commands |= User32.DeferWindowPosCommands.NoOwnerZOrder;
-				}
-
-				windowsPositionInfo = User32.DeferWindowPos(
-					windowsPositionInfo,
-					window.ToPosition.Handle,
-					i == 0 ? IntPtr.Zero : windows[ i - 1 ].ToPosition.Handle,
-					window.X, window.Y,
-					window.Width, window.Height,
-					commands );
+				succeeded = User32.EndDeferWindowPos( windowsPositionInfo );
 			}
-
-			User32.EndDeferWindowPos( windowsPositionInfo );
 		}
 	}
 }
