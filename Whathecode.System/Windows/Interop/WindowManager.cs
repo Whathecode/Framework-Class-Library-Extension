@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Whathecode.System.Runtime.InteropServices;
 
 
@@ -12,6 +13,12 @@ namespace Whathecode.System.Windows.Interop
 	/// <author>Steven Jeuris</author>
 	public static class WindowManager
 	{
+		enum ErrorCode
+		{
+			InvalidWindowHandle = 0x00000578,
+			InvalidMultipleWindowPositionStructure = 0x0000057D
+		}
+
 		/// <summary>
 		///   Enumerates all top-level windows on the screen.
 		/// </summary>
@@ -93,6 +100,9 @@ namespace Whathecode.System.Windows.Interop
 		///   Reposition/resize a set of windows, or change their visiblity. When changing visibilty, windows can't be repositioned/resized.
 		///   This is a limitation of the underlying Win32 API.
 		/// </summary>
+		/// <remarks>
+		///   When invalid window handles are passed, they are simply ignored.
+		/// </remarks>
 		/// <param name="windows">The windows to perform the operation on.</param>
 		/// <param name="changeZOrder">
 		///   When true and changeVisibility is not set, the windows's Z orders are changed to reflect the order of the toPosition list.
@@ -145,6 +155,18 @@ namespace Whathecode.System.Windows.Interop
 						window.X, window.Y,
 						window.Width, window.Height,
 						commands );
+
+					// Handle possible errors.
+					if ( windowsPositionInfo == IntPtr.Zero )
+					{
+						ErrorCode error = (ErrorCode)Marshal.GetLastWin32Error();
+						switch ( error )
+						{
+							case ErrorCode.InvalidWindowHandle:
+								windows = windows.Where( w => !w.ToPosition.IsDestroyed() ).ToList();
+								break;
+						}
+					}
 				}
 
 				succeeded = User32.EndDeferWindowPos( windowsPositionInfo );
