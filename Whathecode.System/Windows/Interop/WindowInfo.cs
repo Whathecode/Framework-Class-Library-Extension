@@ -12,8 +12,8 @@ namespace Whathecode.System.Windows.Interop
 	///   Information about an application window.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	[DataContract]
-	public class WindowInfo
+	[Serializable]
+	public class WindowInfo : ISerializable
 	{
 		const int MaxClassnameLength = 128;	// TODO: Is there an actual maximum class name length?
 		readonly Dictionary<User32.WindowState, WindowState> _windowStateMapping = new Dictionary<User32.WindowState, WindowState>
@@ -23,7 +23,6 @@ namespace Whathecode.System.Windows.Interop
 			{ User32.WindowState.ShowMinimized, WindowState.Minimized }
 		};
 
-		[DataMember]
 		internal readonly IntPtr Handle;
 
 
@@ -34,6 +33,25 @@ namespace Whathecode.System.Windows.Interop
 		public WindowInfo( IntPtr handle )
 		{
 			Handle = handle;
+		}
+
+		public WindowInfo( SerializationInfo info, StreamingContext context )
+		{
+			long pointer = info.GetInt64( "Handle" );
+
+			// The pointer is serialized as a 64 bit integer, but the system might be 32 bit.
+			if ( IntPtr.Size == 8 )
+			{
+				Handle = new IntPtr( pointer );
+			}
+			else
+			{
+				Handle = new IntPtr( (int)pointer );
+			}
+		}
+		public void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "Handle", Handle.ToInt64() );
 		}
 
 
