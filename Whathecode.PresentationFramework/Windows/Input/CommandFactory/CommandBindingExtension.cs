@@ -19,7 +19,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 		/// <summary>
 		///   An enum value specifying the command to which to bind.
 		/// </summary>
-		[ConstructorArgument( "commandId" )] 
+		[ConstructorArgument( "commandId" )]
 		public object Command { get; set; }
 
 

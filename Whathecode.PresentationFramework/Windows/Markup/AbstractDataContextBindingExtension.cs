@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Xaml;
 
 
 namespace Whathecode.System.Windows.Markup

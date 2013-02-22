@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Markup;
 
 
@@ -22,8 +23,7 @@ namespace Whathecode.System.Windows.Markup
 		public override object ProvideValue( IServiceProvider serviceProvider )
 		{
 			_typeResolver = (IXamlTypeResolver)serviceProvider.GetService( typeof( IXamlTypeResolver ) );
-			IProvideValueTarget targetResolver
-				= (IProvideValueTarget)serviceProvider.GetService( typeof( IProvideValueTarget ) );
+			var targetResolver = (IProvideValueTarget)serviceProvider.GetService( typeof( IProvideValueTarget ) );
 
 			object targetObject = targetResolver.TargetObject;
 			object targetProperty = targetResolver.TargetProperty;
@@ -34,9 +34,9 @@ namespace Whathecode.System.Windows.Markup
 				ServiceProvider = serviceProvider;
 			}
 
-			if ( targetObject is DependencyObject )
+			if ( targetObject is DependencyObject || targetObject is Binding )
 			{
-				return ProvideValue( targetObject, targetProperty );				
+				return ProvideValue( targetObject, targetProperty );
 			}			
 
 			// Required to resolve SharedDP when Binding is used in templates.
