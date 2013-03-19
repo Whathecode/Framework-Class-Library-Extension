@@ -112,10 +112,13 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\Media\Media3D\Vector3DInterpolationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Data\AbstractBindingDecoratorExtension.cs" />
-    <Compile Include="Windows\Data\AbstractGenericValueConverter.cs" />
+    <Compile Include="Windows\Data\AbstractMultiValueConverter.cs" />
+    <Compile Include="Windows\Data\AbstractValueConverter.cs" />
     <Compile Include="Windows\Data\AdvancedBindingExtension.cs" />
+    <Compile Include="Windows\Data\ConditionConverter.cs" />
     <Compile Include="Windows\Data\FromBooleanConverter.cs" />
     <Compile Include="Windows\Data\CalculateValueConverter.cs" />
+    <Compile Include="Windows\Data\IMultiValueConverter.cs" />
     <Compile Include="Windows\Data\IValueConverter.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyCallbackAttribute.cs" />
@@ -161,13 +164,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="NCalc">
+      <HintPath>..\..\..\..\..\..\Whathecode\Laevo\Laevo\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

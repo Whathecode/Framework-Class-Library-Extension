@@ -301,6 +301,7 @@
     <Compile Include="Windows\Input\KeyHelper.cs" />
     <Compile Include="Windows\Interop\RepositionWindowInfo.cs" />
     <Compile Include="Windows\Interop\User32.cs" />
+    <Compile Include="Windows\Interop\ErrorCode.cs" />
     <Compile Include="Windows\Interop\User32.Types.cs" />
     <Compile Include="Windows\Interop\WindowInfo.cs" />
     <Compile Include="Windows\Interop\WindowManager.cs" />

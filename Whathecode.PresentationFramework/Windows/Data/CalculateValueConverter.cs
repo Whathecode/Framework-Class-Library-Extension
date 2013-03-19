@@ -9,9 +9,10 @@ namespace Whathecode.System.Windows.Data
 {
 	/// <summary>
 	///   Convert one value to another by doing a calculation.
+	///   TODO: Use NCalc instead?
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	public class CalculateValueConverter : AbstractGenericValueConverter<double, double>
+	public class CalculateValueConverter : AbstractValueConverter<double, double>
 	{
 		/// <summary>
 		///   The calculation to perform.

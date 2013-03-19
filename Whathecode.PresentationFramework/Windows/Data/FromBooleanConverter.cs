@@ -10,7 +10,7 @@ namespace Whathecode.System.Windows.Data
 	/// </summary>
 	/// <typeparam name = "TTo">The type to convert to.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public class FromBooleanConverter<TTo> : AbstractGenericValueConverter<bool, TTo>
+	public class FromBooleanConverter<TTo> : AbstractValueConverter<bool, TTo>
 	{
 		/// <summary>
 		///   The value to return in case the boolean is true.
@@ -36,12 +36,6 @@ namespace Whathecode.System.Windows.Data
 
 
 	/// <summary>
-	///   Converter to convert a boolean to a value associated to each of its two states.
-	/// </summary>
-	public class FromBooleanConverter : FromBooleanConverter<object> {}
-
-
-	/// <summary>
 	///   Markup extension which returns a converter which converts a boolean to a value associated to each of its two states.
 	/// </summary>
 	[MarkupExtensionReturnType( typeof( IValueConverter ) )]
@@ -60,7 +54,7 @@ namespace Whathecode.System.Windows.Data
 
 		protected override object ProvideValue( object targetObject, object targetProperty )
 		{
-			return new FromBooleanConverter
+			return new FromBooleanConverter<object>
 			{
 				IfTrue = IfTrue,
 				IfFalse = IfFalse

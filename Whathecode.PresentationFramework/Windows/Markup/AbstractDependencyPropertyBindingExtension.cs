@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Xaml;
 using Whathecode.System.Windows.Threading;

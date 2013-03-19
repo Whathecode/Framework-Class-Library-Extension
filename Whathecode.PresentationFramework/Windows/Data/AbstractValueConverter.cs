@@ -11,7 +11,7 @@ namespace Whathecode.System.Windows.Data
 	/// <typeparam name = "TFrom">The type to convert from.</typeparam>
 	/// <typeparam name = "TTo">The type to convert to.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public abstract class AbstractGenericValueConverter<TFrom, TTo> : IValueConverter, IValueConverter<TFrom, TTo>
+	public abstract class AbstractValueConverter<TFrom, TTo> : IValueConverter, IValueConverter<TFrom, TTo>
 	{
 		public object Convert( object value, Type targetType, object parameter, CultureInfo culture )
 		{

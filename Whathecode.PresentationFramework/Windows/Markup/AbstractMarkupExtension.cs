@@ -34,7 +34,7 @@ namespace Whathecode.System.Windows.Markup
 				ServiceProvider = serviceProvider;
 			}
 
-			if ( targetObject is DependencyObject || targetObject is Binding )
+			if ( targetObject is DependencyObject || targetObject is Binding || targetObject is MultiBinding )
 			{
 				return ProvideValue( targetObject, targetProperty );
 			}			

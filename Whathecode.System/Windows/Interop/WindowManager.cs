@@ -15,6 +15,7 @@ namespace Whathecode.System.Windows.Interop
 	{
 		enum ErrorCode
 		{
+			AccessDenied = Interop.ErrorCode.AccessDenied,
 			InvalidWindowHandle = 0x00000578,
 			InvalidMultipleWindowPositionStructure = 0x0000057D
 		}
@@ -118,13 +119,14 @@ namespace Whathecode.System.Windows.Interop
 			}
 
 			bool succeeded = false;
+			var windowList = windows.ToList();
 			while ( !succeeded )
 			{
-				IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windows.Count );
+				IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windowList.Count );
 
-				for ( int i = 0; i < windows.Count; ++i )
+				for ( int i = 0; i < windowList.Count; ++i )
 				{
-					RepositionWindowInfo window = windows[ i ];
+					RepositionWindowInfo window = windowList[ i ];
 
 					// Activating windows is outside of the scope of this function, otherwise it gets too complex.
 					var commands = User32.DeferWindowPosCommands.NoActivate;
@@ -151,7 +153,7 @@ namespace Whathecode.System.Windows.Interop
 					windowsPositionInfo = User32.DeferWindowPos(
 						windowsPositionInfo,
 						window.ToPosition.Handle,
-						i == 0 ? IntPtr.Zero : windows[ i - 1 ].ToPosition.Handle,
+						i == 0 ? IntPtr.Zero : windowList[ i - 1 ].ToPosition.Handle,
 						window.X, window.Y,
 						window.Width, window.Height,
 						commands );
@@ -163,9 +165,18 @@ namespace Whathecode.System.Windows.Interop
 						switch ( error )
 						{
 							case ErrorCode.InvalidWindowHandle:
-								windows = windows.Where( w => !w.ToPosition.IsDestroyed() ).ToList();
+								windowList = windowList.Where( w => !w.ToPosition.IsDestroyed() ).ToList();
+								break;
+							case ErrorCode.InvalidMultipleWindowPositionStructure:
+								// Nothing to do, EndDeferWindowPos will fail, and a new operation will be attempted.
+								break;
+							case ErrorCode.AccessDenied:
+								windowList.RemoveAt( i );
 								break;
 						}
+
+						// Try again starting over with a new iteration.
+						break;
 					}
 				}
 

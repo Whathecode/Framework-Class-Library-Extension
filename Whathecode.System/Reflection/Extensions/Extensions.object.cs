@@ -14,6 +14,26 @@ namespace Whathecode.System.Reflection.Extensions
 		/// <returns>The value of the property of the object.</returns>
 		public static object GetPropertyValue( this object source, string property )
 		{
+			PropertyInfo info = GetPropertyInfo( source, property );
+
+			return info.GetValue( source, null );
+		}
+
+		/// <summary>
+		///   Set the value of a property of an object.
+		/// </summary>
+		/// <param name = "source">The source of this extension method.</param>
+		/// <param name = "property">The property to set.</param>
+		/// <param name = "value">The value to set the property to.</param>
+		public static void SetPropertyValue( this object source, string property, object value )
+		{
+			PropertyInfo info = GetPropertyInfo( source, property );
+
+			info.SetValue( source, value );
+		}
+
+		static PropertyInfo GetPropertyInfo( object source, string property )
+		{
 			PropertyInfo info = source.GetType().GetProperty( property );
 
 			if ( info == null )
@@ -21,7 +41,7 @@ namespace Whathecode.System.Reflection.Extensions
 				throw new ArgumentException( "The property with name \"" + property + "\" wasn't found.", "property" );
 			}
 
-			return info.GetValue( source, null );
+			return info;
 		}
 
 		/// <summary>
