@@ -231,5 +231,57 @@ namespace Whathecode.System.Linq
 			return source.Skip( 1 ).All( o => o.Equals( first ) );
 			// ReSharper restore PossibleMultipleEnumeration
 		}
+
+		/// <summary>
+		///   Returns the minimum selected value from a sequence of values using the default comparer.
+		///   This will throw an exception if the sequence is empty.
+		/// </summary>
+		/// <typeparam name = "TSource">The type of the elements of source.</typeparam>
+		/// <typeparam name = "TKey">The type of the selected value within the elements.</typeparam>
+		/// <param name = "source">A sequence of values to determine the minimum selected value of.</param>
+		/// <param name = "selector">A function which returns the value of which the minimum needs to be determined.</param>
+		/// <returns>The element with the minimal selected value. The first element with the minimal selected value when there is more than one.</returns>
+		public static TSource MinBy<TSource, TKey>( this IEnumerable<TSource> source, Func<TSource, TKey> selector )
+		{
+			return source.MinBy( selector, Comparer<TKey>.Default );
+		}
+
+		/// <summary>
+		///   Returns the minimum selected value from a sequence of values using the passed comparer.
+		///   This will throw an exception if the sequence is empty.
+		/// </summary>
+		/// <typeparam name = "TSource">The type of the elements of source.</typeparam>
+		/// <typeparam name = "TKey">The type of the selected value within the elements.</typeparam>
+		/// <param name = "source">A sequence of values to determine the minimum selected value of.</param>
+		/// <param name = "selector">A function which returns the value of which the minimum needs to be determined.</param>
+		/// <param name = "comparer">The comparer used to determine which value is smaller.</param>
+		/// <returns>The element with the minimal selected value. The first element with the minimal selected value when there is more than one.</returns>
+		public static TSource MinBy<TSource, TKey>( this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer )
+		{
+			Contract.Requires( source != null && selector != null && comparer != null );
+
+			using ( IEnumerator<TSource> sourceIterator = source.GetEnumerator() )
+			{
+				if ( !sourceIterator.MoveNext() )
+				{
+					throw new InvalidOperationException( "Sequence was empty." );
+				}
+
+				TSource min = sourceIterator.Current;
+				TKey minKey = selector( min );
+				while ( sourceIterator.MoveNext() )
+				{
+					TSource candidate = sourceIterator.Current;
+					TKey candidateProjected = selector( candidate );
+					if ( comparer.Compare( candidateProjected, minKey ) < 0 )
+					{
+						min = candidate;
+						minKey = candidateProjected;
+					}
+				}
+
+				return min;
+			}
+		}
 	}
 }
