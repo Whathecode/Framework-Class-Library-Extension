@@ -45,6 +45,7 @@ namespace Whathecode.System.Xaml.Behaviors
 
 		public struct ClickDragInfo
 		{
+			public FrameworkElement Sender;
 			public MouseState Mouse;
 			public ClickDragState State;
 			public MousePosition StartPosition;
@@ -479,6 +480,7 @@ namespace Whathecode.System.Xaml.Behaviors
 			{
 				var info = new ClickDragInfo
 				{
+					Sender = element,
 					Mouse = mouseState,
 					State = ClickDragState.Start,
 					StartPosition = mouseState.Position
@@ -509,6 +511,7 @@ namespace Whathecode.System.Xaml.Behaviors
 
 				var info = new ClickDragInfo
 				{
+					Sender = element,
 					Mouse = mouseState,
 					State = ClickDragState.Start,
 					StartPosition = mouseState.Position
