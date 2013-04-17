@@ -23,7 +23,7 @@ namespace Whathecode.System.Windows.Interop
 			{ User32.WindowState.ShowMinimized, WindowState.Minimized }
 		};
 
-		internal readonly IntPtr Handle;
+		internal readonly IntPtr Handle;		
 
 
 		/// <summary>
@@ -87,21 +87,27 @@ namespace Whathecode.System.Windows.Interop
 			return buffer.ToString();
 		}
 
+		Process _process;
 		/// <summary>
 		///   Retrieves the process that created the window, when available.
 		/// </summary>
 		/// <returns>The process when available, null otherwise.</returns>
 		public Process GetProcess()
 		{
-			int processId = 0;
-			if ( User32.GetWindowThreadProcessId( Handle, ref processId ) == 0 )
+			if ( _process == null )
 			{
-				MarshalHelper.ThrowLastWin32ErrorException();
-			}
+				int processId = 0;
+				if ( User32.GetWindowThreadProcessId( Handle, ref processId ) == 0 )
+				{
+					MarshalHelper.ThrowLastWin32ErrorException();
+				}
 
-			return processId == 0
+				_process = processId == 0
 				? null
 				: Process.GetProcessById( processId );
+			}
+
+			return _process;
 		}
 
 		/// <summary>
