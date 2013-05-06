@@ -1,7 +1,8 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.Generic;
+using System.Windows.Input;
 using System.Linq;
+using Whathecode.System.Extensions;
 using Whathecode.System.Windows.Interop;
-using System.Runtime.InteropServices;
 
 
 namespace Whathecode.System.Windows.Input
@@ -18,6 +19,36 @@ namespace Whathecode.System.Windows.Input
 		{
 			short state = User32.GetKeyState( KeyInterop.VirtualKeyFromKey( Key.CapsLock ) );
 			return ((ushort)state & 0xFFFF) != 0;
+		}
+
+		/// <summary>
+		///   Returns all the keys which are currently down, excluding toggle keys.
+		/// </summary>
+		public static List<Key> GetNonToggleKeysState()
+		{
+			var keyStates = new byte[ 256 ];
+			bool success = User32.GetKeyboardState( keyStates );
+
+			var keysDown = new List<Key>();
+			for ( int i = 0; i < keyStates.Length; ++i )
+			{
+				// Skip mouse keys, or non virtual keys (255).
+				if ( IsMouseKey( i ) || i == 255 )
+				{
+					continue;
+				}
+
+				if ( (keyStates[ i ] & 0x80) != 0 )	// 0x80 refers to the highest order bit, which indicates whether the key is down or not.
+				{
+					keysDown.Add( KeyInterop.KeyFromVirtualKey( i ) );
+				}
+			}
+			return keysDown;
+		}
+
+		static bool IsMouseKey( int key )
+		{
+			return key.EqualsAny( 1, 2, 4, 5, 6 );
 		}
 
 		/// <summary>
