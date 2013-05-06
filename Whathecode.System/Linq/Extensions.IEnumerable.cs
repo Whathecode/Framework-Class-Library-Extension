@@ -119,16 +119,16 @@ namespace Whathecode.System.Linq
 		public static IEnumerable<IEnumerable<T>> Combinations<T>( this IEnumerable<T> source, int select, bool repetition = false )
 		{
 			Contract.Requires( source != null );
-			Contract.Requires( select >= 0 );
+			Contract.Requires( @select >= 0 );
 
 			var list = source as T[] ?? source.ToArray();
 
-			return select == 0
+			return @select == 0
 				? new[] { new T[0] }
 				: list.SelectMany( ( element, index ) =>
 					list
 						.Skip( repetition ? index : index + 1 )
-						.Combinations( select - 1, repetition )
+						.Combinations( @select - 1, repetition )
 						.Select( c => new[] { element }.Concat( c ) ) );
 		}
 
@@ -184,6 +184,30 @@ namespace Whathecode.System.Linq
 		public static bool ContainsAll<T>( this IEnumerable<T> source, IEnumerable<T> elements )
 		{
 			return elements.All( source.Contains );
+		}
+
+		/// <summary>
+		///   Determines whether a sequence contains any element from a specified sequence of elements by using the default equality comparer.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "elements">The elements to locate in the sequence.</param>
+		/// <returns>true if the source sequence contains any of the elements in the sequence; otherwise, false</returns>
+		public static bool ContainsAny<T>( this IEnumerable<T> source, params T[] elements )
+		{
+			return source.ContainsAny( (IEnumerable<T>)elements );
+		}
+
+		/// <summary>
+		///   Determines whether a sequence contains any element from a specified sequence of elements by using the default equality comparer.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "elements">The elements to locate in the sequence.</param>
+		/// <returns>true if the source sequence contains any of the elements in the sequence; otherwise, false</returns>
+		public static bool ContainsAny<T>( this IEnumerable<T> source, IEnumerable<T> elements )
+		{
+			return source.Where( elements.Contains ).Any();
 		}
 
 		/// <summary>
