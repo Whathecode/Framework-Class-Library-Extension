@@ -106,7 +106,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 		protected DependencyPropertyFactory( Type ownerType, bool enforceNamingConventions, bool checkForStatic )
 			: base( ownerType, true )
 		{
-			Contract.Requires( typeof( T ).IsFlagsEnum() && typeof( T ).IsVisible );
+			Contract.Requires( typeof( T ).IsFlagsEnum() && (typeof( T ).IsPublic || typeof( T ).IsNestedPublic) );
 
 			Properties = new Dictionary<T, DependencyProperty>();
 			_enforceWpfConvention = enforceNamingConventions;
