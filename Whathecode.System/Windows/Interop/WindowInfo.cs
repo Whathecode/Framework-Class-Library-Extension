@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using Whathecode.System.Runtime.InteropServices;
@@ -88,6 +89,7 @@ namespace Whathecode.System.Windows.Interop
 		}
 
 		Process _process;
+		ProcessThread _processThread;
 		/// <summary>
 		///   Retrieves the process that created the window, when available.
 		/// </summary>
@@ -97,7 +99,8 @@ namespace Whathecode.System.Windows.Interop
 			if ( _process == null )
 			{
 				int processId = 0;
-				if ( User32.GetWindowThreadProcessId( Handle, ref processId ) == 0 )
+				int threadId = User32.GetWindowThreadProcessId( Handle, ref processId );
+				if ( threadId == 0 )
 				{
 					MarshalHelper.ThrowLastWin32ErrorException();
 				}
@@ -105,9 +108,30 @@ namespace Whathecode.System.Windows.Interop
 				_process = processId == 0
 				? null
 				: Process.GetProcessById( processId );
+
+				if ( _process != null )
+				{
+					_processThread = (
+						from ProcessThread t in _process.Threads
+						where t.Id == threadId
+						select t ).First();
+				}
 			}
 
 			return _process;
+		}
+
+		/// <summary>
+		///   Retrieves the thread that created the specified window.
+		/// </summary>
+		public ProcessThread GetProcessThread()
+		{
+			if ( _processThread == null )
+			{
+				GetProcess();
+			}
+
+			return _processThread;
 		}
 
 		/// <summary>
@@ -185,7 +209,7 @@ namespace Whathecode.System.Windows.Interop
 		public bool IsTopmost()
 		{
 			int extraOptions = (int)User32.GetWindowLongPtr( Handle, (int)User32.GetWindowLongOptions.ExtendedStyles );
-			int topmost = (int)User32.ExtendedWindowStyles.Topmost;
+			const int topmost = (int)User32.ExtendedWindowStyles.Topmost;
 
 			return ( (extraOptions & topmost) == topmost );
 		}

@@ -18,8 +18,8 @@ namespace Whathecode.System.Windows.Interop
 		#region Window Functions.
 
 		/// <summary>
-		///   An application-defined callback function used with the EnumWindows or EnumDesktopWindows function.
-		///   It receives top-level window handles. The WNDENUMPROC type defines a pointer to this callback function.
+		///   An application-defined callback function used with functions enumerating windows.
+		///   It receives window handles. The WNDENUMPROC type defines a pointer to this callback function.
 		///   EnumWindowsProc is a placeholder for the application-defined function name.
 		/// </summary>
 		/// <param name="windowHandle">A handle to a top-level window.</param>
@@ -38,7 +38,7 @@ namespace Whathecode.System.Windows.Interop
 		///   A handle to the parent window whose child windows are to be enumerated.
 		///   If this parameter is IntPtr.Zero, this function is equivalent to EnumWindows.
 		/// </param>
-		/// <param name="callback">A pointer to an application-defined callback function. For more information, see EnumChildProc.</param>
+		/// <param name="callback">A pointer to an application-defined callback function. For more information, see <see cref="EnumWindowsProc" />.</param>
 		/// <param name="lParam">An application-defined value to be passed to the callback function.</param>
 		/// <returns>The return value is not used.</returns>
 		/// <remarks>
@@ -48,6 +48,22 @@ namespace Whathecode.System.Windows.Interop
 		/// </remarks>
 		[DllImport( Dll )]
 		public static extern bool EnumChildWindows( IntPtr windowHandle, EnumWindowsProc callback, IntPtr lParam );
+
+		/// <summary>
+		///   Enumerates all nonchild windows associated with a thread by passing the handle to each window, in turn, to an application-defined callback function.
+		///   EnumThreadWindows continues until the last window is enumerated or the callback function returns FALSE.
+		///   To enumerate child windows of a particular window, use the EnumChildWindows function.
+		/// </summary>
+		/// <param name="threadId">The identifier of the thread whose windows are to be enumerated.</param>
+		/// <param name="callback">A pointer to an application-defined callback function. For more information, see <see cref="EnumWindowsProc" />.</param>
+		/// <param name="lParam">An application-defined value to be passed to the callback function.</param>
+		/// <returns>
+		///   If the callback function returns TRUE for all windows in the thread specified by <see cref="threadId" />, the return value is TRUE.
+		///   If the callback function returns FALSE on any enumerated window, or if there are no windows found in the thread specified by <see cref="threadId" />,
+		///   the return value is FALSE.
+		/// </returns>
+		[DllImport( Dll )]
+		public static extern bool EnumThreadWindows( uint threadId, EnumWindowsProc callback, IntPtr lParam );
 
 		/// <summary>
 		///   Enumerates all top-level windows on the screen by passing the handle to each window, in turn, to an application-defined callback function.
