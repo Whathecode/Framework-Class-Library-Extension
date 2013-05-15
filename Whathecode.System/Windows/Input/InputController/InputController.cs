@@ -12,9 +12,6 @@ namespace Whathecode.System.Windows.Input.InputController
 	/// <author>Steven Jeuris</author>
 	public class InputController
 	{
-		readonly List<EventTrigger> _toRemove = new List<EventTrigger>();
-		readonly List<EventTrigger> _toAdd = new List<EventTrigger>(); 
-
 		/// <summary>
 		///   List of InputTrigger's which the InputController needs to manage.
 		/// </summary>
@@ -35,12 +32,18 @@ namespace Whathecode.System.Windows.Input.InputController
 
 		public void AddTrigger( EventTrigger trigger )
 		{
-			_toAdd.Add( trigger );			
+			lock ( Triggers )
+			{
+				Triggers.Add( trigger );
+			}
 		}
 
 		public void RemoveTrigger( EventTrigger trigger )
 		{
-			_toRemove.Add( trigger );
+			lock ( Triggers )
+			{
+				Triggers.Remove( trigger );
+			}
 		}
 
 		public void Update()
@@ -50,13 +53,10 @@ namespace Whathecode.System.Windows.Input.InputController
 				return;
 			}
 
-			_toRemove.ForEach( t => Triggers.Remove( t ) );
-			_toRemove.Clear();
-
-			_toAdd.ForEach( t => Triggers.Add( t ) );
-			_toAdd.Clear();
-
-			Triggers.ForEach( t => t.Update() );
+			lock ( Triggers )
+			{
+				Triggers.ForEach( t => t.Update() );
+			}
 		}
 	}
 }
