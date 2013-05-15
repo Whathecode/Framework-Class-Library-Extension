@@ -30,10 +30,10 @@ namespace Whathecode.System.Windows.Input
 			bool success = User32.GetKeyboardState( keyStates );
 
 			var keysDown = new List<Key>();
-			for ( int i = 0; i < keyStates.Length; ++i )
+			for ( int i = 1; i < 255; ++i )	// Skip none key (0) and non virtual keys (255).
 			{
 				// Skip mouse keys, or non virtual keys (255).
-				if ( IsMouseKey( i ) || i == 255 )
+				if ( IsMouseKey( i ) )
 				{
 					continue;
 				}
