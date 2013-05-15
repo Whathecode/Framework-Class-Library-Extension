@@ -493,35 +493,50 @@ namespace Whathecode.System.Windows.Interop
 		///  InputEventType.Keyboard supports nonkeyboard input methods, such as handwriting recognition or voice recognition, as if it were text input by using the KeyboardInputFlags.Unicode flag.
 		///  For more information, see the remarks section of <see cref="KeyboardInput" />.
 		/// </remarks>
-		[StructLayout( LayoutKind.Explicit )]
+		[StructLayout( LayoutKind.Sequential )]
 		public struct Input
 		{
 			/// <summary>
 			///   The type of the input event.
 			/// </summary>
-			[FieldOffset( 0 )]
 			public InputEventType Type;
 
 			/// <summary>
-			///   The information about a simulated mouse event.
+			///   The information related to the input event, dependent on the <see cref="InputEventType" />.
 			/// </summary>
-			[FieldOffset( 4 )]
-			public MouseInput MouseInput;
-			/// <summary>
-			///   The information about a simulated keyboard event.
-			/// </summary>
-			[FieldOffset( 4 )]
-			public KeyboardInput KeyboardInput;
-			/// <summary>
-			///   The information about a simulated hardware event.
-			/// </summary>
-			[FieldOffset( 4 )]
-			public HardwareInput HardwareInput;
+			public InputUnion InputInformation;
 
 			public static int Size
 			{
 				get { return Marshal.SizeOf( typeof( Input ) ); }
 			}
+		}
+
+		/// <summary>
+		///   The information related to an input event.
+		/// </summary>
+		/// <remarks>
+		///   By separating the union into its own structure, rather than placing the fields directly in the <see cref="Input" /> structure,
+		///   we assure that the .Net structure will have the correct alignment on both 32 and 64 bit.
+		/// </remarks>
+		[StructLayout( LayoutKind.Explicit )]
+		public struct InputUnion
+		{
+			/// <summary>
+			///   The information about a simulated mouse event.
+			/// </summary>
+			[FieldOffset( 0 )]
+			public MouseInput MouseInput;
+			/// <summary>
+			///   The information about a simulated keyboard event.
+			/// </summary>
+			[FieldOffset( 0 )]
+			public KeyboardInput KeyboardInput;
+			/// <summary>
+			///   The information about a simulated hardware event.
+			/// </summary>
+			[FieldOffset( 0 )]
+			public HardwareInput HardwareInput;
 		}
 
 		/// <summary>

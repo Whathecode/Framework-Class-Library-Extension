@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Input;
 using System.Linq;
 using Whathecode.System.Extensions;
+using Whathecode.System.Runtime.InteropServices;
 using Whathecode.System.Windows.Interop;
 
 
@@ -75,23 +77,33 @@ namespace Whathecode.System.Windows.Input
 				new User32.Input
 				{
 					Type = User32.InputEventType.Keyboard,
-					KeyboardInput = new User32.KeyboardInput
+					InputInformation = new User32.InputUnion
 					{
-						VirtualKey = virtualKey,
-					}		
+						KeyboardInput = new User32.KeyboardInput
+						{
+							VirtualKey = virtualKey,
+						}
+					}
 				},
 				new User32.Input
 				{
 					Type = User32.InputEventType.Keyboard,
-					KeyboardInput = new User32.KeyboardInput
+					InputInformation = new User32.InputUnion
 					{
-						VirtualKey = virtualKey,
-						Flags = User32.KeyboardInputFlags.KeyUp
+						KeyboardInput = new User32.KeyboardInput
+						{
+							VirtualKey = virtualKey,
+							Flags = User32.KeyboardInputFlags.KeyUp
+						}
 					}
 				}
 			};
 
-			User32.SendInput( (uint)keyPress.Length, keyPress.ToArray(), User32.Input.Size );
+			uint succeededEvents = User32.SendInput( (uint)keyPress.Length, keyPress.ToArray(), User32.Input.Size );
+			if ( keyPress.Length != 0 && succeededEvents != keyPress.Length )
+			{
+				MarshalHelper.ThrowLastWin32ErrorException();
+			}
 		}
 	}
 }
