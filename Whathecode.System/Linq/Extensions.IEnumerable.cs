@@ -257,29 +257,39 @@ namespace Whathecode.System.Linq
 		}
 
 		/// <summary>
-		///   Returns the minimum selected value from a sequence of values using the default comparer.
-		///   This will throw an exception if the sequence is empty.
+		///   Returns the minimal element of the given sequence, based on the given projection.
 		/// </summary>
-		/// <typeparam name = "TSource">The type of the elements of source.</typeparam>
-		/// <typeparam name = "TKey">The type of the selected value within the elements.</typeparam>
-		/// <param name = "source">A sequence of values to determine the minimum selected value of.</param>
-		/// <param name = "selector">A function which returns the value of which the minimum needs to be determined.</param>
-		/// <returns>The element with the minimal selected value. The first element with the minimal selected value when there is more than one.</returns>
+		/// <remarks>
+		///   If more than one element has the minimal projected value, the first one encountered will be returned.
+		///   This overload uses the default comparer for the projected type. This operator uses immediate execution, but only buffers a single result (the current minimal element).
+		/// </remarks>
+		/// <typeparam name = "TSource">Type of the source sequence.</typeparam>
+		/// <typeparam name = "TKey">Type of the projected element.</typeparam>
+		/// <param name = "source">Source sequence.</param>
+		/// <param name = "selector">Selector to use to pick the results to compare.</param>
+		/// <returns>The minimal element, according to the projection.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is null.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="source"/> is empty.</exception>
 		public static TSource MinBy<TSource, TKey>( this IEnumerable<TSource> source, Func<TSource, TKey> selector )
 		{
 			return source.MinBy( selector, Comparer<TKey>.Default );
 		}
 
 		/// <summary>
-		///   Returns the minimum selected value from a sequence of values using the passed comparer.
-		///   This will throw an exception if the sequence is empty.
+		///   Returns the minimal element of the given sequence, based on the given projection and the specified comparer for projected values.
 		/// </summary>
-		/// <typeparam name = "TSource">The type of the elements of source.</typeparam>
-		/// <typeparam name = "TKey">The type of the selected value within the elements.</typeparam>
-		/// <param name = "source">A sequence of values to determine the minimum selected value of.</param>
-		/// <param name = "selector">A function which returns the value of which the minimum needs to be determined.</param>
-		/// <param name = "comparer">The comparer used to determine which value is smaller.</param>
-		/// <returns>The element with the minimal selected value. The first element with the minimal selected value when there is more than one.</returns>
+		/// <remarks>
+		///   If more than one element has the minimal projected value, the first one encountered will be returned.
+		///   This overload uses the default comparer for the projected type. This operator uses immediate execution, but only buffers a single result (the current minimal element).
+		/// </remarks>
+		/// <typeparam name = "TSource">Type of the source sequence.</typeparam>
+		/// <typeparam name = "TKey">Type of the projected element.</typeparam>
+		/// <param name = "source">Source sequence.</param>
+		/// <param name = "selector">Selector to use to pick the results to compare.</param>
+		/// <param name = "comparer">Comparer to use to compare projected values.</param>
+		/// <returns>The minimal element, according to the projection.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="source"/>, <paramref name="selector"/> or <paramref name="comparer"/> is null.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="source"/> is empty</exception>
 		public static TSource MinBy<TSource, TKey>( this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer )
 		{
 			Contract.Requires( source != null && selector != null && comparer != null );
@@ -288,7 +298,7 @@ namespace Whathecode.System.Linq
 			{
 				if ( !sourceIterator.MoveNext() )
 				{
-					throw new InvalidOperationException( "Sequence was empty." );
+					throw new InvalidOperationException( "Sequence contains no elements." );
 				}
 
 				TSource min = sourceIterator.Current;
@@ -305,6 +315,67 @@ namespace Whathecode.System.Linq
 				}
 
 				return min;
+			}
+		}
+		/// <summary>
+		///   Returns the maximal element of the given sequence, based on the given projection.
+		/// </summary>
+		/// <remarks>
+		///   If more than one element has the maximal projected value, the first one encountered will be returned.
+		///   This overload uses the default comparer for the projected type. This operator uses immediate execution, but only buffers a single result (the current maximal element).
+		/// </remarks>
+		/// <typeparam name = "TSource">Type of the source sequence.</typeparam>
+		/// <typeparam name = "TKey">Type of the projected element.</typeparam>
+		/// <param name = "source">Source sequence.</param>
+		/// <param name = "selector">Selector to use to pick the results to compare.</param>
+		/// <returns>The maximal element, according to the projection.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is null.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="source"/> is empty.</exception>
+		public static TSource MaxBy<TSource, TKey>( this IEnumerable<TSource> source, Func<TSource, TKey> selector )
+		{
+			return source.MaxBy( selector, Comparer<TKey>.Default );
+		}
+
+		/// <summary>
+		///   Returns the maximal element of the given sequence, based on the given projection and the specified comparer for projected values. 
+		/// </summary>
+		/// <remarks>
+		///   If more than one element has the maximal projected value, the first one encountered will be returned.
+		///   This overload uses the default comparer for the projected type. This operator uses immediate execution, but only buffers a single result (the current maximal element).
+		/// </remarks>
+		/// <typeparam name = "TSource">Type of the source sequence.</typeparam>
+		/// <typeparam name = "TKey">Type of the projected element.</typeparam>
+		/// <param name = "source">Source sequence.</param>
+		/// <param name = "selector">Selector to use to pick the results to compare.</param>
+		/// <param name = "comparer">Comparer to use to compare projected values.</param>
+		/// <returns>The maximal element, according to the projection.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="source"/>, <paramref name="selector"/> or <paramref name="comparer"/> is null.</exception>
+		/// <exception cref="InvalidOperationException"><paramref name="source"/> is empty.</exception>
+		public static TSource MaxBy<TSource, TKey>( this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer )
+		{
+			Contract.Requires( source != null && selector != null && comparer != null );
+
+			using ( IEnumerator<TSource> sourceIterator = source.GetEnumerator() )
+			{
+				if ( !sourceIterator.MoveNext() )
+				{
+					throw new InvalidOperationException( "Sequence contains no elements." );
+				}
+
+				TSource max = sourceIterator.Current;
+				TKey maxKey = selector( max );
+				while ( sourceIterator.MoveNext() )
+				{
+					TSource candidate = sourceIterator.Current;
+					TKey candidateProjected = selector( candidate );
+					if ( comparer.Compare( candidateProjected, maxKey ) > 0 )
+					{
+						max = candidate;
+						maxKey = candidateProjected;
+					}
+				}
+
+				return max;
 			}
 		}
 	}
