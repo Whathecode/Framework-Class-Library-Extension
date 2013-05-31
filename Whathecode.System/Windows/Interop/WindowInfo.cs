@@ -182,7 +182,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public void Hide()
 		{
-			User32.ShowWindow( Handle, User32.WindowState.Hide );
+			User32.ShowWindowAsync( Handle, User32.WindowState.Hide );
 		}
 
 		/// <summary>
@@ -219,7 +219,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public void Maximize()
 		{
-			User32.ShowWindow( Handle, User32.WindowState.ShowMaximized );
+			User32.ShowWindowAsync( Handle, User32.WindowState.ShowMaximized );
 		}
 
 		/// <summary>
@@ -227,7 +227,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public void Minimize()
 		{
-			User32.ShowWindow( Handle, User32.WindowState.Minimize );
+			User32.ShowWindowAsync( Handle, User32.WindowState.Minimize );
 		}
 
 		/// <summary>
@@ -239,7 +239,7 @@ namespace Whathecode.System.Windows.Interop
 		/// </param>
 		public void Show( bool activate = true )
 		{
-			User32.ShowWindow(
+			User32.ShowWindowAsync(
 				Handle,
 				activate ? User32.WindowState.Show : User32.WindowState.ShowNoActivate );
 		}

@@ -299,6 +299,22 @@ namespace Whathecode.System.Windows.Interop
 		public static extern bool ShowWindow( IntPtr windowHandle, WindowState showCommand );
 
 		/// <summary>
+		///   Sets the show state of a window created by a different thread.
+		/// </summary>
+		/// <param name = "windowHandle">A handle to the window.</param>
+		/// <param name = "showCommand">Controls how the window is to be shown. For a list of possible values, see the description of the ShowWindow function.</param>
+		/// <returns>
+		///   If the window was previously visible, the return value is nonzero.
+		///   If the window was previously hidden, the return value is zero.
+		/// </returns>
+		/// <remarks>
+		///   This function posts a show-window event to the message queue of the given window.
+		///   An application can use this function to avoid becoming nonresponsive while waiting for a nonresponsive application to finish processing a show-window event.
+		/// </remarks>
+		[DllImport( Dll )]
+		public static extern bool ShowWindowAsync( IntPtr windowHandle, WindowState showCommand );
+
+		/// <summary>
 		///   Retrieves a handle to the foreground window (the window with which the user is currently working).
 		///   The system assigns a slightly higher priority to the thread that creates the foreground window than it does to other threads.
 		/// </summary>
