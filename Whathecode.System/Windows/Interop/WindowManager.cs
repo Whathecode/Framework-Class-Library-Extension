@@ -110,7 +110,7 @@ namespace Whathecode.System.Windows.Interop
 		///   The first item in the list will appear at the top, while the last item will appear at the bottom.
 		/// </param>
 		/// <param name="changeVisibility">When set to true only the visiblity of windows can be changed. When set to false, only the other parameters can be changed.</param>
-		static void RepositionWindows( IList<RepositionWindowInfo> windows, bool changeZOrder, bool changeVisibility )
+		static void RepositionWindows( ICollection<RepositionWindowInfo> windows, bool changeZOrder, bool changeVisibility )
 		{
 			if ( windows.Count == 0 )
 			{
@@ -124,6 +124,7 @@ namespace Whathecode.System.Windows.Interop
 			{
 				IntPtr windowsPositionInfo = User32.BeginDeferWindowPos( windowList.Count );
 
+				bool errorEncountered = false;
 				for ( int i = 0; i < windowList.Count; ++i )
 				{
 					RepositionWindowInfo window = windowList[ i ];
@@ -176,11 +177,15 @@ namespace Whathecode.System.Windows.Interop
 						}
 
 						// Try again starting over with a new iteration.
+						errorEncountered = true;
 						break;
 					}
 				}
 
-				succeeded = User32.EndDeferWindowPos( windowsPositionInfo );
+				if ( !errorEncountered )
+				{
+					succeeded = User32.EndDeferWindowPos( windowsPositionInfo );
+				}
 			}
 		}
 	}

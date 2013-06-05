@@ -223,7 +223,12 @@ namespace Whathecode.System.Windows.Interop
 			///   The retrieved handle identifies the child window at the top of the Z order, if the specified window is a parent window; otherwise, the retrieved handle is IntPtr.Zero.
 			///   The function examines only child windows of the specified window. It does not examine descendant windows.
 			/// </summary>
-			Child = 5
+			Child = 5,
+			/// <summary>
+			///   The retrieved handle identifies the enabled popup window owned by the specified window (the search uses the first such window found using <see cref="Next" />);
+			///   otherwise, if there are no enabled popup windows, the retrieved handle is that of the specified window.
+			/// </summary>
+			EnablePopup = 6
 		}
 
 		/// <summary>
