@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Whathecode.System.Extensions;
 using Whathecode.System.Runtime.InteropServices;
 
 
@@ -21,7 +22,8 @@ namespace Whathecode.System.Windows.Interop
 		{
 			{ User32.WindowState.ShowNormal, WindowState.Open },
 			{ User32.WindowState.Maximized, WindowState.Maximized },
-			{ User32.WindowState.ShowMinimized, WindowState.Minimized }
+			{ User32.WindowState.ShowMinimized, WindowState.Minimized },
+			{ User32.WindowState.Hide, WindowState.Hidden }
 		};
 
 		internal readonly IntPtr Handle;		
@@ -232,6 +234,7 @@ namespace Whathecode.System.Windows.Interop
 
 		/// <summary>
 		///   Activates the window and displays it in its current size and position.
+		///   TODO: Is it possible that this doesn't activate the window when it isn't visible?
 		/// </summary>
 		/// <param name="activate">
 		///	  When set to true, the window will be brought to the front and activated.
@@ -242,6 +245,14 @@ namespace Whathecode.System.Windows.Interop
 			User32.ShowWindowAsync(
 				Handle,
 				activate ? User32.WindowState.Show : User32.WindowState.ShowNoActivate );
+		}
+
+		/// <summary>
+		///   Switches focus to the specified window and brings it to the foreground.
+		/// </summary>
+		public void Focus()
+		{
+			User32.SwitchToThisWindow( Handle, false );
 		}
 
 		public override bool Equals( object other )
@@ -272,9 +283,10 @@ namespace Whathecode.System.Windows.Interop
 
 		public override string ToString()
 		{
+			string processName = GetProcess().IfNotNull( p => p.ProcessName ) ?? "not found";
 			return string.Format(
 				"Window \"{0}\" ({1}) state: {2}, classname: {3}",
-				GetTitle(), GetProcess().ProcessName, GetWindowState(), GetClassName() );
+				GetTitle(), processName, GetWindowState(), GetClassName() );
 		}
 	}
 }

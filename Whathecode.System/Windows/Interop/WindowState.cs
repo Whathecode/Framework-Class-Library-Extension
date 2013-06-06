@@ -16,6 +16,10 @@
 		/// <summary>
 		///   The window is open and maximized.
 		/// </summary>
-		Maximized
+		Maximized,
+		/// <summary>
+		///   The window is hidden.
+		/// </summary>
+		Hidden
 	}
 }

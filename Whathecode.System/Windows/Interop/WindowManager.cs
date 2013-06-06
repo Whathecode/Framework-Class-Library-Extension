@@ -185,6 +185,17 @@ namespace Whathecode.System.Windows.Interop
 				if ( !errorEncountered )
 				{
 					succeeded = User32.EndDeferWindowPos( windowsPositionInfo );
+					if ( succeeded && User32.GetActiveWindow() == IntPtr.Zero )
+					{
+						// All windows are hidden and there is no more active window.
+						// This causes a bug next time a window is shown which doesn't show up on the taskbar. Another window is shown on the taskbar, but not made visible.
+						// To prevent this, activate the start bar.
+						WindowInfo startBar = GetWindows().Where( w => w.GetClassName() == "Shell_TrayWnd" ).FirstOrDefault();
+						if ( startBar != null )
+						{
+							startBar.Focus();
+						}
+					}
 				}
 			}
 		}

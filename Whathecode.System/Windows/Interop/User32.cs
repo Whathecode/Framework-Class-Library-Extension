@@ -418,6 +418,29 @@ namespace Whathecode.System.Windows.Interop
 		[DllImport( Dll, SetLastError = true )]
 		public static extern bool EndDeferWindowPos( IntPtr windowPositionInfo );
 
+		/// <summary>
+		///   Retrieves the window handle to the active window attached to the calling thread's message queue.
+		/// </summary>
+		/// <remarks>
+		///   To get the handle to the foreground window, you can use GetForegroundWindow.
+		///   To get the window handle to the active window in the message queue for another thread, use GetGUIThreadInfo.
+		/// </remarks>
+		/// <returns>The return value is the handle to the active window attached to the calling thread's message queue. Otherwise, the return value is IntPtr.Zero.</returns>
+		[DllImport( Dll )]
+		public static extern IntPtr GetActiveWindow();
+
+		/// <summary>
+		///   Switches focus to the specified window and brings it to the foreground.
+		/// </summary>
+		/// <param name="windowHandle">A handle to the window.</param>
+		/// <param name="altTabSwitch">A TRUE for this parameter indicates that the window is being switched to using the Alt/Ctl+Tab key sequence. This parameter should be FALSE otherwise.</param>
+		/// <remarks>
+		///   This function is typically called to maintain window z-ordering. This function was not included in the SDK headers and libraries until Windows XP with Service Pack 1 (SP1) and Windows Server 2003.
+		///   If you do not have a header file and import library for this function, you can call the function using LoadLibrary and GetProcAddress.
+		/// </remarks>
+		[DllImport( Dll )]
+		public static extern void SwitchToThisWindow( IntPtr windowHandle, bool altTabSwitch );
+
 		#endregion // Window Functions.
 
 
