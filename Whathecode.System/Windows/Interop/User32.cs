@@ -441,6 +441,56 @@ namespace Whathecode.System.Windows.Interop
 		[DllImport( Dll )]
 		public static extern void SwitchToThisWindow( IntPtr windowHandle, bool altTabSwitch );
 
+        /// <summary>
+        /// Registers a specified Shell window to receive certain messages for events or notifications that are useful to Shell applications.
+        /// </summary>
+        /// <param name="hwnd">A handle to the window to register for Shell hook messages.</param>
+        /// <returns>TRUE if the function succeeds; otherwise, FALSE.</returns>
+        [DllImport(Dll, CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool RegisterShellHookWindow(IntPtr hwnd);
+
+
+        /// <summary>
+        /// Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+        /// </summary>
+        /// <param name="lpString">The message to be registered.</param>
+        /// <returns>If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
+        [DllImport(Dll, CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int RegisterWindowMessage(string lpString);
+
+        /// <summary>
+        /// ends the specified message to a window or windows. The SendMessage function calls the window procedure for the specified window and does not return until the window procedure has processed the message.
+        /// </summary>
+        /// <param name="hWnd">A handle to the window whose window procedure will receive the message. If this parameter is HWND_BROADCAST ((HWND)0xffff), the message is sent to all top-level windows in the system, including disabled or invisible unowned windows, overlapped windows, and pop-up windows; but the message is not sent to child windows.</param>
+        /// <param name="msg">The message to be sent. For lists of the system-provided messages, see System-Defined Messages.</param>
+        /// <param name="wParam">Additional message-specific information.</param>
+        /// <param name="lParam">Additional message-specific information.</param>
+        /// <returns>he return value specifies the result of the message processing; it depends on the message sent.</returns>
+        [DllImport("user32.DLL", SetLastError = true)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+        
+        /// <summary>
+        /// Retrieves a handle to the top-level window whose class name and window name match the specified strings. This function does not search child windows. This function does not perform a case-sensitive search.
+        /// </summary>
+        /// <param name="lpszClass">The class name or a class atom created by a previous call to the RegisterClass or RegisterClassEx function. The atom must be in the low-order word of lpClassName; the high-order word must be zero.</param>
+        /// <param name="lpszWindow">The window name (the window's title). If this parameter is NULL, all window names match.</param>
+        /// <returns>If the function succeeds, the return value is a handle to the window that has the specified class name and window name. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
+        [DllImport("user32.DLL")]
+        public static extern IntPtr FindWindow(string lpszClass, string lpszWindow);
+        
+        /// <summary>
+        /// Retrieves a handle to the top-level window whose class name and window name match the specified strings. This function does not search child windows. This function does not perform a case-sensitive search.
+        /// </summary>
+        /// <param name="hwndParent">A handle to the parent window whose child windows are to be searched. If hwndParent is NULL, the function uses the desktop window as the parent window. The function searches among windows that are child windows of the desktop.></param>
+        /// <param name="hwndChildAfter">A handle to a child window. The search begins with the next child window in the Z order. The child window must be a direct child window of hwndParent, not just a descendant window.</param>
+        /// <param name="lpszClass">The class name or a class atom created by a previous call to the RegisterClass or RegisterClassEx function. The atom must be placed in the low-order word of lpszClass; the high-order word must be zero.</param>
+        /// <param name="lpszWindow">The window name (the window's title). If this parameter is NULL, all window names match.</param>
+        /// <returns>If the function succeeds, the return value is a handle to the window that has the specified class and window names. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
+        [DllImport("user32.DLL")]
+        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+       
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint dwProcessId);
 		#endregion // Window Functions.
 
 
