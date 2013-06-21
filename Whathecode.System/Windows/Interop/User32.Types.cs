@@ -6,6 +6,26 @@ namespace Whathecode.System.Windows.Interop
 {
 	partial class User32
 	{
+        /// <summary>
+        /// Specifies or receives the attributes of a list-view item. This structure has been updated to support a new mask value (LVIF_INDENT) that enables item indenting. This structure supersedes the LV_ITEM structure.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Lvitem
+        {
+            public int Mask;
+            public int Item;
+            public int SubItem;
+            public int State;
+            public int StateMask;
+            public IntPtr PszText; // string
+            public int CchTextMax;
+            public int Image;
+            public IntPtr LParam;
+            public int Indent;
+            public int GroupId;
+            public int CColumns;
+            public IntPtr PuColumns;
+        }
 		/// <summary>
 		///   The Point structure defines the x- and y- coordinates of a point.
 		/// </summary>
@@ -486,6 +506,16 @@ namespace Whathecode.System.Windows.Interop
 			NoSendChanging = 0x0400
 		}
 
+        /// <summary>
+        /// ListView API Constants
+        /// </summary>
+        public const uint LVM_FIRST = 0x1000;
+        public const uint LVM_GETITEMCOUNT = LVM_FIRST + 4;
+        public const uint LVM_GETITEMW = LVM_FIRST + 75;
+        public const uint LVM_SETITEMPOSITION = 0x1000 + 15;
+        public const uint LVM_GETITEMPOSITION = LVM_FIRST + 16;
+
+        public const int LVIF_TEXT = 0x0001;
 		#endregion // Window types
 
 
