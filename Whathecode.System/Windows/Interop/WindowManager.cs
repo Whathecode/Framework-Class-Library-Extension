@@ -20,16 +20,19 @@ namespace Whathecode.System.Windows.Interop
 			InvalidMultipleWindowPositionStructure = 0x0000057D
 		}
 
+
 		/// <summary>
 		///   Enumerates all top-level windows on the screen.
 		/// </summary>
 		public static List<WindowInfo> GetWindows()
-		{			
-			var windows = new List<WindowInfo>();
+		{
+			List<WindowInfo> allWindows = new List<WindowInfo>();
+
+			// Find all currently open windows.
 			bool success = User32.EnumWindows(
 				( handle, lparam ) =>
 				{
-					windows.Add( new WindowInfo( handle ) );
+					allWindows.Add( new WindowInfo( handle ) );
 					return true;
 				},
 				IntPtr.Zero );
@@ -39,7 +42,7 @@ namespace Whathecode.System.Windows.Interop
 				MarshalHelper.ThrowLastWin32ErrorException();
 			}
 
-			return windows;
+			return allWindows;
 		}
 
 		/// <summary>
@@ -162,7 +165,7 @@ namespace Whathecode.System.Windows.Interop
 					// Handle possible errors.
 					if ( windowsPositionInfo == IntPtr.Zero )
 					{
-						ErrorCode error = (ErrorCode)Marshal.GetLastWin32Error();
+						var error = (ErrorCode)Marshal.GetLastWin32Error();
 						switch ( error )
 						{
 							case ErrorCode.InvalidWindowHandle:
@@ -190,7 +193,7 @@ namespace Whathecode.System.Windows.Interop
 						// All windows are hidden and there is no more active window.
 						// This causes a bug next time a window is shown which doesn't show up on the taskbar. Another window is shown on the taskbar, but not made visible.
 						// To prevent this, activate the start bar.
-						WindowInfo startBar = GetWindows().Where( w => w.GetClassName() == "Shell_TrayWnd" ).FirstOrDefault();
+						WindowInfo startBar = GetWindows().FirstOrDefault( w => w.GetClassName() == "Shell_TrayWnd" );
 						if ( startBar != null )
 						{
 							startBar.Focus();

@@ -283,7 +283,7 @@
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
     <Compile Include="Collections\Generic\TupleList.cs" />
-    <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
+    <Compile Include="Windows\Runtime\InteropServices\MarshalHelper.cs" />
     <Compile Include="TimeSpanHelper.cs" />
     <Compile Include="TimeSpanPart.cs" />
     <Compile Include="TypeHelper.cs" />

@@ -94,7 +94,7 @@ namespace Whathecode.System.Xaml
 
 					// Listen to changes of the specified dependency property and forward to observer.
 					PropertyObserver observer = o;
-					property.AddValueChanged( selectedObject, delegate { observer.Observer = property.GetValue( selectedObject ); } );
+					property.AddValueChanged( selectedObject, ( s, a ) => observer.Observer = property.GetValue( selectedObject ) );
 
 					// Set data context so binding works.
 					o.DataContext = e.NewValue;

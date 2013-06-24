@@ -26,7 +26,7 @@ namespace Whathecode.System.Windows.Interop
 			{ User32.WindowState.Hide, WindowState.Hidden }
 		};
 
-		internal readonly IntPtr Handle;		
+		internal readonly IntPtr Handle;
 
 
 		/// <summary>
@@ -108,8 +108,8 @@ namespace Whathecode.System.Windows.Interop
 				}
 
 				_process = processId == 0
-				? null
-				: Process.GetProcessById( processId );
+					? null
+					: Process.GetProcessById( processId );
 
 				if ( _process != null )
 				{
@@ -263,7 +263,7 @@ namespace Whathecode.System.Windows.Interop
 				return false;
 			}
 
-			return Handle == otherWindow.Handle;
+			return Equals( otherWindow );
 		}
 
 		public bool Equals( WindowInfo other )
