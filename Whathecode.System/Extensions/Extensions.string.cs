@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Security;
 using Whathecode.System.Algorithm;
 
 
@@ -29,9 +30,9 @@ namespace Whathecode.System.Extensions
 		///   Ensure a string is unique by applying a certain suffix.
 		///   TODO: Allow more choices than a counting int suffix.
 		/// </summary>
-		/// <param name="source">The source of this extension method</param>
-		/// <param name="isUnique">Checks whether a certain path is unique or not.</param>
-		/// <param name="format">A standard or custom suffix format string. (see Remarks)</param>
+		/// <param name = "source">The source of this extension method</param>
+		/// <param name = "isUnique">Checks whether a certain path is unique or not.</param>
+		/// <param name = "format">A standard or custom suffix format string. (see Remarks)</param>
 		/// <returns>The original string with optionally a suffix applied to it to make it unique.</returns>
 		/// <remarks>
 		///   The <paramref name="format" /> parameter should contain a format pattern
@@ -48,6 +49,23 @@ namespace Whathecode.System.Extensions
 				current = source + suffix;
 			}
 			return current;
+		}
+
+		/// <summary>
+		///   Converts an insecure string to a <see cref="SecureString" />.
+		/// </summary>
+		/// <param name = "insecure">The insecure string to convert to a <see cref="SecureString" />.</param>
+		public static SecureString ToSecureString( this string insecure )
+		{
+			var secure = new SecureString();
+
+			foreach ( char c in insecure )
+			{
+				secure.AppendChar( c );
+			}
+			secure.MakeReadOnly();
+
+			return secure;
 		}
 	}
 }
