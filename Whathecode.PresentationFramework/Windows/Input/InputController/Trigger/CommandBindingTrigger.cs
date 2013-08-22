@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using Whathecode.System.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.Input.CommandFactory;
 using Whathecode.System.Windows.Input.InputController.Condition;
@@ -50,9 +51,16 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 
 			// Check whether the data context contains a CommandFactory<TCommands>.
 			Type dataContextType = dataContext.GetType();
-			MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<TCommand> ) ).ToArray();
+			// TODO: Due to a bug in PostSharp 3 a non-typesafe search is done for now: http://stackoverflow.com/q/18341654/590790
+			// The old logic can be enabled again after this is fixed.
+			//MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<TCommand> ) ).ToArray();
+			var commandFactories = dataContextType.GetMembers( ReflectionHelper.FlattenedClassMembers )
+				.Where( m => m is PropertyInfo && ( (PropertyInfo)m ).PropertyType == typeof( object ) )
+				.Select( m => new { DefinedType = m, ActualType = dataContext.GetValue( m ).GetType() } )
+				.Where( g => g.ActualType.IsOfGenericType( typeof( CommandFactory<> ) ) )
+				.Where( g => g.ActualType.GetMemberType().GetGenericArguments()[ 0 ] == typeof( TCommand ) );
 
-			foreach ( object factory in commandFactories.Select( commandFactory => dataContext.GetValue( commandFactory ) ) )
+			foreach ( object factory in commandFactories.Select( g => dataContext.GetValue( g.DefinedType ) ) )
 			{
 				// Get dictionary containing commands from command factory.
 				const string commandsProperty = CommandFactory<object>.CommandsProperty;
