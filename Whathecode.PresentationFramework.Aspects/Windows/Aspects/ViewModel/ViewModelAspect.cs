@@ -28,24 +28,20 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 		object _instance;
 
 		[NonSerialized]
-		//CommandFactory<TCommands> _commandFactory;
-		object _commandFactory;
+		CommandFactory<TCommands> _commandFactory;
 
 		[IntroduceMember( Visibility = Visibility.Private )]
-		//public CommandFactory<TCommands> CommandFactory
-		public object CommandFactory
+		public CommandFactory<TCommands> CommandFactory
 		{
 			get { return _commandFactory; }
 			private set { _commandFactory = value; }
 		}
 
 		[NonSerialized]
-		//NotifyPropertyFactory<TProperties> _propertyFactory;
-		object _propertyFactory;
+		NotifyPropertyFactory<TProperties> _propertyFactory;
 
 		[IntroduceMember( Visibility = Visibility.Private )]
-		//public NotifyPropertyFactory<TProperties> PropertyFactory
-		public object PropertyFactory
+		public NotifyPropertyFactory<TProperties> PropertyFactory
 		{
 			get { return _propertyFactory; }
 			private set { _propertyFactory = value; }
@@ -70,7 +66,7 @@ namespace Whathecode.System.Windows.Aspects.ViewModel
 			CommandFactory = new CommandFactory<TCommands>( _instance );
 			PropertyFactory = new NotifyPropertyFactory<TProperties>( _instance, () => PropertyChanged );
 
-			_notifyPropertyAspects.ForEach( p => p.SetPropertyFactory( _instance, (NotifyPropertyFactory<TProperties>)PropertyFactory ) );
+			_notifyPropertyAspects.ForEach( p => p.SetPropertyFactory( _instance, PropertyFactory ) );
 		}
 
 		public IEnumerable<AspectInstance> ProvideAspects( object targetElement )

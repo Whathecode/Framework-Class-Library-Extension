@@ -15,7 +15,7 @@ namespace Whathecode.Tests.System.Windows.Aspects
 	[ViewModel( typeof( Properties ), typeof( Commands ) )]
 	public class DuckViewModel
 	{
-		enum Properties
+		public enum Properties
 		{
 			Color,
 			CanQuack
