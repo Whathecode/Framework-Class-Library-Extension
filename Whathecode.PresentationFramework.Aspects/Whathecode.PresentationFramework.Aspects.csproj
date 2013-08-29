@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="PostSharp.license" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\..\..\..\Whathecode\Laevo\Laevo\packages\PostSharp.3.0.35\tools\PostSharp.targets" Condition="Exists('..\..\..\..\..\..\Whathecode\Laevo\Laevo\packages\PostSharp.3.0.35\tools\PostSharp.targets')" />
