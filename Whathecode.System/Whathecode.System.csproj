@@ -211,6 +211,7 @@
     <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyChangedAttribute.cs" />
     <Compile Include="DateTimePart.cs" />
     <Compile Include="EnumHelper.cs" />
+    <Compile Include="EnvironmentHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
     <Compile Include="Extensions\Extensions.SecureString.cs" />
     <Compile Include="Extensions\Extensions.TimeSpan.cs" />
@@ -284,7 +285,12 @@
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
     <Compile Include="Collections\Generic\TupleList.cs" />
-    <Compile Include="Windows\Runtime\InteropServices\MarshalHelper.cs" />
+    <Compile Include="Runtime\InteropServices\SafeUnmanagedMemoryHandle.cs" />
+    <Compile Include="Security\Principal\SafeTokenHandle.cs" />
+    <Compile Include="Security\Principal\WindowsIdentityHelper.cs" />
+    <Compile Include="Windows\Interop\AdvApi32.cs" />
+    <Compile Include="Windows\Interop\AdvApi32.Types.cs" />
+    <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
     <Compile Include="TimeSpanHelper.cs" />
     <Compile Include="TimeSpanPart.cs" />
     <Compile Include="TypeHelper.cs" />
