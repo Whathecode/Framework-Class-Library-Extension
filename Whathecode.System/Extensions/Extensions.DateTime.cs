@@ -51,11 +51,27 @@ namespace Whathecode.System.Extensions
 		}
 
 		/// <summary>
+		///   Returns a new <see cref="DateTime" /> object which is rounded down to the day indicating the start of the week.
+		/// </summary>
+		/// <param name="source">The <see cref="DateTime" /> to round down.</param>
+		/// <param name="startOfWeek">They day of the week to round down to.</param>
+		public static DateTime Round( this DateTime source, DayOfWeek startOfWeek )
+		{
+			int excessDays = source.DayOfWeek - startOfWeek;
+			if ( excessDays < 0 )
+			{
+				excessDays += 7;
+			}
+
+			return source.Date - TimeSpan.FromDays( excessDays );
+		}
+
+		/// <summary>
 		///   Safely subtract a given timespan from a <see cref="DateTime" />, preventing an <see cref="ArgumentOutOfRangeException" /> from occurring.
 		///   When the subtraction results in an invalid <see cref="DateTime" />, the nearest valid <see cref="DateTime" /> is used.
 		/// </summary>
-		/// <param name = "source">The <see cref="DateTime" /> to subtract from.</param>
-		/// <param name = "time">The amount of time to subtract from the <see cref="DateTime" />.</param>
+		/// <param name="source">The <see cref="DateTime" /> to subtract from.</param>
+		/// <param name="time">The amount of time to subtract from the <see cref="DateTime" />.</param>
 		public static DateTime SafeSubtract( this DateTime source, TimeSpan time )
 		{
 			long minTicks = DateTime.MinValue.Ticks;
@@ -69,8 +85,8 @@ namespace Whathecode.System.Extensions
 		///   Safely add a given timespan to a <see cref="DateTime" />, preventing an <see cref="ArgumentOutOfRangeException" /> from occurring.
 		///   When the addition results in an invalid <see cref="DateTime" />, the nearest valid <see cref="DateTime" /> is used.
 		/// </summary>
-		/// <param name = "source">The <see cref="DateTime" /> to add to.</param>
-		/// <param name = "time">The amount of time to add to the <see cref="DateTime" />.</param>
+		/// <param name="source">The <see cref="DateTime" /> to add to.</param>
+		/// <param name="time">The amount of time to add to the <see cref="DateTime" />.</param>
 		public static DateTime SafeAdd( this DateTime source, TimeSpan time )
 		{
 			long maxTicks = DateTime.MaxValue.Ticks;

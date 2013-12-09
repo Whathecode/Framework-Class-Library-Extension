@@ -114,6 +114,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\DateTimeExtensionsTest.cs" />
     <Compile Include="MathHelperTest.cs" />
     <Compile Include="Operators\OperatorTest.cs" />
     <Compile Include="Arithmetic\Range\IntervalTest.cs" />
