@@ -196,7 +196,7 @@ namespace Whathecode.System.Windows.Interop
 						WindowInfo startBar = GetWindows().FirstOrDefault( w => w.GetClassName() == "Shell_TrayWnd" );
 						if ( startBar != null )
 						{
-							startBar.Focus();
+							startBar.SetForegroundWindow();
 						}
 					}
 				}

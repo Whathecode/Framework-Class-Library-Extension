@@ -43,15 +43,9 @@ namespace Whathecode.System.Windows.Interop
 			long pointer = info.GetInt64( "Handle" );
 
 			// The pointer is serialized as a 64 bit integer, but the system might be 32 bit.
-			if ( IntPtr.Size == 8 )
-			{
-				Handle = new IntPtr( pointer );
-			}
-			else
-			{
-				Handle = new IntPtr( (int)pointer );
-			}
+			Handle = IntPtr.Size == 8 ? new IntPtr( pointer ) : new IntPtr( (int)pointer );
 		}
+
 		public void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "Handle", Handle.ToInt64() );
@@ -77,6 +71,16 @@ namespace Whathecode.System.Windows.Interop
 		}
 
 		/// <summary>
+		///   Get the owner window of the window if any.
+		/// </summary>
+		/// <returns>The <see cref="WindowInfo" /> instance of the owner window or null if no owner window is present.</returns>
+		public WindowInfo GetOwnerWindow()
+		{
+			IntPtr ownerHandle = User32.GetWindow( Handle, User32.WindowRelationship.Owner );
+			return ownerHandle == IntPtr.Zero ? null : new WindowInfo( ownerHandle );
+		}
+
+		/// <summary>
 		///   Retrieves the name of the class to which the specified window belongs.
 		/// </summary>
 		public string GetClassName()
@@ -88,6 +92,14 @@ namespace Whathecode.System.Windows.Interop
 			}
 
 			return buffer.ToString();
+		}
+
+		/// <summary>
+		///   Determines whether the window is a dialog box.
+		/// </summary>
+		public bool IsDialogBox()
+		{
+			return GetClassName() == "#32770";
 		}
 
 		Process _process;
@@ -248,11 +260,13 @@ namespace Whathecode.System.Windows.Interop
 		}
 
 		/// <summary>
-		///   Switches focus to the specified window and brings it to the foreground.
+		///   Brings the thread that created the specified window into the foreground and activates the window.
+		///   Keyboard input is directed to the window, and various visual cues are changed for the user.
+		///   The system assigns a slightly higher priority to the thread that created the foreground window than it does to other threads.
 		/// </summary>
-		public void Focus()
+		public void SetForegroundWindow()
 		{
-			User32.SwitchToThisWindow( Handle, false );
+			User32.SetForegroundWindow( Handle );
 		}
 
 		public override bool Equals( object other )
