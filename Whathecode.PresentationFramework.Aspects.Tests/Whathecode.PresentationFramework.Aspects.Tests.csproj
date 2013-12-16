@@ -139,6 +139,7 @@
     <Compile Include="RequiresPostSharp.cs" />
     <Compile Include="Windows\Aspects\ViewModelAspectTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Aspects\DependencyPropertyFactoryTest.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Aspects\GenericControlTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Aspects\TestControl.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\CoercionHandlersTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\ValidatorsTest.cs" />

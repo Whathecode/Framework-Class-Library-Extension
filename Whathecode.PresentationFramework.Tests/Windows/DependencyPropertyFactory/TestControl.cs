@@ -75,11 +75,10 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 		{
 			return CoerceCallbackCalled( d, value );
 		}
-
 		// ReSharper restore UnusedMember.Local
 
 
-		class CallbackValidation : AbstractValidation<string>
+		public class CallbackValidation : AbstractValidation<string>
 		{
 			public override bool IsValid( string value )
 			{
@@ -88,7 +87,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 		}
 
 
-		class CoerceValidation : AbstractControlCoercion<Property, int>
+		public class CoerceValidation : AbstractControlCoercion<Property, int>
 		{
 			public CoerceValidation( Property dependentProperties )
 				: base( dependentProperties ) {}

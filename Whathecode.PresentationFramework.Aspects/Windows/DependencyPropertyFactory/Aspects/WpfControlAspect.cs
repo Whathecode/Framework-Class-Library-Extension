@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Windows;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PS = PostSharp.Reflection;
+using PostSharp.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 
@@ -17,68 +15,59 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 	///   add it to the class, or delegate calls to it in the property getters and setters.
 	/// </summary>
 	/// <typeparam name = "T">Enum type specifying all the dependency properties.</typeparam>
-	[Serializable]  
-	public class WpfControlAspect<T> : ITypeLevelAspect, IAspectProvider, ISerializable
+	[Serializable]
+	public class WpfControlAspect<T> : IInstanceScopedAspect, IAspectProvider
 	{
-		public class ConcreteDependencyPropertyFactory : DependencyPropertyFactory<T>
+		class ConcreteDependencyPropertyFactory : DependencyPropertyFactory<T>
 		{
-			/// <remarks>
-			///   HACK: This extended factory calls its protected constructor, disabling the need for the factory member to be static.
-			///         Since the static DependencyProperty fields can't be added yet, naming conventions are disabled as well.
-			/// </remarks>
-			/// <param name="ownerType"></param>
 			public ConcreteDependencyPropertyFactory( Type ownerType )
 				: base( ownerType, false, false )
-			{            
+			{
 			}
 		}
 
 
-		static ConcreteDependencyPropertyFactory _propertyFactory;
-		const string AspectsMemberName = "_propertyAspects";
-		static List<DependencyPropertyAspect<T>> _propertyAspects = new List<DependencyPropertyAspect<T>>();
+		[NonSerialized]
+		object _instance;
 
+		[NonSerialized]
+		static DependencyPropertyFactory<T> _propertyFactory;
 
-		[IntroduceMember( Visibility = PS.Visibility.Private )]
-		public ConcreteDependencyPropertyFactory PropertyFactory
+		[IntroduceMember( Visibility = Visibility.Private )]
+		public DependencyPropertyFactory<T> PropertyFactory
 		{
 			get { return _propertyFactory; }
-			set { _propertyFactory = value; }
+			private set { _propertyFactory = value; }
 		}
 
+		readonly List<DependencyPropertyAspect<T>> _propertyAspects = new List<DependencyPropertyAspect<T>>();
 
-		/// <summary>
-		///   Create a new aspect which allows generation of dependency properties when applied to a <see cref="DependencyObject" />.
-		/// </summary>
-		public WpfControlAspect()
+
+		public object CreateInstance( AdviceArgs adviceArgs )
 		{
+			var newAspect = (WpfControlAspect<T>)MemberwiseClone();
+			newAspect._instance = adviceArgs.Instance;
+
+			return newAspect;
 		}
 
-		public WpfControlAspect( SerializationInfo info, StreamingContext context )
+		public void RuntimeInitializeInstance()
 		{
-			_propertyAspects 
-				= (List<DependencyPropertyAspect<T>>)info.GetValue( AspectsMemberName, typeof( List<DependencyPropertyAspect<T>> ) );
-		}
-
-
-		public void RuntimeInitialize( Type type )
-		{
-			PropertyFactory = new ConcreteDependencyPropertyFactory( type );            
-
-			foreach ( var propertyAspect in _propertyAspects )
+			if ( PropertyFactory == null )
 			{
-				propertyAspect.Factory = PropertyFactory;
+				PropertyFactory = new ConcreteDependencyPropertyFactory( _instance.GetType() );
+				_propertyAspects.ForEach( p => p.Factory = PropertyFactory );
 			}
 		}
 
 		public IEnumerable<AspectInstance> ProvideAspects( object targetElement )
 		{
-			Type targetType = (Type)targetElement;
+			var targetType = (Type)targetElement;
 
-			Dictionary<MemberInfo, DependencyPropertyAttribute[]> attributedMembers
+			Dictionary<MemberInfo, DependencyPropertyAttribute[]> attributedProperties
 				= targetType.GetAttributedMembers<DependencyPropertyAttribute>( MemberTypes.Property );
 
-			foreach ( var member in attributedMembers )
+			foreach ( var member in attributedProperties )
 			{
 				var attribute = member.Value[ 0 ];
 				var propertyAspect = new DependencyPropertyAspect<T>( (T)attribute.GetId() );
@@ -86,11 +75,6 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 
 				yield return new AspectInstance( member.Key, propertyAspect );
 			}
-		}
-
-		public void GetObjectData( SerializationInfo info, StreamingContext context )
-		{
-			info.AddValue( AspectsMemberName, _propertyAspects );
 		}
 	}
 }

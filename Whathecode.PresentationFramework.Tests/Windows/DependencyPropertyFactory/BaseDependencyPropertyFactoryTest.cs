@@ -63,7 +63,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 			{ Property.Maximum, 150 }
 		};
 
-		static readonly Property[] CoercedProperties = new[] { Property.Maximum };
+		static readonly Property[] CoercedProperties = { Property.Maximum };
 
 		[TestInitialize]
 		public void InitializeTest()

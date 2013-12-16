@@ -113,6 +113,7 @@
     <Compile Include="Windows\DependencyPropertyFactory\BaseTestControl.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\BaseDependencyPropertyFactoryTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\DependencyPropertyFactoryTest.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\GenericControlTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Property.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\TestControl.cs" />
     <Compile Include="Windows\Input\CommandFactory\CommandFactoryTest.cs" />
