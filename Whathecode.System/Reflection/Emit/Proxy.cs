@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using TriAxis.RunSharp;
+using Whathecode.System.Linq;
 using Whathecode.System.Reflection.Extensions;
 
 
@@ -29,10 +31,29 @@ namespace Whathecode.System.Reflection.Emit
 		/// <returns>An instance of the specified type which wraps the given object.</returns>
 		public static T CreateGenericInterfaceWrapper<T>( object o )
 		{
-			Contract.Requires( o.GetType().IsOfGenericType( typeof( T ).GetGenericTypeDefinition() ) );
-			Contract.Requires( typeof( T ).IsInterface );
+			return (T)CreateGenericInterfaceWrapper( typeof( T ), o );
+		}
 
-			Type typeToCreate = typeof( T );
+		/// <summary>
+		///   Create a wrapper class for a generic interface with more general type parameters than the wrapped interface.
+		///   Downcasts to the correct more specific type are generated where necessary.
+		///   This of course breaks type safety, and only calls to the class with the correct orginal types will work.
+		///   Incorrect calls will throw <see cref = "InvalidCastException" />.
+		/// </summary>
+		/// <remarks>
+		///   This is useful during reflection, when you don't want to know about specific types, but you can guarantee
+		///   that a certain call will always be done with objects of the correct type.
+		///   TODO: This non-generic method is only needed since RunSharp can't call generic methods, needed to generate wrappers recursively.
+		///   TODO: Possibly Castle DynamicProxy could replace this if it allows creating 'non-matching' proxies and thus support the downcasting.
+		/// </remarks>
+		/// <param name = "typeToCreate">The less-specific generic type of the wrapper which will be generated.</param>
+		/// <param name = "o">The object to wrap, which should implement the desired interface, with arbitrary type parameters.</param>
+		/// <returns>An instance of the specified type which wraps the given object.</returns>
+		public static object CreateGenericInterfaceWrapper( Type typeToCreate, object o )
+		{
+			Contract.Requires( o.GetType().IsOfGenericType( typeToCreate.GetGenericTypeDefinition() ) );
+			Contract.Requires( typeToCreate.IsInterface );
+
 			Type typeToCreateGeneric = typeToCreate.GetGenericTypeDefinition();
 			Type innerType = o.GetType();
 			Type innerMatchingType = innerType.GetMatchingGenericType( typeToCreateGeneric );
@@ -44,6 +65,8 @@ namespace Whathecode.System.Reflection.Emit
 				const string inner = "inner";
 
 				FieldGen innerInstance = type.Private.Field( innerType, "_innerInstance" );
+				FieldGen returnCached = type.Private.Field( typeof( Dictionary<int, object> ), "_returnCached" );
+				FieldGen returnWrappers = type.Private.Field( typeof( Dictionary<int, object> ), "_returnWrappers" );
 
 				// Create constructor which takes the wrapped instance as an argument.
 				ConstructorGen constructor = type.Public.Constructor();
@@ -53,18 +76,24 @@ namespace Whathecode.System.Reflection.Emit
 					CodeGen code = constructor.GetCode();
 					{
 						code.Assign( innerInstance, code.Arg( inner ) );
+						code.Assign( returnCached, Exp.New( typeof( Dictionary<int, object> ) ) );
+						code.Assign( returnWrappers, Exp.New( typeof( Dictionary<int, object> ) ) );
 					}
 				}
 
 				// Create methods.
+				int methodCount = 0;
 				MethodInfo[] innerMethods = innerMatchingType.GetFlattenedInterfaceMethods( ReflectionHelper.FlattenedInstanceMembers ).ToArray();
 				MethodInfo[] toCreateMethods = typeToCreate.GetFlattenedInterfaceMethods( ReflectionHelper.FlattenedInstanceMembers ).ToArray();
+				MethodInfo[] genericMethods = typeToCreateGeneric.GetFlattenedInterfaceMethods( ReflectionHelper.FlattenedInstanceMembers ).ToArray();
 				foreach ( var method in innerMethods
-					.Zip( toCreateMethods,
-						( matching, toCreate ) => new
+					.Zip( toCreateMethods, genericMethods,
+						( matching, toCreate, generic ) => new
 						{
+							Id = methodCount++,
 							Matching = matching,
-							ToCreate = toCreate
+							ToCreate = toCreate,
+							Generic = generic
 						} )
 					.Where( z => z.Matching.IsPublic || z.Matching.IsFamily ) )
 				{
@@ -75,7 +104,7 @@ namespace Whathecode.System.Reflection.Emit
 						? type.MethodImplementation( typeToCreate, toCreate.ReturnType, toCreate.Name )
 						: type.Public.Override.Method( toCreate.ReturnType, toCreate.Name );
 					{
-						ParameterInfo[] toCreateParameters = method.ToCreate.GetParameters();
+						ParameterInfo[] toCreateParameters = toCreate.GetParameters();
 						var parameters = toCreateParameters
 							.Select( p =>
 							{
@@ -88,25 +117,64 @@ namespace Whathecode.System.Reflection.Emit
 						{
 							// Cast arguments to the type of the inner instance.
 							Operand[] args = parameters.Select( p => code.Arg( p.Name ) ).ToArray();
-							Operand[] castArgs = new Operand[] { };
+							Operand[] castArgs = { };
 							if ( args.Length > 0 )
 							{
 								Type[] parameterTypes = method.Matching.GetParameters().Select( p => p.ParameterType ).ToArray();
 								MethodInfo methodToCall
-									= innerType.GetMethod( method.ToCreate.Name, ReflectionHelper.FlattenedInstanceMembers, parameterTypes );
+									= innerType.GetMethod( toCreate.Name, ReflectionHelper.FlattenedInstanceMembers, parameterTypes );
 								castArgs = methodToCall.GetParameters()
 									.Select( ( p, index ) => args[ index ].Cast( typeof( object ) ).Cast( p.ParameterType ) ).ToArray();
 							}
 
-							// Call inner instance and return value when needed.                            
-							if ( method.ToCreate.ReturnType != typeof( void ) )
+							// Call inner instance and return value when needed.
+							if ( toCreate.ReturnType != typeof( void ) )
 							{
-								Operand result = innerInstance.Invoke( method.ToCreate.Name, castArgs );
-								code.Return( result.Cast( method.ToCreate.ReturnType ) );
+								Operand result = innerInstance.Invoke( toCreate.Name, castArgs );
+
+								// Wrappers will recursively need to be created for generic return types.
+								Type genericReturnType = method.Generic.ReturnType;
+								if ( genericReturnType.IsGenericType && genericReturnType.ContainsGenericParameters && genericReturnType.IsInterface )
+								{
+									// Check whether a new result is returned.
+									Operand innerCached = code.Local( typeof( object ) );
+									code.If( returnCached.Invoke( "TryGetValue", method.Id, innerCached.Ref() ) );
+									{
+										code.If( (innerCached == result).LogicalNot() );
+										{
+											code.Invoke( returnWrappers, "Remove", method.Id );
+											code.Invoke( returnCached, "Remove", method.Id );
+											code.Invoke( returnCached, "Add", method.Id, result );
+										}
+										code.End();
+									}
+									code.Else();
+									{
+										code.Invoke( returnCached, "Add", method.Id, result );
+									}
+									code.End();
+
+									// Check whether a wrapper needs to be generated.
+									Operand wrappedCached = code.Local( typeof( object ) );
+									code.If( returnWrappers.Invoke( "TryGetValue", method.Id, wrappedCached.Ref() ).LogicalNot() );
+									{
+										Operand proxied = Static.Invoke( typeof( Proxy ), "CreateGenericInterfaceWrapper", toCreate.ReturnType, result );
+										code.Assign( wrappedCached, proxied );
+										code.Invoke( returnWrappers, "Add", method.Id, wrappedCached );
+									}
+									code.End();
+									code.Return( wrappedCached.Cast( toCreate.ReturnType ) );
+								}
+								else
+								{
+									// A simple cast will work.
+									// TODO: Throw proper exception when this is known to fail. E.g. generic type which is not an interface?
+									code.Return( result.Cast( toCreate.ReturnType ) );
+								}
 							}
 							else
 							{
-								code.Invoke( innerInstance, method.ToCreate.Name, castArgs );
+								code.Invoke( innerInstance, toCreate.Name, castArgs );
 							}
 						}
 					}
@@ -114,7 +182,7 @@ namespace Whathecode.System.Reflection.Emit
 			}
 			Type wrapperType = type.GetCompletedType( true );
 
-			return (T)Activator.CreateInstance( wrapperType, new[] { o } );
+			return Activator.CreateInstance( wrapperType, new[] { o } );
 		}
 	}
 }
