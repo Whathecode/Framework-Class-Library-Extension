@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
-using Whathecode.System.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.Input.CommandFactory;
 using Whathecode.System.Windows.Input.InputController.Condition;
@@ -23,14 +22,16 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 	{
 		readonly TCommand _desiredCommand;
 		ICommand _command;
+		readonly object _parameter;
 
 
-		public CommandBindingTrigger( AbstractCondition condition, FrameworkElement element, TCommand command )
+		public CommandBindingTrigger( AbstractCondition condition, FrameworkElement element, TCommand command, object parameter = null )
 			: base( condition )
 		{
 			Contract.Requires( condition != null && element != null );
 
 			_desiredCommand = command;
+			_parameter = parameter;
 
 			ConditionsMet += TriggerAction;
 			element.DataContextChanged += OnDataContextChanged;
@@ -81,9 +82,9 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 
 		void TriggerAction()
 		{
-			if ( _command != null && _command.CanExecute( null ) )
+			if ( _command != null && _command.CanExecute( _parameter ) )
 			{
-				_command.Execute( null );
+				_command.Execute( _parameter );
 			}
 		}
 	}
