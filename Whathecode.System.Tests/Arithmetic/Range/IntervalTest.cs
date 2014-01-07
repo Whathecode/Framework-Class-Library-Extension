@@ -172,7 +172,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, Interval<TMath> result )		
 			where TMath : IComparable<TMath>
 		{
-			List<Interval<TMath>> results = from.Subtract( subtract );
+			List<IInterval<TMath>> results = from.Subtract( subtract );
 
 			Assert.IsTrue( results.Count == 1 );
 			Assert.IsTrue( results[ 0 ].Equals( result ) );
@@ -182,13 +182,13 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		static void Subtract<TMath>( Interval<TMath> from, Interval<TMath> subtract, List<Interval<TMath>> results )
 			where TMath : IComparable<TMath>
 		{
-			List<Interval<TMath>> subtracted = from.Subtract( subtract );
+			List<IInterval<TMath>> subtracted = from.Subtract( subtract );
 
 			Assert.IsTrue( results.Count == subtracted.Count );
 			for ( int i = 0; i < results.Count; ++i )
 			{
 				Interval<TMath> result = results[ i ];
-				Interval<TMath> subtractResult = subtracted[ i ];
+				IInterval<TMath> subtractResult = subtracted[ i ];
 				Assert.IsTrue( result.Equals( subtractResult ) );
 			}
 		}

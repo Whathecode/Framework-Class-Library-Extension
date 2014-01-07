@@ -206,6 +206,7 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\AbsoluteKeyPointInterpolationProvider.cs" />
     <Compile Include="Arithmetic\Interpolation\TypeProvider\ValueTypeInterpolationProvider.cs" />
     <Compile Include="Arithmetic\MathOperator.cs" />
+    <Compile Include="Arithmetic\Range\IInterval.cs" />
     <Compile Include="Arithmetic\RateOfChange.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyChangedAttribute.cs" />
