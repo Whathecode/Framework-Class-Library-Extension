@@ -22,6 +22,11 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 		[ConstructorArgument( "commandId" )]
 		public object Command { get; set; }
 
+		/// <summary>
+		///   Gets or sets the path to where the command is located.
+		/// </summary>
+		public string Path { get; set; }
+
 
 		/// <summary>
 		///   Create a new binding to a command with a given ID.
@@ -46,13 +51,13 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 			}
 
 			// Check whether the data context contains a CommandFactory<TCommands>.
-			Type dataContextType = dataContext.GetType();
+			Type dataContextType = dataContext.GetValue( Path ).GetType();
 			MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<> ) ).ToArray();
 
 			foreach ( var commandFactory in commandFactories )
 			{
 				// CommandFactory found.
-				// Check whether type parameter matches the command type passed to the constructor.           
+				// Check whether type parameter matches the command type passed to the constructor.
 				Type genericType = commandFactory.GetMemberType();
 				Type parameter = genericType.GetGenericArguments()[ 0 ];
 				if ( parameter != Command.GetType() )
