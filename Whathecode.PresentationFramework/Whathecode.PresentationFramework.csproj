@@ -167,7 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NCalc">
-      <HintPath>..\..\..\..\..\..\Whathecode\Laevo\Laevo\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
+      <HintPath>..\..\laevo\laevo\Laevo\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
