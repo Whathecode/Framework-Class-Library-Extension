@@ -15,18 +15,16 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <typeparam name = "TMath">The type used to specify the interval, and used for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[DataContract]
-	public class Interval<TMath> : ICloneable
+	public class Interval<TMath> : IInterval<TMath>
 		where TMath : IComparable<TMath>
 	{
-		[DataMember]
-		readonly bool _isReversed;
 		// ReSharper disable StaticFieldInGenericType
 		readonly static bool IsIntegralType;
 		// ReSharper restore StaticFieldInGenericType
 
 
 		static Interval<TMath> _empty;
-		public static Interval<TMath> Empty
+		public static IInterval<TMath> Empty
 		{
 			get
 			{
@@ -65,6 +63,12 @@ namespace Whathecode.System.Arithmetic.Range
 		public bool IsEndIncluded { get; private set; }
 
 		/// <summary>
+		///   Determines whether the start of the interval lies before or after the end of the interval. true when before, false when behind.
+		/// </summary>
+		[DataMember]
+		public bool IsReversed { get; private set; }
+
+		/// <summary>
 		///   Get the value in the center of the interval. Rounded to the nearest correct value.
 		/// </summary>
 		public TMath Center
@@ -79,7 +83,7 @@ namespace Whathecode.System.Arithmetic.Range
 		{
 			get
 			{
-				return _isReversed
+				return IsReversed
 					? Operator<TMath>.Subtract( Start, End )
 					: Operator<TMath>.Subtract( End, Start );
 			}
@@ -117,7 +121,7 @@ namespace Whathecode.System.Arithmetic.Range
 			IsEndIncluded = isEndIncluded;			
 
 			// Check whether the interval is a reverse interval. E.g. [5, 0]
-			_isReversed = start.CompareTo(  end ) > 0;					
+			IsReversed = start.CompareTo(  end ) > 0;					
 		}
 
 
@@ -133,7 +137,7 @@ namespace Whathecode.System.Arithmetic.Range
 		{			
 			// Use double math for the calculation, and then cast to the desired type.
 			double value = percentage * CastOperator<TMath, double>.Cast( Size );
-			double addition = value * (_isReversed ? -1 : 1); // Subtraction is required for a reversed interval.
+			double addition = value * (IsReversed ? -1 : 1); // Subtraction is required for a reversed interval.
 
 			// Ensure nearest neighbour rounding for integral types.
 			if ( IsIntegralType )
@@ -164,7 +168,7 @@ namespace Whathecode.System.Arithmetic.Range
 
 			// Negate percentage when position lies before the interval.
 			int positionCompare = position.CompareTo( Start );
-			bool isPositionBeforeInterval = _isReversed
+			bool isPositionBeforeInterval = IsReversed
 				? positionCompare > 0
 				: positionCompare < 0;
 			if ( isPositionBeforeInterval )
@@ -182,7 +186,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "value">The value to map to another range.</param>
 		/// <param name = "range">The range to which to map the value.</param>
 		/// <returns>The value, mapped to the given range.</returns>
-		public TMath Map( TMath value, Interval<TMath> range )
+		public TMath Map( TMath value, IInterval<TMath> range )
 		{
 			return Map<TMath>( value, range );
 		}
@@ -194,7 +198,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "value">The value to map to another range.</param>
 		/// <param name = "range">The range to which to map the value.</param>
 		/// <returns>The value, mapped to the given range.</returns>
-		public TRange Map<TRange>( TMath value, Interval<TRange> range )
+		public TRange Map<TRange>( TMath value, IInterval<TRange> range )
 			where TRange : IComparable<TRange>
 		{
 			return range.GetValueAt( GetPercentageFor( value ) );
@@ -220,7 +224,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "interval">The interval to check for intersection.</param>
 		/// <returns>True when the intervals intersect, false otherwise.</returns>
-		public bool Intersects( Interval<TMath> interval )
+		public bool Intersects( IInterval<TMath> interval )
 		{
 			int rightOfCompare = interval.Start.CompareTo( End );
 			int leftOfCompare = interval.End.CompareTo( Start );
@@ -238,8 +242,8 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The value limited to the range.</returns>
 		public TMath Clamp( TMath value )
 		{
-			TMath smallest = _isReversed ? End : Start;
-			TMath biggest = _isReversed ? Start : End;
+			TMath smallest = IsReversed ? End : Start;
+			TMath biggest = IsReversed ? Start : End;
 
 			return value.CompareTo( smallest ) < 0
 				? smallest
@@ -254,7 +258,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "range">The range to limit to this range.</param>
 		/// <returns>The given range, which excludes all parts lying outside of this range.</returns>
-		public Interval<TMath> Clamp( Interval<TMath> range )
+		public IInterval<TMath> Clamp( IInterval<TMath> range )
 		{
 			var intersection = Intersection( range );
 			if ( intersection == null )
@@ -262,10 +266,10 @@ namespace Whathecode.System.Arithmetic.Range
 				return Empty;
 			}
 
-			TMath smallest = _isReversed ? End : Start;
-			TMath biggest = _isReversed ? Start : End;
-			TMath clampSmallest = range._isReversed ? range.End : range.Start;
-			TMath clampBiggest = range._isReversed ? range.Start : range.End;
+			TMath smallest = IsReversed ? End : Start;
+			TMath biggest = IsReversed ? Start : End;
+			TMath clampSmallest = range.IsReversed ? range.End : range.Start;
+			TMath clampBiggest = range.IsReversed ? range.Start : range.End;
 			bool smaller = smallest.CompareTo( clampSmallest ) < 0;
 			bool bigger = biggest.CompareTo( clampBiggest ) > 0;
 			return new Interval<TMath>(
@@ -282,7 +286,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "option">Option which specifies in which intervals the split point ends up.</param>
 		/// <param name = "before">The interval in which to store the part before the point, if any, null otherwise.</param>
 		/// <param name = "after">The interval in which to store the part after the point, if any, null otherwise.</param>
-		public void Split( TMath atPoint, SplitOption option, out Interval<TMath> before, out Interval<TMath> after )
+		public void Split( TMath atPoint, SplitOption option, out IInterval<TMath> before, out IInterval<TMath> after )
 		{
 			Contract.Requires( atPoint.CompareTo( Start ) >= 0 && atPoint.CompareTo( End ) <= 0 );
 
@@ -318,9 +322,9 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "subtract">The interval to subtract from this interval.</param>
 		/// <returns>The resulting intervals after subtraction.</returns>
-		public List<Interval<TMath>> Subtract( Interval<TMath> subtract )
+		public List<IInterval<TMath>> Subtract( IInterval<TMath> subtract )
 		{
-			var result = new List<Interval<TMath>>();
+			var result = new List<IInterval<TMath>>();
 
 			if ( !Intersects( subtract ) )
 			{
@@ -361,7 +365,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "interval">The interval to get the intersection for.</param>
 		/// <returns>The intersection of this interval with the given other. Null when no intersection.</returns>
-		public Interval<TMath> Intersection( Interval<TMath> interval )
+		public IInterval<TMath> Intersection( IInterval<TMath> interval )
 		{
 			if ( !Intersects( interval ) )
 			{

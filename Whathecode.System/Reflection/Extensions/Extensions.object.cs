@@ -72,7 +72,7 @@ namespace Whathecode.System.Reflection.Extensions
 		}
 
 		/// <summary>
-		///   Returns the value of the object at the given location inside this object.
+		///   Returns the value of the object at the given location inside this object. If no path is given the object itself is returned.
 		///   TODO: Support more advanced property paths. (e.g. indexers) Create custom PropertyPath class?
 		/// </summary>
 		/// <param name = "source">The source of this extension method.</param>
@@ -85,6 +85,11 @@ namespace Whathecode.System.Reflection.Extensions
 		/// <returns>The object at the given path.</returns>
 		public static object GetValue( this object source, string path )
 		{
+			if ( string.IsNullOrEmpty( path ) )
+			{
+				return source;
+			}
+
 			string[] paths = path.Split( '.' );
 			object currentObject = source;
 

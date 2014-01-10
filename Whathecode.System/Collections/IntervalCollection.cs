@@ -30,10 +30,10 @@ namespace Whathecode.System.Collections
 		{
 			public IList<TObject> Values { get; private set; }
 
-			public Interval<TMath> Interval { get; private set; }
+			public IInterval<TMath> Interval { get; private set; }
 
 
-			public IntervalValues( IList<TObject> values, Interval<TMath> interval )
+			public IntervalValues( IList<TObject> values, IInterval<TMath> interval )
 			{
 				Values = values;
 				Interval = interval;
@@ -63,7 +63,7 @@ namespace Whathecode.System.Collections
 		/// </summary>
 		/// <param name = "interval">The interval to store the object in.</param>
 		/// <param name = "value">The object to store.</param>
-		public void Add( Interval<TMath> interval, TObject value )
+		public void Add( IInterval<TMath> interval, TObject value )
 		{
 			Contract.Requires( value != null );
 
@@ -75,7 +75,7 @@ namespace Whathecode.System.Collections
 		/// </summary>
 		/// <param name = "interval">The interval to store the object in.</param>
 		/// <param name = "values">The list of objects to store.</param>
-		public void Add( Interval<TMath> interval, IList<TObject> values )
+		public void Add( IInterval<TMath> interval, IList<TObject> values )
 		{
 			// Check for intersections with existing intervals.
 			IList<IntervalValues> intersecting = FindIntersections( interval );
@@ -83,25 +83,25 @@ namespace Whathecode.System.Collections
 			if ( intersecting.Count > 0 )
 			{
 				// A list used to find remnants after cutting intersections.
-				List<Interval<TMath>> remnants = new List<Interval<TMath>>
+				var remnants = new List<IInterval<TMath>>
 				{
-					(Interval<TMath>)interval.Clone()
+					(IInterval<TMath>)interval.Clone()
 				};
 
 				// Split up all intersecting intervals.
 				foreach ( var intersectingRange in intersecting )
 				{
-					Interval<TMath> intersection = intersectingRange.Interval.Intersection( interval );
+					IInterval<TMath> intersection = intersectingRange.Interval.Intersection( interval );
 
 					SplitRemoveIntersection( intersectingRange, intersection );
 
 					// Add intersection with objects of both intervals.
-					List<TObject> mergedObjects = new List<TObject>( intersectingRange.Values );
+					var mergedObjects = new List<TObject>( intersectingRange.Values );
 					mergedObjects.AddRange( values );
 					_rangedObjects.Add( new IntervalValues( mergedObjects, intersection ) );
 
 					// Remove intersections from remnants.
-					List<Interval<TMath>> newRemnants = new List<Interval<TMath>>();
+					var newRemnants = new List<IInterval<TMath>>();
 					foreach ( var remnant in remnants )
 					{
 						newRemnants.AddRange( remnant.Subtract( intersection ) );
@@ -127,7 +127,7 @@ namespace Whathecode.System.Collections
 		/// </summary>
 		/// <param name = "objectRange">The range of which to remove and split a given interval.</param>
 		/// <param name = "interval">The interval to remove from the range.</param>
-		void SplitRemoveIntersection( IntervalValues objectRange, Interval<TMath> interval )
+		void SplitRemoveIntersection( IntervalValues objectRange, IInterval<TMath> interval )
 		{
 			// Remove original range.
 			_rangedObjects.Remove( objectRange );
@@ -157,7 +157,7 @@ namespace Whathecode.System.Collections
 		{
 			foreach ( var intersectingRange in FindIntersections( interval ) )
 			{
-				Interval<TMath> intersection = intersectingRange.Interval.Intersection( interval );
+				IInterval<TMath> intersection = intersectingRange.Interval.Intersection( interval );
 
 				SplitRemoveIntersection( intersectingRange, intersection );
 			}
@@ -175,13 +175,13 @@ namespace Whathecode.System.Collections
 
 			foreach ( var intersectingRange in FindIntersections( interval ) )
 			{
-				Interval<TMath> intersection = intersectingRange.Interval.Intersection( interval );
+				IInterval<TMath> intersection = intersectingRange.Interval.Intersection( interval );
 
 				// Remove part of the interval which will be moved, static parts can stay.
 				SplitRemoveIntersection( intersectingRange, intersection );
 
 				// Add moved remainder to list to be added again.
-				Interval<TMath> movedInterval = new Interval<TMath>(
+				var movedInterval = new Interval<TMath>(
 					Operator<TMath>.Add( intersection.Start, offset ),
 					intersection.IsStartIncluded,
 					Operator<TMath>.Add( intersection.End, offset ),
@@ -238,7 +238,7 @@ namespace Whathecode.System.Collections
 			get { return false; }
 		}
 
-		List<IntervalValues> FindIntersections( Interval<TMath> interval )
+		List<IntervalValues> FindIntersections( IInterval<TMath> interval )
 		{
 			return (
 				from o in _rangedObjects

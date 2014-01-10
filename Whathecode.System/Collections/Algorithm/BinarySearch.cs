@@ -36,8 +36,8 @@ namespace Whathecode.System.Collections.Algorithm
 		/// <returns>The found object, or it's nearest matches.</returns>
 		public static BinarySearchResult<TObject> Search(
 			TObject toFind,
-			Interval<TIndex> range,
-			IndexerDelegates<TObject, TIndex> indexOperations )			
+			IInterval<TIndex> range,
+			IndexerDelegates<TObject, TIndex> indexOperations )
 		{
 			// Make sure start and end of range are valid.
 			// TODO: This is only necessary the first call of the recursion. Implementing the search as a loop could be more performant.
@@ -60,11 +60,11 @@ namespace Whathecode.System.Collections.Algorithm
 			if ( !isFinished )
 			{
 				// Split interval in the middle.
-				Interval<TIndex> smaller, bigger;
+				IInterval<TIndex> smaller, bigger;
 				range.Split( center, SplitOption.Both, out smaller, out bigger );
 
 				// Continue recursively in the range in which the object lies.
-				Interval<TIndex> inRange = orderToCenter > 0 ? bigger : smaller;
+				IInterval<TIndex> inRange = orderToCenter > 0 ? bigger : smaller;
 				return Search( toFind, inRange, indexOperations );
 			}
 			else
