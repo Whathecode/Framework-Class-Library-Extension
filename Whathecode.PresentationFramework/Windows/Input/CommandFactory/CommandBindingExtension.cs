@@ -51,7 +51,8 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 			}
 
 			// Check whether the data context contains a CommandFactory<TCommands>.
-			Type dataContextType = dataContext.GetValue( Path ).GetType();
+			dataContext = dataContext.GetValue( Path );
+			Type dataContextType = dataContext.GetType();
 			MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<> ) ).ToArray();
 
 			foreach ( var commandFactory in commandFactories )
