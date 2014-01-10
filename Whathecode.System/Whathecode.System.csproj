@@ -323,7 +323,8 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="TriAxis.RunSharp, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Libraries\runsharp-0.1.2-pre-alpha-src\bin\TriAxis.RunSharp.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\RunSharp\RunSharp\bin\Release\TriAxis.RunSharp.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
