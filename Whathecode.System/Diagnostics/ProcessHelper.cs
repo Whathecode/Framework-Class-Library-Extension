@@ -34,8 +34,9 @@ namespace Whathecode.System.Diagnostics
 		/// <param name = "executablePath">Path to the executable.</param>
 		/// <param name = "arguments">The arguments to pass along.</param>
 		/// <param name = "workingDirectory">The directory to use as working directory when running the executable.</param>
+		/// <param name = "hideWindow">Determines whether the window of the launched process should be hidden or not.</param>
 		/// <returns>A RunResults object which contains the output of the executable, plus runtime information.</returns>
-		public static RunResults RunExecutable( string executablePath, string arguments, string workingDirectory )
+		public static RunResults RunExecutable( string executablePath, string arguments, string workingDirectory = "", bool hideWindow = false )
 		{
 			RunResults runResults = new RunResults();
 
@@ -46,6 +47,11 @@ namespace Whathecode.System.Diagnostics
 					proc.StartInfo.FileName = executablePath;
 					proc.StartInfo.Arguments = arguments;
 					proc.StartInfo.WorkingDirectory = workingDirectory;
+					if ( hideWindow )
+					{
+						proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+						proc.StartInfo.CreateNoWindow = true;
+					}
 					proc.StartInfo.UseShellExecute = false;
 					proc.StartInfo.RedirectStandardOutput = true;
 					proc.StartInfo.RedirectStandardError = true;
