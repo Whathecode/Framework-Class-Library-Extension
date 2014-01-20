@@ -114,14 +114,17 @@
     <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\Media\Media3D\Vector3DInterpolationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\Data\AbstractBindingDecoratorExtension.cs" />
+    <Compile Include="Windows\Data\AbstractConditionMarkupExtension.cs" />
     <Compile Include="Windows\Data\AbstractMultiValueConverter.cs" />
     <Compile Include="Windows\Data\AbstractValueConverter.cs" />
     <Compile Include="Windows\Data\AdvancedBindingExtension.cs" />
     <Compile Include="Windows\Data\ConditionConverter.cs" />
     <Compile Include="Windows\Data\FromBooleanConverter.cs" />
     <Compile Include="Windows\Data\CalculateValueConverter.cs" />
+    <Compile Include="Windows\Data\IConditionConverter.cs" />
     <Compile Include="Windows\Data\IMultiValueConverter.cs" />
     <Compile Include="Windows\Data\IValueConverter.cs" />
+    <Compile Include="Windows\Data\SingleConditionConverter.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyCallbackAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Coercion\CoercionHandlerAttribute.cs" />
