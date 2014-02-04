@@ -40,7 +40,7 @@ namespace Whathecode.System.Windows.Data
 	///   The expressions should be formatted according to the NCalc library: http://ncalc.codeplex.com/
 	/// </summary>
 	[MarkupExtensionReturnType( typeof( IMultiValueConverter ) )]
-	public class EqualsConverterExtension : AbstractConditionMarkupExtension
+	public class EqualsConverterExtension : AbstractComparisonMarkupExtension
 	{
 		protected override object CreateConditionConverter( Type type )
 		{
