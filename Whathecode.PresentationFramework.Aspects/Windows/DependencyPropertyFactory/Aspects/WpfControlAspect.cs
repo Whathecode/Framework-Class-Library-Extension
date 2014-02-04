@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Windows;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
-using PostSharp.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
+using Visibility = PostSharp.Reflection.Visibility;
 
 
 namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
@@ -75,6 +76,11 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 
 				yield return new AspectInstance( member.Key, propertyAspect );
 			}
+		}
+
+		public static DependencyProperty GetDependencyProperty( T property )
+		{
+			return _propertyFactory[ property ];
 		}
 	}
 }
