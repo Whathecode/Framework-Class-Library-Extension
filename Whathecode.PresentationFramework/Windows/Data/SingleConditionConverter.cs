@@ -66,9 +66,9 @@ namespace Whathecode.System.Windows.Data
 	[MarkupExtensionReturnType( typeof( IValueConverter ) )]
 	public class SingleConditionConverterExtension : AbstractConditionMarkupExtension
 	{
-		protected override object CreateConditionConverter( Type type, string expression )
+		protected override object CreateConditionConverter( Type type )
 		{
-			return Activator.CreateInstance( typeof( SingleConditionConverter<> ).MakeGenericType( type ), expression );
+			return Activator.CreateInstance( typeof( SingleConditionConverter<> ).MakeGenericType( type ), Expression );
 		}
 	}
 }
