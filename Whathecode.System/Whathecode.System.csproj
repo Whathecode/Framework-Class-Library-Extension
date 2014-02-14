@@ -289,6 +289,7 @@
     <Compile Include="Runtime\InteropServices\SafeUnmanagedMemoryHandle.cs" />
     <Compile Include="Security\Principal\SafeTokenHandle.cs" />
     <Compile Include="Security\Principal\WindowsIdentityHelper.cs" />
+    <Compile Include="Windows\Input\InputController\Condition\SequentialCondition.cs" />
     <Compile Include="Windows\Interop\AdvApi32.cs" />
     <Compile Include="Windows\Interop\AdvApi32.Types.cs" />
     <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
