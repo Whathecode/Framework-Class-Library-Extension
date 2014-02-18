@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using Whathecode.System.Reflection;
@@ -96,6 +98,51 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 		protected override Type[] GetAttributeTypes()
 		{
 			return new[] { typeof( CommandExecuteAttribute ) };
+		}
+
+		/// <summary>
+		///   Retrieve a selected command from the command factory in the specified data context.
+		/// </summary>
+		/// <param name = "dataContext">The data context in which to look for the command factory.</param>
+		/// <param name = "desiredCommand">The command to return from the command factory.</param>
+		/// <returns>The requested command, or null when no data context is set.</returns>
+		public static ICommand GetCommand( object dataContext, T desiredCommand )
+		{
+			if ( dataContext == null )
+			{
+				// No data context set.
+				return null;
+			}
+
+			ICommand command = null;
+			Type dataContextType = dataContext.GetType();
+			MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<T> ) ).ToArray();
+
+			foreach ( object factory in commandFactories.Select( dataContext.GetValue ) )
+			{
+				// Get dictionary containing commands from command factory.
+				const string commandsProperty = CommandFactory<object>.CommandsProperty;
+				var dictionary = factory.GetPropertyValue( commandsProperty ) as IDictionary;
+				if ( dictionary == null )
+				{
+					throw new InvalidCastException( "Expected that \"" + commandsProperty + "\" property is IDictionary." );
+				}
+				if ( !dictionary.Contains( desiredCommand ) )
+				{
+					throw new ArgumentException( "No command found for command ID \"" + desiredCommand + "\"" );
+				}
+
+				command = (ICommand)dictionary[ desiredCommand ];
+			}
+
+			if ( command == null )
+			{
+				// No useful factory available.
+				throw new InvalidImplementationException(
+					"No CommandFactory for ID type \"" + desiredCommand.GetType() + "\" in type \"" + dataContextType + "\" found." );
+			}
+
+			return command;
 		}
 	}
 }

@@ -50,43 +50,14 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 				return null;
 			}
 
-			// Check whether the data context contains a CommandFactory<TCommands>.
 			dataContext = dataContext.GetValue( Path );
-			Type dataContextType = dataContext.GetType();
-			MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<> ) ).ToArray();
 
-			foreach ( var commandFactory in commandFactories )
-			{
-				// CommandFactory found.
-				// Check whether type parameter matches the command type passed to the constructor.
-				Type genericType = commandFactory.GetMemberType();
-				Type parameter = genericType.GetGenericArguments()[ 0 ];
-				if ( parameter != Command.GetType() )
-				{
-					throw new ArgumentException( "The passed command ID should be of type " + parameter + "." );
-				}
-
-				// Correct type, get factory.
-				object factory = dataContext.GetValue( commandFactory );
-
-				// Get dictionary containing commands from command factory.
-				const string commandsProperty = CommandFactory<object>.CommandsProperty;
-				var dictionary = factory.GetPropertyValue( commandsProperty ) as IDictionary;
-				if ( dictionary == null )
-				{
-					throw new InvalidCastException( "Expected that \"" + commandsProperty + "\" property is IDictionary." );
-				}
-				if ( !dictionary.Contains( Command ) )
-				{
-					throw new ArgumentException( "No command found for command ID \"" + Command + "\"" );
-				}
-
-				return dictionary[ Command ];
-			}
-
-			// No useful factory available.
-			throw new InvalidImplementationException(
-				"No CommandFactory for ID type \"" + Command.GetType() + "\" in type \"" + dataContextType + "\" found." );
+			// Check whether the data context contains a CommandFactory<TCommands>.
+			Type commandFactory = typeof( CommandFactory<> ).MakeGenericType( Command.GetType() );
+			return commandFactory.InvokeMember(
+				"GetCommand",
+				BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, Type.DefaultBinder, null,
+				new [] { dataContext, Command } );
 		}
 	}
 }
