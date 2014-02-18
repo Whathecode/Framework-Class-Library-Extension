@@ -26,13 +26,11 @@ namespace Whathecode.System.Windows.Interop
 		/// </summary>
 		public static List<WindowInfo> GetWindows()
 		{
-			List<WindowInfo> allWindows = new List<WindowInfo>();
-
-			// Find all currently open windows.
+			var windows = new List<WindowInfo>();
 			bool success = User32.EnumWindows(
 				( handle, lparam ) =>
 				{
-					allWindows.Add( new WindowInfo( handle ) );
+					windows.Add( new WindowInfo( handle ) );
 					return true;
 				},
 				IntPtr.Zero );
@@ -42,7 +40,7 @@ namespace Whathecode.System.Windows.Interop
 				MarshalHelper.ThrowLastWin32ErrorException();
 			}
 
-			return allWindows;
+			return windows;
 		}
 
 		/// <summary>

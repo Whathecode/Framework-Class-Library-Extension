@@ -50,7 +50,6 @@ namespace Whathecode.System.Windows.Input.InputController.Trigger
 				return;
 			}
 
-			// Check whether the data context contains a CommandFactory<TCommands>.
 			Type dataContextType = dataContext.GetType();
 			MemberInfo[] commandFactories = dataContextType.GetMembers( typeof( CommandFactory<TCommand> ) ).ToArray();
 

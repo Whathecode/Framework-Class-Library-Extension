@@ -8,6 +8,7 @@ namespace Whathecode.System.Windows.Input.InputController
 	///   A class which manages InputTrigger's.
 	///   Add wanted InputTrigger's to this class and call Update() as much as possible.
 	///   The InputTrigger's will be triggered when needed.
+	///   TODO: Using Reactive extensions, a lot of the InputController might be support out-of-the-box.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	public class InputController

@@ -16,7 +16,7 @@ namespace Whathecode.System
 	public abstract class AbstractBehaviorAttribute : Attribute
 	{
 		/// <summary>
-		///   Thy dynamically created instance as specified in the constructor.
+		///   The dynamically created instance of the type passed to the constructor.
 		/// </summary>
 		protected object DynamicInstance { get; private set; }
 

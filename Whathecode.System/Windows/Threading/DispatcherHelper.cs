@@ -36,17 +36,9 @@ namespace Whathecode.System.Windows.Threading
 
 		public static TResult SafeDispatch<TResult>( Dispatcher dispatcher, Func<TResult> action )
 		{
-			TResult result;
-			if ( dispatcher.CheckAccess() )
-			{
-				result = action();
-			}
-			else
-			{
-				result = (TResult)dispatcher.Invoke( action );
-			}
-
-			return result;
+			return dispatcher.CheckAccess()
+				? action()
+				: dispatcher.Invoke( action );
 		}
 	}
 }

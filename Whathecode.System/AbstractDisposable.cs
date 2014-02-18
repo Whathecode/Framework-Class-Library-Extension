@@ -31,20 +31,22 @@ namespace Whathecode.System
 
 		void Dispose( bool isDisposing )
 		{
-			if ( !_isDisposed )
+			if ( _isDisposed )
 			{
-				if ( isDisposing )
-				{
-					FreeManagedResources();
-				}
-				FreeUnmanagedResources();
-				_isDisposed = true;
+				return;
+			}
 
-				Action handler = OnDisposed;
-				if ( handler != null )
-				{
-					handler();
-				}
+			if ( isDisposing )
+			{
+				FreeManagedResources();
+			}
+			FreeUnmanagedResources();
+			_isDisposed = true;
+
+			Action handler = OnDisposed;
+			if ( handler != null )
+			{
+				handler();
 			}
 		}
 

@@ -11,7 +11,7 @@ using Whathecode.System.Reflection.Extensions;
 namespace Whathecode.System
 {
 	/// <summary>
-	///   A generic helper class to do common <see cref = "Delegate" /> operations.
+	///   A helper class to do common <see cref = "Delegate" /> operations.
 	///   TODO: Add extra contracts to reenforce correct usage.
 	/// </summary>
 	/// <author>Steven Jeuris</author>

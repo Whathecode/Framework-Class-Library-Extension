@@ -106,7 +106,7 @@ namespace Whathecode.System.Operators
 		public static Func<T, T> Not
 		{
 			get { return NotLazy.Value; }
-		}		
+		}
 
 
 		static BitwiseOperator()
@@ -130,7 +130,7 @@ namespace Whathecode.System.Operators
 				= DelegateHelper.CreateDelegate<Func<BinaryOperation, Func<T, T, T>>>(
 					binaryMethod,
 					null,
-					DelegateHelper.CreateOptions.Downcasting );			
+					DelegateHelper.CreateOptions.Downcasting );
 
 			AndLazy = new Lazy<Func<T, T, T>>( () => compileBinary( Expression.And ) );
 			OrLazy = new Lazy<Func<T, T, T>>( () => compileBinary( Expression.Or ) );

@@ -55,7 +55,7 @@ namespace Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting.Tests
 			object hookedEvent = new object();
 			#pragma warning disable 168
 			object referenceCopy = hookedEvent;
-		#pragma warning restore 168
+			#pragma warning restore 168
 			AssertHelper.ThrowsException<AssertFailedException>( () => AssertHelper.IsGarbageCollected( ref hookedEvent ) );
 
 			// Still attached as event.
