@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 
 namespace Whathecode.System.Diagnostics
@@ -15,65 +14,38 @@ namespace Whathecode.System.Diagnostics
 	///   Based on the work of Eric White.
 	///   http://blogs.msdn.com/ericwhite/archive/2008/08/07/running-an-executable-and-collecting-the-output.aspx
 	/// </remarks>
-	public static class ProcessHelper
+	public static partial class ProcessHelper
 	{
 		/// <summary>
-		///   Class which contains all the results from running an executable.
-		/// </summary>
-		public class RunResults
-		{
-			public int ExitCode;
-			public StringBuilder Output = new StringBuilder();
-			public StringBuilder ErrorOutput = new StringBuilder();
-		}
-
-
-		/// <summary>
-		///   Run an executable.
+		///   Sets up a process, ready for execution.
 		/// </summary>
 		/// <param name = "executablePath">Path to the executable.</param>
 		/// <param name = "arguments">The arguments to pass along.</param>
 		/// <param name = "workingDirectory">The directory to use as working directory when running the executable.</param>
 		/// <param name = "hideWindow">Determines whether the window of the launched process should be hidden or not.</param>
 		/// <returns>A RunResults object which contains the output of the executable, plus runtime information.</returns>
-		public static RunResults RunExecutable( string executablePath, string arguments, string workingDirectory = "", bool hideWindow = false )
+		public static RunConfiguration SetUp( string executablePath, string arguments, string workingDirectory = "", bool hideWindow = false )
 		{
-			RunResults runResults = new RunResults();
+			Process proc = new Process();
 
 			if ( File.Exists( executablePath ) )
 			{
-				using ( Process proc = new Process() )
+				proc.StartInfo.FileName = executablePath;
+				proc.StartInfo.Arguments = arguments;
+				proc.StartInfo.WorkingDirectory = workingDirectory;
+				if ( hideWindow )
 				{
-					proc.StartInfo.FileName = executablePath;
-					proc.StartInfo.Arguments = arguments;
-					proc.StartInfo.WorkingDirectory = workingDirectory;
-					if ( hideWindow )
-					{
-						proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-						proc.StartInfo.CreateNoWindow = true;
-					}
-					proc.StartInfo.UseShellExecute = false;
-					proc.StartInfo.RedirectStandardOutput = true;
-					proc.StartInfo.RedirectStandardError = true;
-					proc.OutputDataReceived +=
-						( o, e ) => runResults.Output.Append( e.Data ).Append( Environment.NewLine );
-					proc.ErrorDataReceived +=
-						( o, e ) => runResults.ErrorOutput.Append( e.Data ).Append( Environment.NewLine );
-
-					proc.Start();
-					proc.BeginOutputReadLine();
-					proc.BeginErrorReadLine();
-
-					proc.WaitForExit();
-					runResults.ExitCode = proc.ExitCode;
+					proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+					proc.StartInfo.CreateNoWindow = true;
 				}
+				proc.StartInfo.UseShellExecute = false;
 			}
 			else
 			{
 				throw new ArgumentException( "Invalid executable path.", "executablePath" );
 			}
 
-			return runResults;
+			return new RunConfiguration( proc );
 		}
 	}
 }

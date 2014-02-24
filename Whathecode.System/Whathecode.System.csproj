@@ -211,6 +211,7 @@
     <Compile Include="Collections\Generic\LoopList.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyChangedAttribute.cs" />
     <Compile Include="DateTimePart.cs" />
+    <Compile Include="Diagnostics\RunConfiguration.cs" />
     <Compile Include="EnumHelper.cs" />
     <Compile Include="EnvironmentHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
