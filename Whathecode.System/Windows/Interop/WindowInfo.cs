@@ -125,10 +125,18 @@ namespace Whathecode.System.Windows.Interop
 
 				if ( _process != null )
 				{
-					_processThread = (
-						from ProcessThread t in _process.Threads
-						where t.Id == threadId
-						select t ).First();
+					try
+					{
+						_processThread = (
+							from ProcessThread t in _process.Threads
+							where t.Id == threadId
+							select t ).First();
+					}
+					catch ( InvalidOperationException )
+					{
+						// Process has since been shut down.
+						_process = null;
+					}
 				}
 			}
 
