@@ -120,6 +120,7 @@
     <Compile Include="Windows\Data\AbstractValueConverter.cs" />
     <Compile Include="Windows\Data\AdvancedBindingExtension.cs" />
     <Compile Include="Windows\Data\ConditionConverter.cs" />
+    <Compile Include="Windows\Data\EnumHasFlagConverter.cs" />
     <Compile Include="Windows\Data\EqualsConverter.cs" />
     <Compile Include="Windows\Data\FromBooleanConverter.cs" />
     <Compile Include="Windows\Data\CalculateValueConverter.cs" />
