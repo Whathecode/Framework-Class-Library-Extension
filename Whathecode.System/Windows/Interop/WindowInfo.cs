@@ -237,6 +237,22 @@ namespace Whathecode.System.Windows.Interop
 		}
 
 		/// <summary>
+		///   Check whether or not a window is no longer responding to window messages.
+		/// </summary>
+		/// <param name="timeout">How long to wait for the window in milliseconds, before presuming it timed out.</param>
+		/// <returns>True when the window has timed out; false otherwise.</returns>
+		public bool HasTimedOut( uint timeout )
+		{
+			IntPtr result;
+			int responding = User32.SendMessageTimeout(
+				Handle, 0, IntPtr.Zero, IntPtr.Zero,
+				User32.SendMessageTimeoutFlags.AbortIfHung | User32.SendMessageTimeoutFlags.Block | User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung,
+				timeout, out result );
+
+			return responding == 0;
+		}
+
+		/// <summary>
 		///   Activates the window and displays it as a maximized window.
 		/// </summary>
 		public void Maximize()

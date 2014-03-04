@@ -476,6 +476,40 @@ namespace Whathecode.System.Windows.Interop
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern bool SetForegroundWindow( IntPtr windowHandle );
 
+		/// <summary>
+		///   Sends the specified message to one or more windows.
+		/// </summary>
+		/// <param name="windowHandle">
+		///   A handle to the window whose window procedure will receive the message.
+		/// 
+		///   If this parameter is <see cref="BroadcastToAllWindows" />, the message is sent to all top-level windows in the system, including disabled or invisible unowned windows.
+		///   The function does not return until each window has timed out. Therefore, the total wait time can be up to the value of timeout multiplied by the number of top-level windows.
+		/// </param>
+		/// <param name="message">The message to be sent. For lists of the system-provided messages, see System-Defined Messages.</param>
+		/// <param name="wParam">Any additional message-specific information.</param>
+		/// <param name="lParam">Any additional message-specific information.</param>
+		/// <param name="flags">The behavior of this function.</param>
+		/// <param name="timeout">
+		///   The duration of the time-out period, in milliseconds. If the message is a broadcast message, each window can use the full time-out period.
+		///   For example, if you specify a five second time-out period and there are three top-level windows that fail to process the message, you could have up to a 15 second delay.
+		/// </param>
+		/// <param name="result">The result of the message processing. The value of this parameter depends on the message that is specified.</param>
+		/// <remarks>
+		///   The function calls the window procedure for the specified window and, if the specified window belongs to a different thread,
+		///   does not return until the window procedure has processed the message or the specified time-out period has elapsed.
+		///   If the window receiving the message belongs to the same queue as the current thread, the window procedure is called directly - the time-out value is ignored.
+		///   This function considers that a thread is not responding if it has not called GetMessage or a similar function within five seconds.
+		///   The system only does marshalling for system messages (those in the range 0 to (WM_USER-1)). To send other messages (those >= WM_USER) to another process, you must do custom marshalling.
+		/// </remarks>
+		/// <returns>
+		///   If the function succeeds, the return value is nonzero. SendMessageTimeout does not provide information about individual windows timing out if <see cref="BroadcastToAllWindows" /> is used.
+		///   If the function fails or times out, the return value is 0. To get extended error information, call GetLastWin32Error.
+		///   If GetLastWin32Error returns <see cref="ErrorCode.Timeout" />, then the function timed out.
+		///   Windows 2000: If GetLastWin32Error returns 0, then the function timed out.
+		/// </returns>
+		[DllImport( Dll, SetLastError = true, CharSet = CharSet.Auto )]
+		public static extern int SendMessageTimeout( IntPtr windowHandle, uint message, IntPtr wParam, IntPtr lParam, SendMessageTimeoutFlags flags, uint timeout, out IntPtr result );
+
 		#endregion // Window Functions.
 
 

@@ -6,6 +6,13 @@
 	/// <author>Steven Jeuris</author>
 	enum ErrorCode
 	{
-		AccessDenied = 0x5,
+		/// <summary>
+		///   Access is denied.
+		/// </summary>
+		AccessDenied = 0x0005,
+		/// <summary>
+		///   This operation returned because the time-out period expired.
+		/// </summary>
+		Timeout = 0x05B4
 	}
 }
