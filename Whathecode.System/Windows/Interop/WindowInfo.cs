@@ -26,7 +26,10 @@ namespace Whathecode.System.Windows.Interop
 			{ User32.WindowState.Hide, WindowState.Hidden }
 		};
 
-		internal readonly IntPtr Handle;
+		/// <summary>
+		///   The underlying window handle.
+		/// </summary>
+		public readonly IntPtr Handle;
 
 
 		/// <summary>
