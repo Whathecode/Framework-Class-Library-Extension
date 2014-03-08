@@ -215,6 +215,7 @@
     <Compile Include="EnumHelper.cs" />
     <Compile Include="EnvironmentHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
+    <Compile Include="Extensions\Extensions.RegistryKey.cs" />
     <Compile Include="Extensions\Extensions.SecureString.cs" />
     <Compile Include="Extensions\Extensions.TimeSpan.cs" />
     <Compile Include="Extensions\Extensions.Vector.cs" />

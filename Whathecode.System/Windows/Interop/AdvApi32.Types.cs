@@ -1,7 +1,12 @@
-﻿namespace Whathecode.System.Windows.Interop
+﻿using System;
+
+
+namespace Whathecode.System.Windows.Interop
 {
 	partial class AdvApi32
 	{
+		#region Access tokens.
+
 		/// <summary>
 		///   The <see cref="TokenElevationType"/> enumeration indicates the elevation type of token being queried by the GetTokenInformation function.
 		/// </summary>
@@ -233,5 +238,25 @@
 			/// </summary>
 			SecurityDelegation
 		}
+
+		#endregion // Access tokens.
+
+
+		#region Registry.
+
+		/// <summary>
+		///   Determines the behavior of <see cref="RegLoadMUIString" />.
+		/// </summary>
+		[Flags]
+		internal enum RegistryLoadMuiStringOptions : uint
+		{
+			None = 0,
+			/// <summary>
+			///   The string is truncated to fit the available size of the output buffer. If this flag is specified, copiedDataSize must be NULL.
+			/// </summary>
+			Truncate = 1
+		}
+
+		#endregion // Registry.
 	}
 }
