@@ -116,8 +116,8 @@ namespace Whathecode.System.Windows
 		{
 			if ( _process == null )
 			{
-				int processId = 0;
-				int threadId = User32.GetWindowThreadProcessId( Handle, ref processId );
+				uint processId;
+				uint threadId = User32.GetWindowThreadProcessId( Handle, out processId );
 				if ( threadId == 0 )
 				{
 					MarshalHelper.ThrowLastWin32ErrorException();
@@ -125,7 +125,7 @@ namespace Whathecode.System.Windows
 
 				_process = processId == 0
 					? null
-					: Process.GetProcessById( processId );
+					: Process.GetProcessById( (int)processId );
 
 				if ( _process != null )
 				{

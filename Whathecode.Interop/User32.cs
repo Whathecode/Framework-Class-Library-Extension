@@ -235,7 +235,7 @@ namespace Whathecode.Interop
 		/// </param>
 		/// <returns>The return value is the identifier of the thread that created the window.</returns>
 		[DllImport( Dll, SetLastError = true )]
-		public static extern int GetWindowThreadProcessId( IntPtr windowHandle, ref int processId );
+		public static extern uint GetWindowThreadProcessId( IntPtr windowHandle, out uint processId );
 
 		/// <summary>
 		///   Determines whether the specified window handle identifies an existing window.
