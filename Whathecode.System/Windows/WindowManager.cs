@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Whathecode.Interop;
 using Whathecode.System.Runtime.InteropServices;
 
 
-namespace Whathecode.System.Windows.Interop
+namespace Whathecode.System.Windows
 {
 	/// <summary>
 	///   Can find and manage application windows.

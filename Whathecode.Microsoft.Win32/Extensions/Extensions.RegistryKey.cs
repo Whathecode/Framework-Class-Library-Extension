@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Text;
 using Microsoft.Win32;
-using Whathecode.System.Windows.Interop;
+using Whathecode.Interop;
 
 
-namespace Whathecode.System.Extensions
+namespace Whathecode.Microsoft.Extensions
 {
-	public static partial class Extensions
+	public static class Extensions
 	{
 		/// <summary>
 		///   Retrieves the multilingual string associated with the specified name. Returns null if the name/value pair does not exist in the registry.

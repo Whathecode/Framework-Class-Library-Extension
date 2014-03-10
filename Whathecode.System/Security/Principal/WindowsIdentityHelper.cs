@@ -2,9 +2,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using Whathecode.Interop;
 using Whathecode.System.Runtime.InteropServices;
-using Whathecode.System.Windows.Interop;
-
 
 
 namespace Whathecode.System.Security.Principal

@@ -1,9 +1,9 @@
 ﻿using System;
 
 
-namespace Whathecode.System.Windows.Interop
+namespace Whathecode.Interop
 {
-	partial class AdvApi32
+	public partial class AdvApi32
 	{
 		#region Access tokens.
 
@@ -216,7 +216,7 @@ namespace Whathecode.System.Windows.Interop
 		///   The <see cref = "SecurityImpersonationLevel" /> enumeration contains values that specify security impersonation levels.
 		///   Security impersonation levels govern the degree to which a server process can act on behalf of a client process.
 		/// </summary>
-		internal enum SecurityImpersonationLevel
+		public enum SecurityImpersonationLevel
 		{
 			/// <summary>
 			///   The server process cannot obtain identification information about the client, and it cannot impersonate the client.
@@ -248,7 +248,7 @@ namespace Whathecode.System.Windows.Interop
 		///   Determines the behavior of <see cref="RegLoadMUIString" />.
 		/// </summary>
 		[Flags]
-		internal enum RegistryLoadMuiStringOptions : uint
+		public enum RegistryLoadMuiStringOptions : uint
 		{
 			None = 0,
 			/// <summary>

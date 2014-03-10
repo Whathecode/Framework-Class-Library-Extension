@@ -1,10 +1,10 @@
-﻿namespace Whathecode.System.Windows.Interop
+﻿namespace Whathecode.Interop
 {
 	/// <summary>
 	///   Common error codes used throughout win32.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	enum ErrorCode
+	public enum ErrorCode
 	{
 		/// <summary>
 		///   The operation completed successfully.

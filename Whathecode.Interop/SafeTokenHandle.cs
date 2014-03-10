@@ -5,12 +5,12 @@ using System.Security;
 using Microsoft.Win32.SafeHandles;
 
 
-namespace Whathecode.System.Security.Principal
+namespace Whathecode.Interop
 {
 	/// <summary>
 	///   A wrapper class for a token handle.
 	/// </summary>
-	sealed class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
+	public sealed class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		public SafeTokenHandle()
 			: base( true ) {}

@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Whathecode.Interop;
 using Whathecode.System.Extensions;
 using Whathecode.System.Runtime.InteropServices;
 
 
-namespace Whathecode.System.Windows.Interop
+namespace Whathecode.System.Windows
 {
 	/// <summary>
 	///   Information about an application window.

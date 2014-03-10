@@ -215,7 +215,6 @@
     <Compile Include="EnumHelper.cs" />
     <Compile Include="EnvironmentHelper.cs" />
     <Compile Include="Extensions\Extensions.DateTime.cs" />
-    <Compile Include="Extensions\Extensions.RegistryKey.cs" />
     <Compile Include="Extensions\Extensions.SecureString.cs" />
     <Compile Include="Extensions\Extensions.TimeSpan.cs" />
     <Compile Include="Extensions\Extensions.Vector.cs" />
@@ -289,11 +288,8 @@
     <Compile Include="Reflection\Extensions\Extensions.Type.cs" />
     <Compile Include="Collections\Generic\TupleList.cs" />
     <Compile Include="Runtime\InteropServices\SafeUnmanagedMemoryHandle.cs" />
-    <Compile Include="Security\Principal\SafeTokenHandle.cs" />
     <Compile Include="Security\Principal\WindowsIdentityHelper.cs" />
     <Compile Include="Windows\Input\InputController\Condition\SequentialCondition.cs" />
-    <Compile Include="Windows\Interop\AdvApi32.cs" />
-    <Compile Include="Windows\Interop\AdvApi32.Types.cs" />
     <Compile Include="Runtime\InteropServices\MarshalHelper.cs" />
     <Compile Include="TimeSpanHelper.cs" />
     <Compile Include="TimeSpanPart.cs" />
@@ -310,14 +306,11 @@
     <Compile Include="Extensions\Extensions.Point.cs" />
     <Compile Include="Windows\Input\InputController\Trigger\SequenceTrigger.cs" />
     <Compile Include="Windows\Input\KeyHelper.cs" />
-    <Compile Include="Windows\Interop\RepositionWindowInfo.cs" />
-    <Compile Include="Windows\Interop\User32.cs" />
-    <Compile Include="Windows\Interop\ErrorCode.cs" />
-    <Compile Include="Windows\Interop\User32.Types.cs" />
-    <Compile Include="Windows\Interop\WindowInfo.cs" />
-    <Compile Include="Windows\Interop\WindowManager.cs" />
-    <Compile Include="Windows\Interop\WindowState.cs" />
+    <Compile Include="Windows\RepositionWindowInfo.cs" />
     <Compile Include="Windows\Threading\DispatcherHelper.cs" />
+    <Compile Include="Windows\WindowInfo.cs" />
+    <Compile Include="Windows\WindowManager.cs" />
+    <Compile Include="Windows\WindowState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -350,7 +343,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Whathecode.Interop\Whathecode.Interop.csproj">
+      <Project>{93706064-ef4a-4f46-abb8-d93e4c0d2732}</Project>
+      <Name>Whathecode.Interop</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

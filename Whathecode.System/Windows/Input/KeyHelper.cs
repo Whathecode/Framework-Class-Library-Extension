@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Input;
 using System.Linq;
+using System.Windows.Input;
+using Whathecode.Interop;
 using Whathecode.System.Extensions;
 using Whathecode.System.Runtime.InteropServices;
-using Whathecode.System.Windows.Interop;
 
 
 namespace Whathecode.System.Windows.Input

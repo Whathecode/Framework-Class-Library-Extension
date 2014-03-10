@@ -3,14 +3,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 
-namespace Whathecode.System.Windows.Interop
+namespace Whathecode.Interop
 {
 	/// <summary>
 	///   Class through which user32.dll calls can be accessed for which the .NET framework offers no alternative.
 	///   TODO: Clean up remaining original documentation, converting it to the wrapper's equivalents.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	static partial class User32
+	public static partial class User32
 	{
 		const string Dll = "user32.dll";
 

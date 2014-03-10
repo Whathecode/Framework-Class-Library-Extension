@@ -2,17 +2,16 @@
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using Whathecode.System.Security.Principal;
 
 
-namespace Whathecode.System.Windows.Interop
+namespace Whathecode.Interop
 {
 	/// <summary>
 	///   Class through which advapi32.dll calls can be accessed for which the .NET framework offers no alternative.
 	///   TODO: Clean up remaining original documentation, converting it to the wrapper's equivalents.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	static partial class AdvApi32
+	public static partial class AdvApi32
 	{
 		const string Dll = "advapi32.dll";
 

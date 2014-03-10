@@ -1,4 +1,4 @@
-﻿namespace Whathecode.System.Windows.Interop
+﻿namespace Whathecode.System.Windows
 {
 	/// <summary>
 	///   Indicates the state a window is in.
