@@ -112,6 +112,23 @@ namespace Whathecode.Interop
 			///   For example, an <see cref="Process"/> does not return when you use <see cref="ShellExecuteInfoType.InvokeIdList" /> to invoke IContextMenu.
 			/// </summary>
 			public IntPtr Process;
+
+
+			/// <summary>
+			///   Initializes a <see cref="ShellExecuteInfo" /> correctly, in order to execute a given PIDL.
+			/// </summary>
+			/// <param name = "pidl">The PIDL to execute.</param>
+			/// <param name = "show">Indicates how the application should be shown when it is opened.</param>
+			public static ShellExecuteInfo ExecutePidl( IntPtr pidl, User32.WindowState show )
+			{
+				return new ShellExecuteInfo
+				{
+					StructSize = (uint)Marshal.SizeOf( typeof( ShellExecuteInfo ) ),
+					Type = ShellExecuteInfoType.Pidl,
+					Pidl = pidl,
+					Show = show
+				};
+			}
 		}
 
 
