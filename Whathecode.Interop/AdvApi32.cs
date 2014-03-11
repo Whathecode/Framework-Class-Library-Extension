@@ -7,7 +7,7 @@ using System.Text;
 namespace Whathecode.Interop
 {
 	/// <summary>
-	///   Class through which advapi32.dll calls can be accessed for which the .NET framework offers no alternative.
+	///   Class through which advapi32.dll calls can be accessed.
 	///   TODO: Clean up remaining original documentation, converting it to the wrapper's equivalents.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
