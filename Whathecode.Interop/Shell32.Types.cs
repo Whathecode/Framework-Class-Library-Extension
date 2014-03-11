@@ -236,7 +236,7 @@ namespace Whathecode.Interop
 			/// <summary>
 			///   Explores the folder specified by file.
 			/// </summary>
-			public static string Explore = "expore";
+			public static string Explore = "explore";
 			/// <summary>
 			///   Initiates a search starting from the specified directory.
 			/// </summary>

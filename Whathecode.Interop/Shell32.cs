@@ -87,7 +87,7 @@ namespace Whathecode.Interop
 		/// 
 		///   Opening items from a URL You can register your application to activate when passed URLs. You can also specify which protocols your application supports. See Application Registration for more info.
 		///   Site chain support As of Windows 8, you can provide a site chain pointer to the <see cref="ShellExecuteInfo" /> function to support item activation with services from that site.
-		///   See Launching Applications (ShellExecute, <see cref="ShellExecuteInfo" />, <see cref="ShellExecuteInfo" />) for more information.
+		///   See Launching Applications (ShellExecute, <see cref="ShellExecuteEx" />, <see cref="ShellExecuteInfo" />) for more information.
 		/// </remarks>
 		[DllImport( Dll, SetLastError = true )]
 		public static extern bool ShellExecuteEx( ref ShellExecuteInfo executeInfo );
