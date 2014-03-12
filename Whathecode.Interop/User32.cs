@@ -126,18 +126,18 @@ namespace Whathecode.Interop
 		/// </param>
 		/// <returns>
 		///   If the function succeeds, the return value is the requested value.
-		///   If the function fails, the return value is zero. To get extended error information, call GetLastWin32Error.
-		///   If SetWindowLong or SetWindowLongPtr has not been called previously, GetWindowLongPtr returns zero for values in the extra window or class memory.
+		///   If the function fails, the return value is zero. To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.
+		///   If SetWindowLong or SetWindowLongPtr has not been called previously, <see cref="GetWindowLongPtr" /> returns zero for values in the extra window or class memory.
 		/// </returns>
 		public static IntPtr GetWindowLongPtr( IntPtr windowHandle, int index )
 		{
 			// GetWindowLongPtr is only supported by Win64. By checking the pointer size the correct function can be called.
 			return IntPtr.Size == 8
 				? GetWindowLongPtr64( windowHandle, index )
-				: GetWindowLongPtr32( windowHandle, index );
+				: new IntPtr( GetWindowLongPtr32( windowHandle, index ) );
 		}
 		[DllImport( Dll, EntryPoint="GetWindowLong", SetLastError = true )]
-		static extern IntPtr GetWindowLongPtr32( IntPtr windowHandle, int index );
+		static extern int GetWindowLongPtr32( IntPtr windowHandle, int index );
 		[DllImport( Dll, EntryPoint="GetWindowLongPtr", SetLastError = true )]
 		static extern IntPtr GetWindowLongPtr64( IntPtr windowHandle, int index );
 
@@ -508,6 +508,7 @@ namespace Whathecode.Interop
 		///   Windows 2000: If GetLastWin32Error returns 0, then the function timed out.
 		/// </returns>
 		[DllImport( Dll, SetLastError = true, CharSet = CharSet.Auto )]
+		[return: MarshalAs( UnmanagedType.SysInt )]
 		public static extern int SendMessageTimeout( IntPtr windowHandle, uint message, IntPtr wParam, IntPtr lParam, SendMessageTimeoutFlags flags, uint timeout, out IntPtr result );
 
 		#endregion // Window Functions.
