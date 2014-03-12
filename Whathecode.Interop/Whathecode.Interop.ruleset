@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Whathecode.Interop" Description="This rule set contains all rules minus ones that don't make sense for a reusable public P/Invoke library." ToolsVersion="12.0">
+  <IncludeAll Action="Warning" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1401" Action="None" />
+  </Rules>
+</RuleSet>
