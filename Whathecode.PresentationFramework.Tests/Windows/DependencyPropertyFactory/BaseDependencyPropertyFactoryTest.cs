@@ -72,12 +72,12 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 
 			// Get dependency properties.
 			_propertyAttributes = (from p in typeof( TTestClass ).GetProperties()
-				let attributes = p.GetCustomAttributes( typeof( DependencyPropertyAttribute ), false )
+				let attributes = p.GetAttributes<DependencyPropertyAttribute>()
 				where attributes.Count() > 0
 				select new
 				{
 					Property = p,
-					Attribute = attributes.First() as DependencyPropertyAttribute
+					Attribute = attributes.First()
 				}).ToDictionary( p => p.Property, p => p.Attribute );
 
 			// Get all dependency property descriptors, linked to the property enum.

@@ -372,10 +372,11 @@ namespace Whathecode.System.Reflection.Extensions
 		{
 			return (
 				from member in source.GetMembers( bindingFlags )
-				from attribute in (Attribute[])member.GetCustomAttributes( typeof( TAttribute ), inherit )
 				where member.MemberType.HasFlag( memberTypes )
-				group attribute by member
-				).ToDictionary( g => g.Key, g => g.Cast<TAttribute>().ToArray() );
+				let attributes = member.GetAttributes<TAttribute>( inherit )
+				where attributes.Length > 0
+				select new { Member = member, Attributes = attributes }
+				).ToDictionary( g => g.Member, g => g.Attributes );
 		}
 
 		/// <summary>

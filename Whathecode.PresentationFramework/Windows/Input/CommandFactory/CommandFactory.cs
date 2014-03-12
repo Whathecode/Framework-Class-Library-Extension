@@ -49,7 +49,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 				{
 					// Is a CanExecute method defined?
 					Func<bool> canExecute = null;
-					Dictionary<MemberInfo, IdAttribute[]> matches = GetAttributedMembers<CommandCanExecuteAttribute>( (T)id.GetId() );
+					Dictionary<MemberInfo, CommandCanExecuteAttribute[]> matches = GetAttributedMembers<CommandCanExecuteAttribute>( (T)id.GetId() );
 					if ( matches.Count > 0 )
 					{
 						if ( matches.Count > 1 )
@@ -60,7 +60,7 @@ namespace Whathecode.System.Windows.Input.CommandFactory
 						}
 
 						// Get the can execute method.
-						Dictionary<MemberInfo, IdAttribute[]>.Enumerator matchesEnumerator = matches.GetEnumerator();
+						Dictionary<MemberInfo, CommandCanExecuteAttribute[]>.Enumerator matchesEnumerator = matches.GetEnumerator();
 						matchesEnumerator.MoveNext();
 						var canExecuteMethod = (MethodInfo)matchesEnumerator.Current.Key;
 						canExecute = (Func<bool>)Delegate.CreateDelegate( typeof( Func<bool> ), _owner, canExecuteMethod );

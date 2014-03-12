@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Whathecode.System.Reflection.Extensions;
 
 
 namespace Whathecode.System.Reflection
@@ -107,12 +108,12 @@ namespace Whathecode.System.Reflection
 		/// <typeparam name = "TAttributeType">The type of IdAttribute to look for.</typeparam>
 		/// <param name = "id">The id the IdAttribute should have.</param>
 		/// <returns>All matching IdAttributes for every member where matches were found.</returns>
-		protected Dictionary<MemberInfo, IdAttribute[]> GetAttributedMembers<TAttributeType>( TEnum id )
+		protected Dictionary<MemberInfo, TAttributeType[]> GetAttributedMembers<TAttributeType>( TEnum id )
 			where TAttributeType : IdAttribute
 		{
 			return (
 				from member in OwnerType.GetMembers( ReflectionHelper.FlattenedClassMembers )
-				from attribute in (IdAttribute[])member.GetCustomAttributes( typeof( TAttributeType ), false )
+				from attribute in member.GetAttributes<TAttributeType>()
 				where attribute.GetId().Equals( id )
 				group attribute by member
 				).ToDictionary( g => g.Key, g => g.ToArray() );

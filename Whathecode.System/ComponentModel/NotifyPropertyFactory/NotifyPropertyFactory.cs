@@ -64,9 +64,9 @@ namespace Whathecode.System.ComponentModel.NotifyPropertyFactory
 				// Hook up optional changed handler.
 				Action<object, object> changedHandler = (
 					from method in OwnerType.GetMethods( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance )
-					let methodAttributes = method.GetCustomAttributes( typeof( NotifyPropertyChangedAttribute ), false )
+					let methodAttributes = method.GetAttributes<NotifyPropertyChangedAttribute>()
 					where methodAttributes != null && methodAttributes.Length == 1
-					let changed = (NotifyPropertyChangedAttribute)methodAttributes[ 0 ]
+					let changed = methodAttributes[ 0 ]
 					where changed.GetId().Equals( id )
 					select DelegateHelper.CreateDelegate<Action<object, object>>( method, _owner, DelegateHelper.CreateOptions.Downcasting )
 					).FirstOrDefault();

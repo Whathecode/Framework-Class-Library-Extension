@@ -132,7 +132,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			// Check whether callback attributes are applied to non-static functions. They should be static!
 			var callbackMethods =
 				from method in OwnerType.GetMethods( ReflectionHelper.FlattenedClassMembers )
-				from attribute in (Attribute[])method.GetCustomAttributes( typeof( AbstractDependencyPropertyCallbackAttribute ), false )
+				from attribute in method.GetAttributes<AbstractDependencyPropertyCallbackAttribute>()
 				select method;
 			if ( !callbackMethods.All( m => m.IsStatic ) )
 			{
@@ -365,11 +365,9 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 
 			return (
 				from method in OwnerType.GetMethods( allStaticMethods )
-				let methodAttributes =
-					method.GetCustomAttributes( typeof( TCallbackAttribute ), false )
+				let methodAttributes = method.GetAttributes<TCallbackAttribute>()
 				where methodAttributes != null && methodAttributes.Length == 1
-				let changed =
-					(TCallbackAttribute)methodAttributes[ 0 ]
+				let changed = methodAttributes[ 0 ]
 				where changed.GetId().Equals( id )
 				select Delegate.CreateDelegate( changed.CallbackType, method )
 				).FirstOrDefault();
