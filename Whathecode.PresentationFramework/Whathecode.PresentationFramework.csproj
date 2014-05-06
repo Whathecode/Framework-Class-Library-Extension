@@ -128,6 +128,7 @@
     <Compile Include="Windows\Data\ConditionConverter.cs" />
     <Compile Include="Windows\Data\EnumHasFlagConverter.cs" />
     <Compile Include="Windows\Data\EqualsConverter.cs" />
+    <Compile Include="Windows\Data\EqualsValueConverter.cs" />
     <Compile Include="Windows\Data\FromBooleanConverter.cs" />
     <Compile Include="Windows\Data\CalculateValueConverter.cs" />
     <Compile Include="Windows\Data\IConditionConverter.cs" />
