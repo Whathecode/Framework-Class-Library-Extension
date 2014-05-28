@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
@@ -46,12 +47,16 @@ namespace Whathecode.System.Aspects
 		}
 
 		// ReSharper disable UnusedMember.Local
-		IEnumerable<ConstructorInfo> SelectConstructors( EventInfo target )
+		IEnumerable<MethodBase> SelectConstructors( EventInfo target )
 		{
 			// An event always has a declaring type.
 			Contract.Assume( target.DeclaringType != null );
 
-			return target.DeclaringType.GetConstructors( ReflectionHelper.InstanceMembers );
+			return
+				// Constructors.
+				target.DeclaringType.GetConstructors( ReflectionHelper.InstanceMembers )
+				// Deserialization method.
+				.Concat<MethodBase>( target.DeclaringType.GetMethods( ReflectionHelper.InstanceMembers ).Where( m => m.GetAttributes<OnDeserializingAttribute>().Any() ) );
 		}
 		// ReSharper restore UnusedMember.Local
 
