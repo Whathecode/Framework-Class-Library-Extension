@@ -133,6 +133,7 @@
     <Compile Include="Windows\Data\CalculateValueConverter.cs" />
     <Compile Include="Windows\Data\IConditionConverter.cs" />
     <Compile Include="Windows\Data\IMultiValueConverter.cs" />
+    <Compile Include="Windows\Data\InverseBooleanConverter.cs" />
     <Compile Include="Windows\Data\IValueConverter.cs" />
     <Compile Include="Windows\Data\SingleConditionConverter.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
