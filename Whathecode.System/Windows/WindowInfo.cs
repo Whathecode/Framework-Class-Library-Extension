@@ -123,9 +123,18 @@ namespace Whathecode.System.Windows
 					MarshalHelper.ThrowLastWin32ErrorException();
 				}
 
-				_process = processId == 0
-					? null
-					: Process.GetProcessById( (int)processId );
+				try
+				{
+					_process = processId == 0
+						? null
+						: Process.GetProcessById( (int)processId );
+				}
+				catch ( ArgumentException )
+				{
+					// The process specified by processId parameter is not running.
+					// GetWindowThreadProcessId at one point returned a processId of a process which was not running. Possibly a remnant window of a crashed process?
+					_process = null;
+				}
 
 				if ( _process != null )
 				{
