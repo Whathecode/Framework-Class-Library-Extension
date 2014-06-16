@@ -508,8 +508,7 @@ namespace Whathecode.Interop
 		///   Windows 2000: If GetLastWin32Error returns 0, then the function timed out.
 		/// </returns>
 		[DllImport( Dll, SetLastError = true, CharSet = CharSet.Auto )]
-		[return: MarshalAs( UnmanagedType.SysInt )]
-		public static extern int SendMessageTimeout( IntPtr windowHandle, uint message, IntPtr wParam, IntPtr lParam, SendMessageTimeoutFlags flags, uint timeout, out IntPtr result );
+		public static extern IntPtr SendMessageTimeout( IntPtr windowHandle, uint message, IntPtr wParam, IntPtr lParam, SendMessageTimeoutFlags flags, uint timeout, out IntPtr result );
 
 		#endregion // Window Functions.
 

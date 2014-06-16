@@ -257,7 +257,7 @@ namespace Whathecode.System.Windows
 		public bool HasTimedOut( uint timeout )
 		{
 			IntPtr result;
-			int responding = User32.SendMessageTimeout(
+			int responding = (int)User32.SendMessageTimeout(
 				Handle, 0, IntPtr.Zero, IntPtr.Zero,
 				User32.SendMessageTimeoutFlags.AbortIfHung | User32.SendMessageTimeoutFlags.Block | User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung,
 				timeout, out result );
