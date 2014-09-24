@@ -456,10 +456,11 @@ namespace Whathecode.System.Xaml.Behaviors
 			var element = (FrameworkElement)sender;
 
 			MouseState mouseState = GetMouseState( e, element );
+			bool isLeftButton = e.ChangedButton == MouseButton.Left;
 
 			// Trigger down commands.
 			ICommand leftDownCommand = GetLeftMouseDownCommand( element );
-			if ( e.ChangedButton == MouseButton.Left )
+			if ( isLeftButton )
 			{
 				leftDownCommand.SafeExecute( mouseState );
 			}
@@ -470,13 +471,9 @@ namespace Whathecode.System.Xaml.Behaviors
 			}
 
 			// Track click commands.
-			ICommand leftClickCommand = e.ChangedButton == MouseButton.Left
-				? GetLeftClickCommand( element )
-				: GetRightClickCommand( element );
-			Dictionary<object, ClickDragInfo> clickInfo = e.ChangedButton == MouseButton.Left
-				? LeftClickInfo
-				: RightClickInfo;
-			if ( leftClickCommand != null && e.ChangedButton == MouseButton.Left )
+			ICommand clickCommand = isLeftButton ? GetLeftClickCommand( element ) : GetRightClickCommand( element );
+			Dictionary<object, ClickDragInfo> clickInfo = isLeftButton ? LeftClickInfo : RightClickInfo;
+			if ( clickCommand != null )
 			{
 				var info = new ClickDragInfo
 				{
@@ -495,12 +492,8 @@ namespace Whathecode.System.Xaml.Behaviors
 			_distanceDragged = 0;
 
 			// Trigger click drag commands.
-			ICommand clickDragCommand = e.ChangedButton == MouseButton.Left
-				? GetLeftClickDragCommand( element )
-				: GetRightClickDragCommand( element );
-			Dictionary<object, ClickDragInfo> dragInfo = e.ChangedButton == MouseButton.Left
-				? LeftClickDragInfo
-				: RightClickDragInfo;
+			ICommand clickDragCommand = isLeftButton ? GetLeftClickDragCommand( element ) : GetRightClickDragCommand( element );
+			Dictionary<object, ClickDragInfo> dragInfo = isLeftButton ? LeftClickDragInfo : RightClickDragInfo;
 			if ( clickDragCommand != null )
 			{
 				if ( GetDragCapturesMouse( element ) )
@@ -532,10 +525,11 @@ namespace Whathecode.System.Xaml.Behaviors
 			var element = (FrameworkElement)sender;
 
 			MouseState mouseState = GetMouseState( e, element );
+			bool isLeftButton = e.ChangedButton == MouseButton.Left;
 
 			// Trigger up commands.
 			ICommand leftUpCommand = GetLeftMouseUpCommand( element );
-			if ( e.ChangedButton == MouseButton.Left )
+			if ( isLeftButton )
 			{
 				leftUpCommand.SafeExecute( mouseState );
 			}
@@ -550,7 +544,7 @@ namespace Whathecode.System.Xaml.Behaviors
 			{
 				ClickDragInfo clickInfo;
 				ICommand leftClickCommand = GetLeftClickCommand( element );
-				if ( e.ChangedButton == MouseButton.Left && LeftClickInfo.TryGetValue( sender, out clickInfo ) )
+				if ( isLeftButton && LeftClickInfo.TryGetValue( sender, out clickInfo ) )
 				{
 					leftClickCommand.SafeExecute( mouseState );
 				}
@@ -564,12 +558,8 @@ namespace Whathecode.System.Xaml.Behaviors
 			RightClickInfo.Clear();
 
 			// Trigger click drag commands.
-			ICommand clickDragCommand = e.ChangedButton == MouseButton.Left
-				? GetLeftClickDragCommand( element )
-				: GetRightClickDragCommand( element );
-			Dictionary<object, ClickDragInfo> dragInfos = e.ChangedButton == MouseButton.Left
-				? LeftClickDragInfo
-				: RightClickDragInfo;
+			ICommand clickDragCommand = isLeftButton ? GetLeftClickDragCommand( element ) : GetRightClickDragCommand( element );
+			Dictionary<object, ClickDragInfo> dragInfos = isLeftButton ? LeftClickDragInfo : RightClickDragInfo;
 			ClickDragInfo dragInfo;
 			if ( dragInfos.TryGetValue( sender, out dragInfo ) )
 			{

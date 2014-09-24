@@ -133,6 +133,18 @@ namespace Whathecode.System.Linq
 		}
 
 		/// <summary>
+		///   Concatenates one item to the sequence.
+		/// </summary>
+		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+		/// <param name = "source">The source for this extension method.</param>
+		/// <param name = "item">The item to append to the sequence.</param>
+		/// <returns>The sequence with the passed item appended to it.</returns>
+		public static IEnumerable<T> ConcatItem<T>( this IEnumerable<T> source, T item )
+		{
+			return source.Concat( new[] { item } );
+		}
+
+		/// <summary>
 		///   Returns whether the sequence contains exactly a certain amount of elements.
 		/// </summary>
 		/// <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
