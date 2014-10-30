@@ -20,8 +20,7 @@ namespace Whathecode.System.Windows
 	{
 		const int MaxClassnameLength = 128; // TODO: Is there an actual maximum class name length?
 
-		readonly Dictionary<User32.WindowState, WindowState> _windowStateMapping = new Dictionary
-			<User32.WindowState, WindowState>
+		readonly Dictionary<User32.WindowState, WindowState> _windowStateMapping = new Dictionary<User32.WindowState, WindowState>
 		{
 			{ User32.WindowState.ShowNormal, WindowState.Open },
 			{ User32.WindowState.Maximized, WindowState.Maximized },
@@ -192,7 +191,6 @@ namespace Whathecode.System.Windows
 		/// <summary>
 		///   Retrieves the current state of the window.
 		/// </summary>
-		/// <returns></returns>
 		public WindowState GetWindowState()
 		{
 			User32.WindowPlacement placement = GetWindowPlacement();
@@ -249,7 +247,7 @@ namespace Whathecode.System.Windows
 			int extraOptions = (int)User32.GetWindowLongPtr( Handle, (int)User32.GetWindowLongOptions.ExtendedStyles );
 			const int topmost = (int)User32.ExtendedWindowStyles.Topmost;
 
-			return ( ( extraOptions & topmost ) == topmost );
+			return ( (extraOptions & topmost) == topmost );
 		}
 
 		int SendMessageTimeOut( uint timeout, User32.SendMessageTimeoutFlags callFlags )
@@ -261,9 +259,9 @@ namespace Whathecode.System.Windows
 		}
 
 		/// <summary>
-		///   Check whether or not a window is no longer responding to window messages.
+		///   Check whether a window is responding to window messages.
 		/// </summary>
-		/// <param name="timeout">How long to wait for the window in milliseconds, before presuming it timed out.</param>
+		/// <param name="timeout">How long to wait for the window in milliseconds, before deciding whether or not it timed out.</param>
 		/// <returns>True when the window has timed out; false otherwise.</returns>
 		public bool HasTimedOut( uint timeout )
 		{
@@ -277,10 +275,10 @@ namespace Whathecode.System.Windows
 		}
 
 		/// <summary>
-		///   Check whether or not a window is responding to messages within given timespan.
+		///   Check whether or not a window is responding to messages within a given timespan, regardless of whether or not it is busy processing other messages.
 		/// </summary>
-		/// <param name="timeout">How long to wait for the window in milliseconds, before presuming it timed out.</param>
-		/// <returns>True when the window has timed out; false otherwise.</returns>
+		/// <param name="timeout">How long to wait for a response from the window in milliseconds.</param>
+		/// <returns>True when the window responded within the given timespan; false otherwise.</returns>
 		public bool IsResponding( uint timeout )
 		{
 			const User32.SendMessageTimeoutFlags respondingFlags =
