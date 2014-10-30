@@ -51,6 +51,18 @@ namespace Whathecode.System
 		}
 
 		/// <summary>
+		///   This method needs to be called from each public instance method to prevent operations on the object after it has been disposed.
+		/// </summary>
+		/// <param name = "message">The error message that explains the reason for the exception.</param>
+		protected void ThrowExceptionIfDisposed( string message = null )
+		{
+			if ( _isDisposed )
+			{
+				throw new ObjectDisposedException( null, message );
+			}
+		}
+
+		/// <summary>
 		///   This is only called once, when the managed resources haven't been cleaned up yet.
 		/// </summary>
 		protected abstract void FreeManagedResources();
