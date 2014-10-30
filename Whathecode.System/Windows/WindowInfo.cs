@@ -18,8 +18,10 @@ namespace Whathecode.System.Windows
 	[Serializable]
 	public class WindowInfo : ISerializable
 	{
-		const int MaxClassnameLength = 128;	// TODO: Is there an actual maximum class name length?
-		readonly Dictionary<User32.WindowState, WindowState> _windowStateMapping = new Dictionary<User32.WindowState, WindowState>
+		const int MaxClassnameLength = 128; // TODO: Is there an actual maximum class name length?
+
+		readonly Dictionary<User32.WindowState, WindowState> _windowStateMapping = new Dictionary
+			<User32.WindowState, WindowState>
 		{
 			{ User32.WindowState.ShowNormal, WindowState.Open },
 			{ User32.WindowState.Maximized, WindowState.Maximized },
@@ -108,6 +110,7 @@ namespace Whathecode.System.Windows
 
 		Process _process;
 		ProcessThread _processThread;
+
 		/// <summary>
 		///   Retrieves the process that created the window, when available.
 		/// </summary>
@@ -246,7 +249,15 @@ namespace Whathecode.System.Windows
 			int extraOptions = (int)User32.GetWindowLongPtr( Handle, (int)User32.GetWindowLongOptions.ExtendedStyles );
 			const int topmost = (int)User32.ExtendedWindowStyles.Topmost;
 
-			return ( (extraOptions & topmost) == topmost );
+			return ( ( extraOptions & topmost ) == topmost );
+		}
+
+		int SendMessageTimeOut( uint timeout, User32.SendMessageTimeoutFlags callFlags )
+		{
+			IntPtr result;
+			return (int)User32.SendMessageTimeout(
+				Handle, 0, IntPtr.Zero, IntPtr.Zero, callFlags,
+				timeout, out result );
 		}
 
 		/// <summary>
@@ -256,13 +267,47 @@ namespace Whathecode.System.Windows
 		/// <returns>True when the window has timed out; false otherwise.</returns>
 		public bool HasTimedOut( uint timeout )
 		{
-			IntPtr result;
-			int responding = (int)User32.SendMessageTimeout(
-				Handle, 0, IntPtr.Zero, IntPtr.Zero,
-				User32.SendMessageTimeoutFlags.AbortIfHung | User32.SendMessageTimeoutFlags.Block | User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung,
-				timeout, out result );
+			const User32.SendMessageTimeoutFlags hasTimeOutFlags =
+				User32.SendMessageTimeoutFlags.AbortIfHung |
+				User32.SendMessageTimeoutFlags.Block |
+				User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung;
 
+			var responding = SendMessageTimeOut( timeout, hasTimeOutFlags );
 			return responding == 0;
+		}
+
+		/// <summary>
+		///   Check whether or not a window is responding to messages within given timespan.
+		/// </summary>
+		/// <param name="timeout">How long to wait for the window in milliseconds, before presuming it timed out.</param>
+		/// <returns>True when the window has timed out; false otherwise.</returns>
+		public bool IsResponding( uint timeout )
+		{
+			const User32.SendMessageTimeoutFlags respondingFlags =
+				User32.SendMessageTimeoutFlags.AbortIfHung |
+				User32.SendMessageTimeoutFlags.Block;
+
+			int responding = SendMessageTimeOut( timeout, respondingFlags );
+			return responding != 0;
+		}
+
+		/// <summary>
+		///   Check whether or not a window message queue is busy.
+		/// </summary>
+		/// <param name="timeout">How long to wait for the window in milliseconds, before presuming it is busy.</param>
+		/// <returns>True when the window message queue is busy; false otherwise.</returns>
+		public bool IsBusy( uint timeout )
+		{
+			const User32.SendMessageTimeoutFlags busyFlags =
+				User32.SendMessageTimeoutFlags.AbortIfHung |
+				User32.SendMessageTimeoutFlags.Block |
+				User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung;
+
+			var start = DateTime.Now;
+			var responding = SendMessageTimeOut( timeout, busyFlags );
+			var timeDifference = DateTime.Now - start;
+
+			return timeDifference.Milliseconds > timeout && responding == 1;
 		}
 
 		/// <summary>
