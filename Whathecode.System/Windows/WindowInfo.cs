@@ -249,62 +249,41 @@ namespace Whathecode.System.Windows
 			return ( (extraOptions & topmost) == topmost );
 		}
 
-		int SendMessageTimeOut( uint timeout, User32.SendMessageTimeoutFlags callFlags )
-		{
-			IntPtr result;
-			return (int)User32.SendMessageTimeout(
-				Handle, 0, IntPtr.Zero, IntPtr.Zero, callFlags,
-				timeout, out result );
-		}
-
 		/// <summary>
-		///   Check whether a window is responding to message or is busy processing other messages.
+		///   Check whether or not a window is responding to messages within a given timespan.
 		/// </summary>
 		/// <param name="timeout">How long to wait for the window in milliseconds, before deciding whether or not is responding.</param>
-		/// <returns>True when the window responded within the given timespan or is busy processing other messages; false otherwise.</returns>
-		public bool IsRespondingOrBusy( uint timeout )
+		/// <returns>True when the window responded within the given timespan; false otherwise.</returns>
+		public bool IsRespondingWithin( uint timeout )
 		{
-			const User32.SendMessageTimeoutFlags hasTimeOutFlags =
-				User32.SendMessageTimeoutFlags.AbortIfHung |
-				User32.SendMessageTimeoutFlags.Block |
-				User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung;
-
-			var responding = SendMessageTimeOut( timeout, hasTimeOutFlags );
-			return responding != 0;
+			return IsResponding( timeout, User32.SendMessageTimeoutFlags.Normal );
 		}
 
 		/// <summary>
-		///   Check whether or not a window is responding to messages within a given timespan, regardless of whether or not it is busy processing other messages.
+		///   Check whether a window is responding to a message within a given timespan, but wait as long as it is busy processing other messages.
 		/// </summary>
-		/// <param name="timeout">How long to wait for a response from the window in milliseconds.</param>
-		/// <returns>True when the window responded within the given timespan; false otherwise.</returns>
+		/// <param name="timeout">
+		///		How long to wait for the window in milliseconds before deciding it hangs; when it is no longer processing messages.
+		///		Timeout is not enforced as long as the window is busy processing messages.
+		/// </param>
+		/// <returns>True when the window eventually responded; false when the window hangs.</returns>
 		public bool IsResponding( uint timeout )
 		{
-			const User32.SendMessageTimeoutFlags respondingFlags =
+			return IsResponding( timeout, User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung );
+		}
+
+		bool IsResponding( uint timeout, User32.SendMessageTimeoutFlags callFlags )
+		{
+			User32.SendMessageTimeoutFlags flags = callFlags |
 				User32.SendMessageTimeoutFlags.AbortIfHung |
 				User32.SendMessageTimeoutFlags.Block;
 
-			int responding = SendMessageTimeOut( timeout, respondingFlags );
+			IntPtr result;
+			var responding = (int)User32.SendMessageTimeout(
+				Handle, 0, IntPtr.Zero, IntPtr.Zero, callFlags,
+				timeout, out result );
+
 			return responding != 0;
-		}
-
-		/// <summary>
-		///   Check whether or not a window message queue is busy.
-		/// </summary>
-		/// <param name="timeout">How long to wait for the window in milliseconds, before presuming it is busy.</param>
-		/// <returns>True when the window message queue is busy; false otherwise.</returns>
-		public bool IsBusy( uint timeout )
-		{
-			const User32.SendMessageTimeoutFlags busyFlags =
-				User32.SendMessageTimeoutFlags.AbortIfHung |
-				User32.SendMessageTimeoutFlags.Block |
-				User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung;
-
-			var start = DateTime.Now;
-			var responding = SendMessageTimeOut( timeout, busyFlags );
-			var timeDifference = DateTime.Now - start;
-
-			return timeDifference.Milliseconds > timeout && responding == 1;
 		}
 
 		/// <summary>
