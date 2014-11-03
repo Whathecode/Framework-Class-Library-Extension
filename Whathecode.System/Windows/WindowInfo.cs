@@ -259,11 +259,11 @@ namespace Whathecode.System.Windows
 		}
 
 		/// <summary>
-		///   Check whether a window is responding to window messages.
+		///   Check whether a window is responding to message or is busy processing other messages.
 		/// </summary>
-		/// <param name="timeout">How long to wait for the window in milliseconds, before deciding whether or not it timed out.</param>
-		/// <returns>True when the window has timed out; false otherwise.</returns>
-		public bool HasTimedOut( uint timeout )
+		/// <param name="timeout">How long to wait for the window in milliseconds, before deciding whether or not is responding.</param>
+		/// <returns>True when the window responded within the given timespan or is busy processing other messages; false otherwise.</returns>
+		public bool IsRespondingOrBusy( uint timeout )
 		{
 			const User32.SendMessageTimeoutFlags hasTimeOutFlags =
 				User32.SendMessageTimeoutFlags.AbortIfHung |
@@ -271,7 +271,7 @@ namespace Whathecode.System.Windows
 				User32.SendMessageTimeoutFlags.NoTimeoutIfNotHung;
 
 			var responding = SendMessageTimeOut( timeout, hasTimeOutFlags );
-			return responding == 0;
+			return responding != 0;
 		}
 
 		/// <summary>
