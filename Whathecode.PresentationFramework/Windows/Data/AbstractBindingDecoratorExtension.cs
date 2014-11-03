@@ -10,8 +10,7 @@ using Whathecode.System.Windows.Markup;
 namespace Whathecode.System.Windows.Data
 {
 	/// <summary>
-	///   A Decorator for <see cref = "Binding">System.Windows.Data.Binding</see>
-	///   which allows to add additional logic.
+	///   A Decorator for <see cref = "Binding" /> which allows to add additional logic.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[MarkupExtensionReturnType( typeof( object ) )]
@@ -274,7 +273,7 @@ namespace Whathecode.System.Windows.Data
 
 		protected override object ProvideValue( DependencyObject dependencyObject, DependencyProperty dependencyProperty )
 		{
-			FrameworkElement element = dependencyObject as FrameworkElement;
+			var element = dependencyObject as FrameworkElement;
 			if ( element == null )
 			{
 				throw new InvalidImplementationException( "The BindingDecoratorExtension may only be used on framework elements." );

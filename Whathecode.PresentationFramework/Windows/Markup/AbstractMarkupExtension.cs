@@ -7,7 +7,7 @@ using System.Windows.Markup;
 namespace Whathecode.System.Windows.Markup
 {
 	/// <summary>
-	///   An abstract implementation for MarkupExtension which already exposes required properties.
+	///   An abstract implementation for <see cref = "MarkupExtension" /> which already exposes required properties.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	public abstract class AbstractMarkupExtension : MarkupExtension

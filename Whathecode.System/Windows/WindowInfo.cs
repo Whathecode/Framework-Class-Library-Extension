@@ -241,7 +241,6 @@ namespace Whathecode.System.Windows
 		/// <summary>
 		///   Determines whether or not the window is set to be topmost, in which case it always stays on top of any other non-topmost windows.
 		/// </summary>
-		/// <returns></returns>
 		public bool IsTopmost()
 		{
 			int extraOptions = (int)User32.GetWindowLongPtr( Handle, (int)User32.GetWindowLongOptions.ExtendedStyles );

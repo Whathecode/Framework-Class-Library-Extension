@@ -45,7 +45,7 @@ namespace Whathecode.System.Windows.Data
 			// Trigger a property changed callback as long as the new value equals the default value.
 			object current = DependencyObject.GetValue( DependencyProperty );
 			PropertyMetadata metaData = DependencyProperty.GetMetadata( DependencyObject );
-			bool equals = current == null ? current == metaData.DefaultValue : current.Equals( metaData.DefaultValue );
+			bool equals = current == null ? metaData.DefaultValue == null : current.Equals( metaData.DefaultValue );
 			if ( equals )
 			{
 				if ( metaData.PropertyChangedCallback != null )

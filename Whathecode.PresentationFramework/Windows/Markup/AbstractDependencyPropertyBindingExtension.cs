@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Data;
+using System.Windows.Markup;
 using System.Xaml;
 using Whathecode.System.Windows.Threading;
 
@@ -7,8 +9,8 @@ using Whathecode.System.Windows.Threading;
 namespace Whathecode.System.Windows.Markup
 {
 	/// <summary>
-	///   A MarkupExtension which allows binding to a dependency property.
-	///   This is similar to System.Windows.Data.Binding, but more abstract.
+	///   A <see cref = "MarkupExtension" /> which allows binding to a dependency property.
+	///   This is similar to <see cref = "Binding" />, but more abstract.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	public abstract class AbstractDependencyPropertyBindingExtension : AbstractMarkupExtension
