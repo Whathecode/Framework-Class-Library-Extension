@@ -59,7 +59,7 @@ namespace Whathecode.System.Reflection.Emit
 			Type innerMatchingType = innerType.GetMatchingGenericType( typeToCreateGeneric );
 
 			// Implement passed type and redirect all public calls to inner instance.
-			AssemblyGen assembly = new AssemblyGen( "Whathecode.System.RunSharp" );
+			var assembly = new AssemblyGen( "Whathecode.System.RunSharp" );
 			TypeGen type = assembly.Public.Class( "Wrapped" + typeToCreate.Name, typeof( object ), typeToCreate );
 			{
 				const string inner = "inner";
@@ -121,6 +121,7 @@ namespace Whathecode.System.Reflection.Emit
 							if ( args.Length > 0 )
 							{
 								Type[] parameterTypes = method.Matching.GetParameters().Select( p => p.ParameterType ).ToArray();
+								// TODO: When searching for generic methods, GetMethod returns null.
 								MethodInfo methodToCall
 									= innerType.GetMethod( toCreate.Name, ReflectionHelper.FlattenedInstanceMembers, parameterTypes );
 								castArgs = methodToCall.GetParameters()

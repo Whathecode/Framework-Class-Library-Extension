@@ -132,6 +132,7 @@
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="Linq\IEnumerableExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\Emit\ProxyTest.CreateGenericInterfaceWrapper.cs" />
     <Compile Include="Reflection\Emit\ProxyTest.cs" />
     <Compile Include="Reflection\Extensions\EventInfoExtensionsTest.cs" />
     <Compile Include="Reflection\Extensions\FieldInfoExtensionsTest.cs" />

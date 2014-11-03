@@ -1,13 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting;
-using Whathecode.System.Reflection.Emit;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
 namespace Whathecode.Tests.System.Reflection.Emit
 {
 	[TestClass]
-	public class ProxyTest
+	public partial class ProxyTest
 	{
 		public interface ITest<T>
 		{
@@ -34,21 +31,25 @@ namespace Whathecode.Tests.System.Reflection.Emit
 
 		public interface IComposition<T>
 		{
-			ITest<T> GetTest(); 
+			ITest<T> GetTest();
 			void SetTest( ITest<T> test );
 		}
 
-
-		public class InterfaceTest : ITest<string>
+		public interface IGenericMethod<T>
 		{
-			string _value;
+			void Generic<TGeneric>( TGeneric generic );
+		}
 
-			public string GetTest()
+		public class Test<T> : ITest<T>
+		{
+			T _value;
+
+			public T GetTest()
 			{
 				return _value;
 			}
 
-			public void SetTest( string value )
+			public void SetTest( T value )
 			{
 				_value = value;
 			}
@@ -111,7 +112,7 @@ namespace Whathecode.Tests.System.Reflection.Emit
 
 		public class CompositionTest : IComposition<string>
 		{
-			ITest<string> _test = new InterfaceTest();
+			ITest<string> _test = new Test<string>();
 
 			public ITest<string> GetTest()
 			{
@@ -124,56 +125,12 @@ namespace Whathecode.Tests.System.Reflection.Emit
 			}
 		}
 
-
-		[TestMethod]
-		public void CreateGenericInterfaceWrapperTest()
+		public class GenericMethodTest : IGenericMethod<string>
 		{
-			const string testString = "test";
-			const int testInt = 10;
-
-			// Test interface wrapper.
-			var interfaceTest = new InterfaceTest();
-			ITest<object> wrappedInterfaceTest = Proxy.CreateGenericInterfaceWrapper<ITest<object>>( interfaceTest );
-			wrappedInterfaceTest.SetTest( testString );
-			Assert.AreEqual( testString, wrappedInterfaceTest.GetTest() );
-			Assert.AreEqual( testString, interfaceTest.GetTest() );
-			AssertHelper.ThrowsException<InvalidCastException>( () => wrappedInterfaceTest.SetTest( 0 ) );
-
-			// Test wrapper for interface with multiple parameters.
-			var multipleTest = new MultipleParametersTest();
-			IMultipleParametersTest<object, object> wrappedMultipleTest
-				= Proxy.CreateGenericInterfaceWrapper<IMultipleParametersTest<object, object>>( multipleTest );
-			wrappedMultipleTest.SetT1( testString );
-			wrappedMultipleTest.SetT2( testInt );
-			Assert.AreEqual( testString, wrappedMultipleTest.GetT1() );
-			Assert.AreEqual( testInt, wrappedMultipleTest.GetT2() );
-			Assert.AreEqual( testString, multipleTest.GetT1() );
-			Assert.AreEqual( testInt, multipleTest.GetT2() );
-			AssertHelper.ThrowsException<InvalidCastException>( () => wrappedMultipleTest.SetT1( 0 ) );
-			AssertHelper.ThrowsException<InvalidCastException>( () => wrappedMultipleTest.SetT2( "bleh" ) );
-
-			// Test wrapper for extending interface.
-			var extendedInterfaceTest = new ExtendedInterfaceTest();
-			IExtendedTest<object> wrappedExtendedInterfaceTest
-				= Proxy.CreateGenericInterfaceWrapper<IExtendedTest<object>>( extendedInterfaceTest );
-			wrappedExtendedInterfaceTest.SetTest( testString );
-			Assert.AreEqual( testString, wrappedExtendedInterfaceTest.GetTest() );
-			Assert.AreEqual( testString, extendedInterfaceTest.GetTest() );
-			AssertHelper.ThrowsException<InvalidCastException>( () => wrappedExtendedInterfaceTest.SetTest( 0 ) );
-
-			// Test wrapper for composition interface.
-			var compositionTest = new CompositionTest();
-			IComposition<object> wrappedCompositionTest = Proxy.CreateGenericInterfaceWrapper<IComposition<object>>( compositionTest );
-			ITest<object> innerWrapped = wrappedCompositionTest.GetTest();
-			ITest<object> innerWrappedCached = wrappedCompositionTest.GetTest();
-			Assert.IsTrue( innerWrapped == innerWrappedCached );  // Check whether the internal wrapper is cached.
-			compositionTest.SetTest( new InterfaceTest() );
-			ITest<object> innerWrappedUpdated = wrappedCompositionTest.GetTest();
-			Assert.IsTrue( innerWrapped != innerWrappedUpdated ); // Check whether cache is updated when wrapped object changes.
-			innerWrappedUpdated.SetTest( testString );
-			Assert.AreEqual( testString, wrappedCompositionTest.GetTest().GetTest() );
-			Assert.AreEqual( testString, compositionTest.GetTest().GetTest() );
-			AssertHelper.ThrowsException<InvalidCastException>( () => wrappedCompositionTest.GetTest().SetTest( 0 ) );
+			public void Generic<TGeneric>( TGeneric generic )
+			{
+				// TODO: What to test?
+			}
 		}
 	}
 }
