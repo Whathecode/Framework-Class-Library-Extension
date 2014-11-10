@@ -314,6 +314,7 @@
     <Compile Include="Windows\Input\KeyHelper.cs" />
     <Compile Include="Windows\RepositionWindowInfo.cs" />
     <Compile Include="Windows\Threading\DispatcherHelper.cs" />
+    <Compile Include="Windows\UnresponsiveWindowsException.cs" />
     <Compile Include="Windows\WindowInfo.cs" />
     <Compile Include="Windows\WindowManager.cs" />
     <Compile Include="Windows\WindowState.cs" />

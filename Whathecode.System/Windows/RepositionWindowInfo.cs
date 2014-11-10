@@ -63,5 +63,15 @@ namespace Whathecode.System.Windows
 			_originalHeight = position.Bottom - position.Top;
 			Height = _originalHeight;
 		}
+
+
+		/// <summary>
+		///   Verifies whether or not the window is responsive.
+		/// </summary>
+		/// <returns></returns>
+		internal bool IsResponding()
+		{
+			return ToPosition.IsRespondingWithin( 100 );
+		}
 	}
 }

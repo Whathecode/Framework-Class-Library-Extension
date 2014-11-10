@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Whathecode.Interop;
 using Whathecode.System.Runtime.InteropServices;
 
@@ -82,21 +83,50 @@ namespace Whathecode.System.Windows
 
 		/// <summary>
 		///   Reposition a set of windows in one operation.
-		///   TODO: Handle any scenarios where repositioning windows fails.
 		/// </summary>
 		/// <param name="toPosition">The windows to reposition.</param>
+		/// <param name="throwUnresponsiveException">
+		///   Throw a <see cref="UnresponsiveWindowsException" /> when some of the windows become unresponsive during the operation.
+		///   This exception is thrown once the total operation lasts longer than two seconds.
+		///   An attempt is made to still position the windows which are responsive.
+		/// </param>
 		/// <param name="changeZOrder">
 		///   When true, the windows's Z orders are changed to reflect the order of the toPosition list.
 		///   The first item in the list will appear at the top, while the last item will appear at the bottom.
 		/// </param>
-		public static void RepositionWindows( List<RepositionWindowInfo> toPosition, bool changeZOrder = false )
+		public static void RepositionWindows( List<RepositionWindowInfo> toPosition, bool throwUnresponsiveException, bool changeZOrder = false )
 		{
-			bool changeVisibility = toPosition.Any( w => w.HasVisibilityChanged() );
-			if ( changeVisibility )
+			Action operation = () =>
 			{
-				RepositionWindows( toPosition, false, true );
+				bool changeVisibility = toPosition.Any( w => w.HasVisibilityChanged() );
+				if ( changeVisibility )
+				{
+					RepositionWindowsInner( toPosition, false, true );
+				}
+				RepositionWindowsInner( toPosition, changeZOrder, false );
+			};
+
+			// Early out when caller decides not to check for unresponsive windows.
+			if ( !throwUnresponsiveException )
+			{
+				operation();
+				return;
 			}
-			RepositionWindows( toPosition, changeZOrder, false );
+
+			// When windows don't process Win32 messages, they can lock the operation. Therefore, run operation on a separate thread and watch for a timeout.
+			var waitOperation = Task.Factory.StartNew( operation );
+			bool completed = waitOperation.Wait( TimeSpan.FromSeconds( 2 ) );
+			if ( completed )
+			{
+				return;
+			}
+
+			// There were some unresponsive windows. Skip them and try again.
+			List<RepositionWindowInfo> unresponsive = toPosition.Where( w => !w.IsResponding() ).ToList();
+			RepositionWindows( toPosition.Except( unresponsive ).ToList(), true, changeZOrder );
+
+			// Unresponsive windows are skipped and an exception is thrown indicating which windows could not be positioned.
+			throw new UnresponsiveWindowsException( unresponsive.Select( w => w.ToPosition ).ToList() );
 		}
 
 		/// <summary>
@@ -112,7 +142,7 @@ namespace Whathecode.System.Windows
 		///   The first item in the list will appear at the top, while the last item will appear at the bottom.
 		/// </param>
 		/// <param name="changeVisibility">When set to true only the visiblity of windows can be changed. When set to false, only the other parameters can be changed.</param>
-		static void RepositionWindows( ICollection<RepositionWindowInfo> windows, bool changeZOrder, bool changeVisibility )
+		static void RepositionWindowsInner( ICollection<RepositionWindowInfo> windows, bool changeZOrder, bool changeVisibility )
 		{
 			if ( windows.Count == 0 )
 			{
