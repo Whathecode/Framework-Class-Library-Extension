@@ -121,7 +121,8 @@ namespace Whathecode.System.Reflection.Emit
 							if ( args.Length > 0 )
 							{
 								Type[] parameterTypes = method.Matching.GetParameters().Select( p => p.ParameterType ).ToArray();
-								// TODO: When searching for generic methods, GetMethod returns null.
+								// TODO: When searching for generic methods, GetMethod returns null. http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
+								//       Even when the correct method is found through custom filtering, RunSharp does not seem to be able to create generic methods yet.
 								MethodInfo methodToCall
 									= innerType.GetMethod( toCreate.Name, ReflectionHelper.FlattenedInstanceMembers, parameterTypes );
 								castArgs = methodToCall.GetParameters()

@@ -129,7 +129,6 @@ namespace Whathecode.Tests.System.Reflection.Emit
 		{
 			public void Generic<TGeneric>( TGeneric generic )
 			{
-				// TODO: What to test?
 			}
 		}
 	}
