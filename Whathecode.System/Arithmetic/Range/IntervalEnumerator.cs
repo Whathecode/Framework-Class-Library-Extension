@@ -14,7 +14,7 @@ namespace Whathecode.System.Arithmetic.Range
 	public class IntervalEnumerator<TMath, TSize> : AbstractEnumerator<TMath>
 		where TMath : IComparable<TMath>
 	{
-		readonly IInterval<TMath, TSize> _interval;
+		readonly Interval<TMath, TSize> _interval;
 		readonly TSize _step;
 
 
@@ -23,7 +23,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "interval">The interval which to traverse.</param>
 		/// <param name = "step">The steps to step forward each time.</param>
-		public IntervalEnumerator( IInterval<TMath, TSize> interval, TSize step )
+		public IntervalEnumerator( Interval<TMath, TSize> interval, TSize step )
 		{
 			_interval = interval;
 			_step = step;

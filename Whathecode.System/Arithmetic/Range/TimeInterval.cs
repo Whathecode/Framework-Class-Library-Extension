@@ -37,7 +37,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   Create a <see cref = "TimeInterval" /> from a compatible interval type.
 		/// </summary>
 		/// <param name = "interval">The compatible interval type.</param>
-		public TimeInterval( IInterval<DateTime, TimeSpan> interval )
+		public TimeInterval( Interval<DateTime, TimeSpan> interval )
 			: this ( interval.Start, interval.IsStartIncluded, interval.End, interval.IsEndIncluded )
 		{
 		}

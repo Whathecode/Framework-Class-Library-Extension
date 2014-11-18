@@ -16,7 +16,7 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <typeparam name = "T">The type used to specify the interval, and used for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[DataContract]
-	public class Interval<T> : Interval<T, T>, IInterval<T>
+	public class Interval<T> : Interval<T, T>
 		where T : IComparable<T>
 	{
 		/// <summary>
@@ -41,7 +41,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   Create a less generic interval from a more generic base type.
 		/// </summary>
 		/// <param name = "interval">The more generic base type.</param>
-		public Interval( IInterval<T, T> interval )
+		public Interval( Interval<T, T> interval )
 			: base( interval.Start, interval.IsStartIncluded, interval.End, interval.IsEndIncluded ) {}
 
 
@@ -51,7 +51,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "range">The range to limit to this range.</param>
 		/// <returns>The given range, which excludes all parts lying outside of this range.</returns>
-		public IInterval<T> Clamp( IInterval<T> range )
+		public Interval<T> Clamp( Interval<T> range )
 		{
 			// Redirect to more generic base type.
 			return new Interval<T>( base.Clamp( range ) );
@@ -64,11 +64,11 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "option">Option which specifies in which intervals the split point ends up.</param>
 		/// <param name = "before">The interval in which to store the part before the point, if any, null otherwise.</param>
 		/// <param name = "after">The interval in which to store the part after the point, if any, null otherwise.</param>
-		public void Split( T atPoint, SplitOption option, out IInterval<T> before, out IInterval<T> after )
+		public void Split( T atPoint, SplitOption option, out Interval<T> before, out Interval<T> after )
 		{
 			// Redirect to more generic base type.
-			IInterval<T, T> beforeInner;
-			IInterval<T, T> afterInner;
+			Interval<T, T> beforeInner;
+			Interval<T, T> afterInner;
 			Split( atPoint, option, out beforeInner, out afterInner );
 			before = new Interval<T>( beforeInner );
 			after = new Interval<T>( afterInner );
@@ -79,11 +79,11 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "subtract">The interval to subtract from this interval.</param>
 		/// <returns>The resulting intervals after subtraction.</returns>
-		public List<IInterval<T>> Subtract( IInterval<T> subtract )
+		public List<Interval<T>> Subtract( Interval<T> subtract )
 		{
 			// Redirect to more generic base type.
-			List<IInterval<T, T>> result = base.Subtract( subtract );
-			return result.Select( r => new Interval<T>( r ) ).Cast<IInterval<T>>().ToList();
+			List<Interval<T, T>> result = base.Subtract( subtract );
+			return result.Select( r => new Interval<T>( r ) ).ToList();
 		}
 
 		/// <summary>
@@ -91,10 +91,10 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "interval">The interval to get the intersection for.</param>
 		/// <returns>The intersection of this interval with the given other. Null when no intersection.</returns>
-		public IInterval<T> Intersection( IInterval<T> interval )
+		public Interval<T> Intersection( Interval<T> interval )
 		{
 			// Redirect to more generic base type.
-			IInterval<T, T> result = base.Intersection( interval );
+			Interval<T, T> result = base.Intersection( interval );
 			return new Interval<T>( result );
 		}
 
@@ -103,7 +103,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   When the value lies within the interval the returned interval is the same.
 		/// </summary>
 		/// <param name = "value">The value up to which to expand the interval.</param>
-		public new IInterval<T> ExpandTo( T value )
+		public new Interval<T> ExpandTo( T value )
 		{
 			return new Interval<T>( base.ExpandTo( value ) );
 		}
@@ -114,7 +114,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "value">The value up to which to expand the interval.</param>
 		/// <param name = "include">Include the value to which is expanded in the interval.</param>
-		public new IInterval<T> ExpandTo( T value, bool include )
+		public new Interval<T> ExpandTo( T value, bool include )
 		{
 			return new Interval<T>( base.ExpandTo( value, include ) );
 		}
@@ -123,7 +123,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   Returns an interval offsetted from the current interval by a specified amount.
 		/// </summary>
 		/// <param name="amount">How much to move the interval.</param>
-		public new IInterval<T> Move( T amount )
+		public new Interval<T> Move( T amount )
 		{
 			return new Interval<T>( base.Move( amount ) );
 		}
@@ -136,7 +136,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   Smaller than 1.0 to scale down, larger to scale up.
 		/// </param>
 		/// <param name="aroundPercentage">The percentage inside the interval around which to scale.</param>
-		public new IInterval<T> Scale( double scale, double aroundPercentage = 0.5 )
+		public new Interval<T> Scale( double scale, double aroundPercentage = 0.5 )
 		{
 			return new Interval<T>( base.Scale( scale, aroundPercentage ) );
 		}
@@ -155,7 +155,7 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <typeparam name = "TSize">The type used to specify distances in between two values of <see cref="T" />.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[DataContract]
-	public class Interval<T, TSize> : IInterval<T, TSize>
+	public class Interval<T, TSize>
 		where T : IComparable<T>
 	{
 		// ReSharper disable StaticFieldInGenericType
@@ -365,7 +365,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "value">The value to map to another range.</param>
 		/// <param name = "range">The range to which to map the value.</param>
 		/// <returns>The value, mapped to the given range.</returns>
-		public T Map( T value, IInterval<T, TSize> range )
+		public T Map( T value, Interval<T, TSize> range )
 		{
 			return Map<T, TSize>( value, range );
 		}
@@ -378,7 +378,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "value">The value to map to another range.</param>
 		/// <param name = "range">The range to which to map the value.</param>
 		/// <returns>The value, mapped to the given range.</returns>
-		public TOther Map<TOther, TOtherSize>( T value, IInterval<TOther, TOtherSize> range )
+		public TOther Map<TOther, TOtherSize>( T value, Interval<TOther, TOtherSize> range )
 			where TOther : IComparable<TOther>
 		{
 			return range.GetValueAt( GetPercentageFor( value ) );
@@ -404,7 +404,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "interval">The interval to check for intersection.</param>
 		/// <returns>True when the intervals intersect, false otherwise.</returns>
-		public bool Intersects( IInterval<T, TSize> interval )
+		public bool Intersects( Interval<T, TSize> interval )
 		{
 			int rightOfCompare = interval.Start.CompareTo( End );
 			int leftOfCompare = interval.End.CompareTo( Start );
@@ -439,7 +439,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "range">The range to limit to this range.</param>
 		/// <returns>The given range, which excludes all parts lying outside of this range.</returns>
-		public IInterval<T, TSize> Clamp( IInterval<T, TSize> range )
+		public Interval<T, TSize> Clamp( Interval<T, TSize> range )
 		{
 			var intersection = Intersection( range );
 			if ( intersection == null )
@@ -467,7 +467,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "option">Option which specifies in which intervals the split point ends up.</param>
 		/// <param name = "before">The interval in which to store the part before the point, if any, null otherwise.</param>
 		/// <param name = "after">The interval in which to store the part after the point, if any, null otherwise.</param>
-		public void Split( T atPoint, SplitOption option, out IInterval<T, TSize> before, out IInterval<T, TSize> after )
+		public void Split( T atPoint, SplitOption option, out Interval<T, TSize> before, out Interval<T, TSize> after )
 		{
 			if ( atPoint.CompareTo( Start ) < 0 || atPoint.CompareTo( End ) > 0 )
 			{
@@ -509,9 +509,9 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "subtract">The interval to subtract from this interval.</param>
 		/// <returns>The resulting intervals after subtraction.</returns>
-		public List<IInterval<T, TSize>> Subtract( IInterval<T, TSize> subtract )
+		public List<Interval<T, TSize>> Subtract( Interval<T, TSize> subtract )
 		{
-			var result = new List<IInterval<T, TSize>>();
+			var result = new List<Interval<T, TSize>>();
 
 			if ( !Intersects( subtract ) )
 			{
@@ -552,7 +552,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "interval">The interval to get the intersection for.</param>
 		/// <returns>The intersection of this interval with the given other. Null when no intersection.</returns>
-		public IInterval<T, TSize> Intersection( IInterval<T, TSize> interval )
+		public Interval<T, TSize> Intersection( Interval<T, TSize> interval )
 		{
 			if ( !Intersects( interval ) )
 			{
@@ -634,7 +634,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   When the value lies within the interval the returned interval is the same.
 		/// </summary>
 		/// <param name = "value">The value up to which to expand the interval.</param>
-		public IInterval<T, TSize> ExpandTo( T value )
+		public Interval<T, TSize> ExpandTo( T value )
 		{
 			Contract.Ensures( LiesInInterval( value ) );
 
@@ -647,7 +647,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		/// <param name = "value">The value up to which to expand the interval.</param>
 		/// <param name = "include">Include the value to which is expanded in the interval.</param>
-		public IInterval<T, TSize> ExpandTo( T value, bool include )
+		public Interval<T, TSize> ExpandTo( T value, bool include )
 		{
 			T start = Start;
 			T end = End;
@@ -675,7 +675,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   Returns an interval offsetted from the current interval by a specified amount.
 		/// </summary>
 		/// <param name="amount">How much to move the interval.</param>
-		public IInterval<T, TSize> Move( TSize amount )
+		public Interval<T, TSize> Move( TSize amount )
 		{
 			return new Interval<T, TSize>(
 				Operator<T, TSize>.AddSize( Start, amount ),
@@ -692,7 +692,7 @@ namespace Whathecode.System.Arithmetic.Range
 		///   Smaller than 1.0 to scale down, larger to scale up.
 		/// </param>
 		/// <param name="aroundPercentage">The percentage inside the interval around which to scale.</param>
-		public IInterval<T, TSize> Scale( double scale, double aroundPercentage = 0.5 )
+		public Interval<T, TSize> Scale( double scale, double aroundPercentage = 0.5 )
 		{
 			TSize scaledSize = Convert( Convert( Size ) * scale );
 			TSize sizeDiff = Operator<TSize>.Subtract( Size, scaledSize ); // > 0 larger, < 0 smaller

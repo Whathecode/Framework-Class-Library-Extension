@@ -86,7 +86,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		static void IsReversedTestHelper<T, TSize>( T value, TSize addition )
 			where T : IComparable<T>
 		{
-			IInterval<T, TSize> normal = NewInterval( value, addition );
+			Interval<T, TSize> normal = NewInterval( value, addition );
 			Assert.IsFalse( normal.IsReversed );
 
 			var reversed = new Interval<T, TSize>( normal.End, normal.Start );
@@ -259,7 +259,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			where T : IComparable<T>
 			where TOther : IComparable<TOther>
 		{
-			IInterval<T, TSize> interval = NewInterval( from, addition );
+			Interval<T, TSize> interval = NewInterval( from, addition );
 			TOther result = interval.Map( valueToMap, NewInterval( mapFrom, mapAddition ) );
 
 			Assert.AreEqual( expected, result );
@@ -305,7 +305,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			LiesInInterval( excluded, end, false ); // Right edge.
 		}
 
-		static void LiesInInterval<T, TSize>( IInterval<T, TSize> interval, T value, bool expected )
+		static void LiesInInterval<T, TSize>( Interval<T, TSize> interval, T value, bool expected )
 			where T : IComparable<T>
 		{
 			bool insideInterval = interval.LiesInInterval( value );
@@ -370,7 +370,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			Intersects( bd, ac, true ); // Left overlap.
 		}
 
-		static void Intersects<T, TSize>( IInterval<T, TSize> a, IInterval<T, TSize> b, bool expected )
+		static void Intersects<T, TSize>( Interval<T, TSize> a, Interval<T, TSize> b, bool expected )
 			where T : IComparable<T>
 		{
 			bool intersects = a.Intersects( b );
@@ -450,12 +450,12 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		static void ClampIntervalTestHelper<T, TSize>(
 			T startA, bool startAIncluded, TSize additionA, bool endAIncluded,
 			T startB, bool startBIncluded, TSize additionB, bool endBIncluded,
-			IInterval<T, TSize> clamped )
+			Interval<T, TSize> clamped )
 			where T : IComparable<T>
 		{
 			// Fully included intervals.
-			IInterval<T, TSize> intervalA = NewInterval( startA, additionA, startAIncluded, endAIncluded );
-			IInterval<T, TSize> intervalB = NewInterval( startB, additionB, startBIncluded, endBIncluded );
+			Interval<T, TSize> intervalA = NewInterval( startA, additionA, startAIncluded, endAIncluded );
+			Interval<T, TSize> intervalB = NewInterval( startB, additionB, startBIncluded, endBIncluded );
 			var result = intervalA.Clamp( intervalB );
 			Assert.AreEqual( clamped, result );
 		}
@@ -493,12 +493,12 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 
 		static void SplitTestHelper<T, TSize>(
 			T start, TSize addition, T atPoint, SplitOption splitOption,
-			IInterval<T, TSize> expectedBefore, IInterval<T, TSize> expectedAfter )
+			Interval<T, TSize> expectedBefore, Interval<T, TSize> expectedAfter )
 			where T : IComparable<T>
 		{
-			IInterval<T, TSize> interval = NewInterval( start, addition );
-			IInterval<T, TSize> before;
-			IInterval<T, TSize> after;
+			Interval<T, TSize> interval = NewInterval( start, addition );
+			Interval<T, TSize> before;
+			Interval<T, TSize> after;
 			interval.Split( atPoint, splitOption, out before, out after );
 
 			Assert.AreEqual( expectedBefore, before );
@@ -575,26 +575,26 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		// ReSharper disable UnusedParameter.Local
-		static void Subtract<T, TSize>( IInterval<T, TSize> from, IInterval<T, TSize> subtract, Interval<T, TSize> result )		
+		static void Subtract<T, TSize>( Interval<T, TSize> from, Interval<T, TSize> subtract, Interval<T, TSize> result )		
 			where T : IComparable<T>
 		{
-			List<IInterval<T, TSize>> results = from.Subtract( subtract );
+			List<Interval<T, TSize>> results = from.Subtract( subtract );
 
 			Assert.IsTrue( results.Count == 1 );
 			Assert.IsTrue( results[ 0 ].Equals( result ) );
 		}
 		// ReSharper restore UnusedParameter.Local
 
-		static void Subtract<T, TSize>( IInterval<T, TSize> from, IInterval<T, TSize> subtract, List<Interval<T, TSize>> results )
+		static void Subtract<T, TSize>( Interval<T, TSize> from, Interval<T, TSize> subtract, List<Interval<T, TSize>> results )
 			where T : IComparable<T>
 		{
-			List<IInterval<T, TSize>> subtracted = from.Subtract( subtract );
+			List<Interval<T, TSize>> subtracted = from.Subtract( subtract );
 
 			Assert.IsTrue( results.Count == subtracted.Count );
 			for ( int i = 0; i < results.Count; ++i )
 			{
 				Interval<T, TSize> result = results[ i ];
-				IInterval<T, TSize> subtractResult = subtracted[ i ];
+				Interval<T, TSize> subtractResult = subtracted[ i ];
 				Assert.IsTrue( result.Equals( subtractResult ) );
 			}
 		}
@@ -635,11 +635,11 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		static void IntersectionTestHelper<T, TSize>(
 			T startA, bool startAIncluded, TSize additionA, bool endAIncluded,
 			T startB, bool startBIncluded, TSize additionB, bool endBIncluded,
-			IInterval<T, TSize> intersection )
+			Interval<T, TSize> intersection )
 			where T : IComparable<T>
 		{
-			IInterval<T, TSize> intervalA = NewInterval( startA, additionA, startAIncluded, endAIncluded );
-			IInterval<T, TSize> intervalB = NewInterval( startB, additionB, startBIncluded, endBIncluded );
+			Interval<T, TSize> intervalA = NewInterval( startA, additionA, startAIncluded, endAIncluded );
+			Interval<T, TSize> intervalB = NewInterval( startB, additionB, startBIncluded, endBIncluded );
 
 			Assert.AreEqual( intersection, intervalA.Intersection( intervalB ) );
 		}
@@ -662,7 +662,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			ExpandToTestHelper( 0, false, 10, true, 0, new Interval<int, int>( 0, 10 ) );
 
 			// Extend but don't exclude.
-			IInterval<int, int> excluded = NewInterval( 0, 10, true, false );
+			Interval<int, int> excluded = NewInterval( 0, 10, true, false );
 			Assert.AreEqual( new Interval<int, int>( 0, true, 20, false ), excluded.ExpandTo( 20, false ) );
 			Assert.AreEqual( excluded, excluded.ExpandTo( 10, false ) );
 
@@ -710,10 +710,10 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 				new Interval<DateTime, TimeSpan>( new DateTime( 2014, 1, 31 ), new DateTime( 2014, 2, 1 ) ) );
 		}
 
-		static void MoveTestHelper<T, TSize>( T start, bool startIncluded, TSize addition, bool endIncluded, TSize move, IInterval<T, TSize> moved )
+		static void MoveTestHelper<T, TSize>( T start, bool startIncluded, TSize addition, bool endIncluded, TSize move, Interval<T, TSize> moved )
 			where T : IComparable<T>
 		{
-			IInterval<T, TSize> interval = NewInterval( start, addition, startIncluded, endIncluded );
+			Interval<T, TSize> interval = NewInterval( start, addition, startIncluded, endIncluded );
 			Assert.AreEqual( moved, interval.Move( move ) );
 		}
 
@@ -750,10 +750,10 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 				new Interval<DateTime,TimeSpan>( new DateTime( 2014, 12, 1, 6, 0, 0 ), new DateTime( 2014, 12, 1, 18, 0, 0 ) ) );
 		}
 
-		static void ScaleTestHelper<T, TSize>( T start, TSize addition, double scale, double aroundPercentage, IInterval<T, TSize> scaled )
+		static void ScaleTestHelper<T, TSize>( T start, TSize addition, double scale, double aroundPercentage, Interval<T, TSize> scaled )
 			where T : IComparable<T>
 		{
-			IInterval<T, TSize> interval = NewInterval( start, addition );
+			Interval<T, TSize> interval = NewInterval( start, addition );
 			Assert.AreEqual( scaled, interval.Scale( scale, aroundPercentage ) );
 		}
 
