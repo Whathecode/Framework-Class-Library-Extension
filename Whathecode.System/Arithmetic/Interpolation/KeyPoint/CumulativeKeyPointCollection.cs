@@ -47,7 +47,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 		readonly LazyOperationsList<KeyPoint>
 			_data = new LazyOperationsList<KeyPoint>();
 
-		Interval<TMath> _dataRange;
+		IInterval<TMath> _dataRange;
 		readonly TMath _zero;
 		readonly TMath _minusOne;
 
@@ -55,7 +55,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 		///   The range of all the data between which is interpolated.
 		///   TODO: Make readonly?
 		/// </summary>
-		public override Interval<TMath> DataRange
+		public override IInterval<TMath> DataRange
 		{
 			get { return _dataRange; }
 		}
@@ -137,7 +137,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			}
 			else
 			{
-				DataRange.ExpandTo( position );
+				_dataRange = _dataRange.ExpandTo( position );
 			}
 
 			_data.Add( newKeyPoint );

@@ -208,4 +208,59 @@ namespace Whathecode.System.Operators
 			NotLazy = new Lazy<Func<T, T>>( () => BitwiseOperator<T>.Not );
 		}
 	}
+
+
+	/// <summary>
+	///   Allows access to standard operators (e.g. addition) for a generic type,
+	///   where the type which identifies distances between two instances is different. E.g. DateTime and TimeSpan.
+	///   TODO: Could the other operator class extend from this one?
+	/// </summary>
+	/// <remarks>
+	///   Lazy backing fields are used to prevent initializing an operator which isn't supported by the type.
+	/// </remarks>
+	public static class Operator<T, TSize>
+	{
+		#region Field operators.
+
+		static readonly Lazy<Func<T, TSize, T>> AddSizeLazy;
+		/// <summary>
+		///   A delegate to evaluate binary addition (+) of a size to the given type.
+		///   This delegate will throw an <see cref = "InvalidOperationException" /> if the type does not provide this operator.
+		/// </summary>
+		public static Func<T, TSize, T> AddSize
+		{
+			get { return AddSizeLazy.Value; }
+		}
+
+		static readonly Lazy<Func<T, T, TSize>> SubtractLazy;
+		/// <summary>
+		///   A delegate to evaluate binary subtraction (-) for the given type.
+		///   This delegate will throw an <see cref = "InvalidOperationException" /> if the type does not provide this operator.
+		/// </summary>
+		public static Func<T, T, TSize> Subtract
+		{
+			get { return SubtractLazy.Value; }
+		}
+
+		static readonly Lazy<Func<T, TSize, T>> SubtractSizeLazy;
+		/// <summary>
+		///   A delegate to evaluate binary subtraction (-) of a size for the given type.
+		///   This delegate will throw an <see cref = "InvalidOperationException" /> if the type does not provide this operator.
+		/// </summary>
+		public static Func<T, TSize, T> SubtractSize
+		{
+			get { return SubtractSizeLazy.Value; }
+		}
+
+		#endregion // Field operators.
+
+
+		static Operator()
+		{
+			// Field operators.
+			AddSizeLazy = new Lazy<Func<T, TSize, T>>( () => OperatorHelper.CompileBinaryExpression<T, TSize, T>( Expression.Add ) );
+			SubtractLazy = new Lazy<Func<T, T, TSize>>( () => OperatorHelper.CompileBinaryExpression<T, T, TSize>( Expression.Subtract ) );
+			SubtractSizeLazy = new Lazy<Func<T, TSize, T>>( () => OperatorHelper.CompileBinaryExpression<T, TSize, T>( Expression.Subtract ) );
+		}
+	}
 }

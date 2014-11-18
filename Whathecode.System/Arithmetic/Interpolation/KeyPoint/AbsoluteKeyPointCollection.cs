@@ -27,7 +27,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 		/// </summary>
 		readonly TValue _referenceKeyPoint;
 
-		public override Interval<TMath> DataRange
+		public override IInterval<TMath> DataRange
 		{
 			get { return _data.GetKeysInterval(); }
 		}

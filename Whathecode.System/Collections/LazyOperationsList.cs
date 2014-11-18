@@ -41,7 +41,7 @@ namespace Whathecode.System.Collections
 		/// </summary>
 		/// <param name = "operation">The operation to be done on all the objects in the given range, returning the updated object.</param>
 		/// <param name = "range">The range on which to perform the operation.</param>
-		public void AddOperation( Func<TObject, TObject> operation, Interval<int> range )
+		public void AddOperation( Func<TObject, TObject> operation, IInterval<int> range )
 		{
 			Contract.Requires( range.Start >= 0 && range.End < Count );
 

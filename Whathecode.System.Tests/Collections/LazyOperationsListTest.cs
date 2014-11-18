@@ -48,7 +48,7 @@ namespace Whathecode.Tests.System.Collections
 			};
 
 			// Create operation which is done for every range.
-			_operation = i => { return i + 1; };
+			_operation = i => i + 1;
 		}
 
 		void PerformAllOperations()

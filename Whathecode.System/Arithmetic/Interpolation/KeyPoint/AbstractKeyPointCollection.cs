@@ -32,7 +32,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 		///   The range of all the data between which is interpolated.
 		///   TODO: Make readonly?
 		/// </summary>
-		public abstract Interval<TMath> DataRange { get; }
+		public abstract IInterval<TMath> DataRange { get; }
 
 		/// <summary>
 		///   Get the key point at a given position when present.
