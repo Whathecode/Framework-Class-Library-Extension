@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using Whathecode.System.Algorithm;
 
 
 namespace Whathecode.System.Arithmetic.Range
@@ -7,6 +10,9 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <summary>
 	///   Class specifying an interval in time. Borders may be included or excluded. This type is immutable.
 	/// </summary>
+	/// <remarks>
+	///   This is a wrapper class which simply redirect calls to a more generic base type.
+	/// </remarks>
 	/// <author>Steven Jeuris</author>
 	[DataContract]
 	public class TimeInterval : Interval<DateTime, TimeSpan>
@@ -42,6 +48,54 @@ namespace Whathecode.System.Arithmetic.Range
 		{
 		}
 
+
+		/// <summary>
+		///   Limit a given range to this range.
+		///   When part of the given range lies outside of this range, it isn't included in the resulting range.
+		/// </summary>
+		/// <param name = "range">The range to limit to this range.</param>
+		/// <returns>The given range, which excludes all parts lying outside of this range.</returns>
+		public TimeInterval Clamp( TimeInterval range )
+		{
+			return new TimeInterval( base.Clamp( range ) );
+		}
+
+		/// <summary>
+		///   Split the interval into two intervals at the given date, or nearest valid point.
+		/// </summary>
+		/// <param name = "atPoint">The point in time where to split.</param>
+		/// <param name = "option">Option which specifies in which intervals the split point ends up.</param>
+		/// <param name = "before">The interval in which to store the part before the specified date, if any, null otherwise.</param>
+		/// <param name = "after">The interval in which to store the part after the specified date, if any, null otherwise.</param>
+		public void Split( DateTime atPoint, SplitOption option, out TimeInterval before, out TimeInterval after )
+		{
+			Interval<DateTime, TimeSpan> beforeInner;
+			Interval<DateTime, TimeSpan> afterInner;
+			Split( atPoint, option, out beforeInner, out afterInner );
+			before = new TimeInterval( beforeInner );
+			after = new TimeInterval( afterInner );
+		}
+
+		/// <summary>
+		///   Subtract a given interval from the current interval.
+		/// </summary>
+		/// <param name = "subtract">The interval to subtract from this interval.</param>
+		/// <returns>The resulting intervals after subtraction.</returns>
+		public List<TimeInterval> Subtract( TimeInterval subtract )
+		{
+			List<Interval<DateTime, TimeSpan>> result = base.Subtract( subtract );
+			return result.Select( r => new TimeInterval( r ) ).ToList();
+		}
+
+		/// <summary>
+		///   Returns the intersection of this interval with another.
+		/// </summary>
+		/// <param name = "interval">The interval to get the intersection for.</param>
+		/// <returns>The intersection of this interval with the given other. Null when no intersection.</returns>
+		public TimeInterval Intersection( TimeInterval interval )
+		{
+			return new TimeInterval( base.Intersection( interval ) );
+		}
 
 		/// <summary>
 		///   Returns an expanded interval of the current interval up to the given time (and including).

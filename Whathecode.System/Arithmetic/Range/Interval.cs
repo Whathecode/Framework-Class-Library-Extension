@@ -13,6 +13,9 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <summary>
 	///   Class specifying an interval from a value, to a value. Borders may be included or excluded. This type is immutable.
 	/// </summary>
+	/// <remarks>
+	///   This is a wrapper class which simply redirect calls to a more generic base type.
+	/// </remarks>
 	/// <typeparam name = "T">The type used to specify the interval, and used for the calculations.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[DataContract]
@@ -53,7 +56,6 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The given range, which excludes all parts lying outside of this range.</returns>
 		public Interval<T> Clamp( Interval<T> range )
 		{
-			// Redirect to more generic base type.
 			return new Interval<T>( base.Clamp( range ) );
 		}
 
@@ -66,7 +68,6 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "after">The interval in which to store the part after the point, if any, null otherwise.</param>
 		public void Split( T atPoint, SplitOption option, out Interval<T> before, out Interval<T> after )
 		{
-			// Redirect to more generic base type.
 			Interval<T, T> beforeInner;
 			Interval<T, T> afterInner;
 			Split( atPoint, option, out beforeInner, out afterInner );
@@ -81,7 +82,6 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The resulting intervals after subtraction.</returns>
 		public List<Interval<T>> Subtract( Interval<T> subtract )
 		{
-			// Redirect to more generic base type.
 			List<Interval<T, T>> result = base.Subtract( subtract );
 			return result.Select( r => new Interval<T>( r ) ).ToList();
 		}
@@ -93,9 +93,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The intersection of this interval with the given other. Null when no intersection.</returns>
 		public Interval<T> Intersection( Interval<T> interval )
 		{
-			// Redirect to more generic base type.
-			Interval<T, T> result = base.Intersection( interval );
-			return new Interval<T>( result );
+			return new Interval<T>( base.Intersection( interval ) );
 		}
 
 		/// <summary>
