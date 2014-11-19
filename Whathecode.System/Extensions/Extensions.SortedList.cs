@@ -48,13 +48,16 @@ namespace Whathecode.System.Extensions
 
 			// Do a binary search on the keys, and retrieve the values associated with the keys.
 			BinarySearchResult<TKey> searchResult = BinarySearchKeys( source, key );
-			BinarySearchResult<TValue> valueResult = new BinarySearchResult<TValue>
+			var valueResult = new BinarySearchResult<TValue>
 			{
 				IsObjectInRange = searchResult.IsObjectInRange,
 				IsObjectFound = searchResult.IsObjectFound,
-				Object = searchResult.IsObjectFound ? source[ searchResult.Object ] : default(TValue),
-				Smaller = source[ searchResult.Smaller ],
-				Bigger = source[ searchResult.Bigger ]
+				Found = searchResult.IsObjectFound
+					? new BinarySearchResult<TValue>.FoundResult( source[ searchResult.Found.Object ] )
+					: null,
+				NotFound = searchResult.IsObjectFound
+					? null
+					: new BinarySearchResult<TValue>.NotFoundResult( source[ searchResult.NotFound.Smaller ], source[ searchResult.NotFound.Bigger ] )
 			};
 
 			return valueResult;

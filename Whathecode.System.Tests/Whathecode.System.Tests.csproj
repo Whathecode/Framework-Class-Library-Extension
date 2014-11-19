@@ -121,6 +121,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Algorithm\BinarySearchTest.cs" />
     <Compile Include="Extensions\DateTimeExtensionsTest.cs" />
     <Compile Include="MathHelperTest.cs" />
     <Compile Include="Operators\OperatorTest.cs" />

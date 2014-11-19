@@ -87,17 +87,17 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			TValue result;
 			if ( searchResult.IsObjectFound )
 			{
-				result = KeyPoints[ searchResult.Object ];
+				result = KeyPoints[ searchResult.Found.Object ];
 			}
 			else
 			{
 				// Use double math to calculate the desired value inside the interval. (percentage)				
-				double smallerValue = CastOperator<TMath, double>.Cast( searchResult.Smaller );
-				double biggerValue = CastOperator<TMath, double>.Cast( searchResult.Bigger );
+				double smallerValue = CastOperator<TMath, double>.Cast( searchResult.NotFound.Smaller );
+				double biggerValue = CastOperator<TMath, double>.Cast( searchResult.NotFound.Bigger );
 
 				result = Interpolate(
-					KeyPoints.IndexAtPosition( searchResult.Smaller ),
-					KeyPoints.IndexAtPosition( searchResult.Bigger ),
+					KeyPoints.IndexAtPosition( searchResult.NotFound.Smaller ),
+					KeyPoints.IndexAtPosition( searchResult.NotFound.Bigger ),
 					position,
 					new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( CastOperator<TMath, double>.Cast( position ) ) );
 			}
@@ -135,12 +135,12 @@ namespace Whathecode.System.Arithmetic.Interpolation
 			BinarySearchResult<TMath> searchResult = KeyPoints.BinarySearch( position );
 
 			// Use double math to calculate percentage of desired value inside 
-			double smallerValue = CastOperator<TMath, double>.Cast( searchResult.Smaller );
-			double biggerValue = CastOperator<TMath, double>.Cast( searchResult.Bigger );
+			double smallerValue = CastOperator<TMath, double>.Cast( searchResult.NotFound.Smaller );
+			double biggerValue = CastOperator<TMath, double>.Cast( searchResult.NotFound.Bigger );
 
 			TValue result = TangentAt(
-				KeyPoints.IndexAtPosition( searchResult.Smaller ),
-				KeyPoints.IndexAtPosition( searchResult.Bigger ),
+				KeyPoints.IndexAtPosition( searchResult.NotFound.Smaller ),
+				KeyPoints.IndexAtPosition( searchResult.NotFound.Bigger ),
 				position,
 				new Interval<double>( smallerValue, biggerValue ).GetPercentageFor( CastOperator<TMath, double>.Cast( position ) ) );
 

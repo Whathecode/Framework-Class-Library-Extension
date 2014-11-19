@@ -73,7 +73,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 
 				if ( result.IsObjectFound )
 				{
-					return result.Object.Value;
+					return result.Found.Object.Value;
 				}
 
 				throw new IndexOutOfRangeException( "The requested value for index '" + position + "' doesn't exist." );
@@ -222,9 +222,12 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 			{
 				IsObjectInRange = result.IsObjectInRange,
 				IsObjectFound = result.IsObjectFound,
-				Object = result.IsObjectFound ? result.Object.Position : default( TMath ),
-				Smaller = result.Smaller.Position,
-				Bigger = result.Bigger.Position
+				Found = result.IsObjectFound
+					? new BinarySearchResult<TMath>.FoundResult( result.Found.Object.Position )
+					: null,
+				NotFound = result.IsObjectFound
+					? null
+					: new BinarySearchResult<TMath>.NotFoundResult( result.NotFound.Smaller.Position, result.NotFound.Bigger.Position )
 			};
 		}
 
@@ -232,7 +235,7 @@ namespace Whathecode.System.Arithmetic.Interpolation.KeyPoint
 		{
 			BinarySearchResult<KeyPoint> result = BinarySearchPosition( position );
 
-			return _data.IndexOf( result.Object );
+			return _data.IndexOf( result.Found.Object );
 		}
 
 		BinarySearchResult<KeyPoint> BinarySearchPosition( TMath position )

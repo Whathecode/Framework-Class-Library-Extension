@@ -73,7 +73,7 @@ namespace Whathecode.System.Collections.Algorithm
 				TObject bigger = indexOperations.GetByIndex( range.End );
 
 				// Find the desired object.
-				TObject foundObject = default(TObject);
+				TObject foundObject = default( TObject );
 				if ( isObjectFound )
 				{
 					foundObject = centerObject;
@@ -93,13 +93,13 @@ namespace Whathecode.System.Collections.Algorithm
 				}
 
 				// Return result.
+				bool isObjectInRange = toFind.CompareTo( smaller ) >= 0 && toFind.CompareTo( bigger ) <= 0;
 				return new BinarySearchResult<TObject>
 				{
-					IsObjectInRange = toFind.CompareTo( smaller ) >= 0 && toFind.CompareTo( bigger ) <= 0,
+					IsObjectInRange = isObjectInRange,
 					IsObjectFound = isObjectFound,
-					Object = foundObject,
-					Smaller = smaller,
-					Bigger = bigger
+					Found = isObjectFound ? new BinarySearchResult<TObject>.FoundResult( foundObject ) : null,
+					NotFound = isObjectFound || !isObjectInRange ? null : new BinarySearchResult<TObject>.NotFoundResult( smaller, bigger )
 				};
 			}
 		}

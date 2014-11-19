@@ -8,6 +8,47 @@
 	public struct BinarySearchResult<TObject>
 	{
 		/// <summary>
+		///   Stores the retrieved object if found.
+		/// </summary>
+		public class FoundResult
+		{
+			/// <summary>
+			///   The object which was found.
+			/// </summary>
+			public readonly TObject Object;
+
+
+			public FoundResult( TObject foundObject )
+			{
+				Object = foundObject;
+			}
+		}
+
+		/// <summary>
+		///   Stores the nearest objects when object is not found but within range.
+		/// </summary>
+		public class NotFoundResult
+		{
+			/// <summary>
+			///   The object smaller or equal than the object searched for.
+			/// </summary>
+			public readonly TObject Smaller;
+
+			/// <summary>
+			///   The object bigger or equal than the object searched for.
+			/// </summary>
+			public readonly TObject Bigger;
+
+
+			public NotFoundResult( TObject smaller, TObject bigger )
+			{
+				Smaller = smaller;
+				Bigger = bigger;
+			}
+		}
+
+
+		/// <summary>
 		///   True when the object lies inside the range of values.
 		/// </summary>
 		public bool IsObjectInRange;
@@ -18,18 +59,13 @@
 		public bool IsObjectFound;
 
 		/// <summary>
-		///   The object, when found. Default value for TObject type otherwise.
+		///   Contains the retrieved object if found, null otherwise.
 		/// </summary>
-		public TObject Object;
+		public FoundResult Found;
 
 		/// <summary>
-		///   The object smaller or equal than the object searched for.
+		///   Contains the nearest objects when object is not found but within range, null otherwise.
 		/// </summary>
-		public TObject Smaller;
-
-		/// <summary>
-		///   The object bigger or equal than the object searched for.
-		/// </summary>
-		public TObject Bigger;
+		public NotFoundResult NotFound;
 	}
 }
