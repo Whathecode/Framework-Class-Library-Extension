@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using XamlTests;
+using XamlTests.Aspects;
 
 
 namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Aspects

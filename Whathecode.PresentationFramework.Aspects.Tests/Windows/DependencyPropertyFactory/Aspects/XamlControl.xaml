@@ -7,7 +7,7 @@
 
 	<Grid>
 		<dp:TestControl
-			Standard="{Binding ElementName=Callback, Path=Title}" />
+			Standard="{Binding ElementName=Control, Path=Title}" />
 	</Grid>
 
 </Window>
