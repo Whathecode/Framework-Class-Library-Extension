@@ -13,7 +13,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Aspects
 	/// </summary>
 	/// <author>Steven Jeuris</author>
 	[TestClass]
-	public class DependencyPropertyFactoryTest : BaseDependencyPropertyFactoryTest<TestControl> { }
+	public class DependencyPropertyTest : BaseDependencyPropertyTest<TestControl> { }
 
 	#pragma warning restore 0436
 }

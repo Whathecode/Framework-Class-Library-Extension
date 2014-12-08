@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 {
-	public class BaseTestControl : DependencyObject
+	public class BaseTestControl : UIElement
 	{
 		public static bool IsValidateCallbackCalled { get; private set; }
 

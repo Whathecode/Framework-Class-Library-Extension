@@ -1,0 +1,13 @@
+﻿<Window
+	x:Name="Control"
+	x:Class="XamlTests.XamlControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:dp="clr-namespace:Whathecode.Tests.System.Windows.DependencyPropertyFactory">
+	
+	<Grid>
+		<dp:TestControl
+			Standard="{Binding ElementName=Callback, Path=Title}" />
+	</Grid>
+	
+</Window>

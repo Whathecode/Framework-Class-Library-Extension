@@ -19,7 +19,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 	/// </summary>
 	/// <typeparam name = "TTestClass">The type of the class with dependency properties to be tested.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public abstract class BaseDependencyPropertyFactoryTest<TTestClass>
+	public abstract class BaseDependencyPropertyTest<TTestClass>
 		where TTestClass : BaseTestControl, new()
 	{	
 		#region Common Test Members

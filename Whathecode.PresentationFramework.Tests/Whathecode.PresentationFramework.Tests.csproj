@@ -117,11 +117,16 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\BaseTestControl.cs" />
-    <Compile Include="Windows\DependencyPropertyFactory\BaseDependencyPropertyFactoryTest.cs" />
-    <Compile Include="Windows\DependencyPropertyFactory\DependencyPropertyFactoryTest.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\BaseDependencyPropertyTest.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\BaseXamlTest.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\DependencyPropertyTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\GenericControlTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Property.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\TestControl.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\XamlControl.xaml.cs">
+      <DependentUpon>XamlControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\DependencyPropertyFactory\XamlTest.cs" />
     <Compile Include="Windows\Input\CommandFactory\CommandFactoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +153,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Windows\DependencyPropertyFactory\XamlControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

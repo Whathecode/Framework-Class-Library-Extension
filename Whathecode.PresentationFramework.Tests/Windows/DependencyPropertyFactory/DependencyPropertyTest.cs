@@ -4,5 +4,5 @@
 namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 {
 	[TestClass]
-	public class DependencyPropertyFactoryTest : BaseDependencyPropertyFactoryTest<TestControl> {}
+	public class DependencyPropertyTest : BaseDependencyPropertyTest<TestControl> {}
 }
