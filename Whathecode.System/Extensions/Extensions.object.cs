@@ -32,6 +32,18 @@ namespace Whathecode.System.Extensions
 		}
 
 		/// <summary>
+		///   Returns whether all given values equal the object.
+		/// </summary>
+		/// <typeparam name="T">Type of the objects to compare.</typeparam>
+		/// <param name="source">The source for this extension method.</param>
+		/// <param name="toCompare">The objects to compare with.</param>
+		/// <returns>True when all given values equal the object, false otherwise.</returns>
+		public static bool EqualsAll<T>( this T source, params T[] toCompare )
+		{
+			return toCompare.All( o => o.Equals( source ) );
+		}
+
+		/// <summary>
 		///   Returns a selected value when the source is not null; null otherwise.
 		/// </summary>
 		/// <typeparam name = "T">Type of the source object.</typeparam>

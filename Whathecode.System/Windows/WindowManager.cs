@@ -121,12 +121,15 @@ namespace Whathecode.System.Windows
 				return;
 			}
 
-			// There were some unresponsive windows. Skip them and try again.
+			// There might be some unresponsive windows. Skip them and try again.
 			List<RepositionWindowInfo> unresponsive = toPosition.Where( w => !w.IsResponding() ).ToList();
-			RepositionWindows( toPosition.Except( unresponsive ).ToList(), true, changeZOrder );
+			if ( unresponsive.Count > 0 )
+			{
+				RepositionWindows( toPosition.Except( unresponsive ).ToList(), true, changeZOrder );
 
-			// Unresponsive windows are skipped and an exception is thrown indicating which windows could not be positioned.
-			throw new UnresponsiveWindowsException( unresponsive.Select( w => w.ToPosition ).ToList() );
+				// Unresponsive windows are skipped and an exception is thrown indicating which windows could not be positioned.
+				throw new UnresponsiveWindowsException( unresponsive.Select( w => w.ToPosition ).ToList() );
+			}
 		}
 
 		/// <summary>
