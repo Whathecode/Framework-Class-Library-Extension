@@ -34,7 +34,9 @@
   <ItemGroup>
     <Compile Include="AdvApi32.cs" />
     <Compile Include="AdvApi32.Types.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="ErrorCode.cs" />
+    <Compile Include="HResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeTokenHandle.cs" />
     <Compile Include="Shell32.cs" />

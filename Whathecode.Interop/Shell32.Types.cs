@@ -319,5 +319,214 @@ namespace Whathecode.Interop
 			/// </summary>
 			UnavailableFileAssociation = 31
 		}
+
+		/// <summary>
+		///   Specify special retrieval options for known folders. These values supersede CSIDL values, which have parallel meanings.
+		/// </summary>
+		[Flags]
+		public enum KnownFolderRetrievalFlags : uint
+		{
+			None = 0,
+			/// <summary>
+			///   Build a simple IDList (PIDL).
+			///   This value can be used when you want to retrieve the file system path but do not specify this value if you are retrieving the localized display name of the folder because it might not resolve correctly.
+			/// </summary>
+			SimpleIdList = 0x00000100,
+			/// <summary>
+			///   Gets the folder's default path independent of the current location of its parent. <see cref="DefaultPath" /> must also be set.
+			/// </summary>
+			NotParentRelative = 0x00000200,
+			/// <summary>
+			///   Gets the default path for a known folder. If this flag is not set, the function retrieves the current—and possibly redirected—path of the folder.
+			///   The execution of this flag includes a verification of the folder's existence unless <see cref="DontVerify" /> is set.
+			/// </summary>
+			DefaultPath = 0x00000400,
+			/// <summary>
+			///   Initializes the folder using its Desktop.ini settings. If the folder cannot be initialized, the function returns a failure code and no path is returned.
+			///   This flag should always be combined with <see cref="Create" />.
+			/// 
+			///   If the folder is located on a network, the function might take a longer time to execute.
+			/// </summary>
+			InitializeDesktopIni = 0x00000800,
+			/// <summary>
+			///   Gets the true system path for the folder, free of any aliased placeholders such as %USERPROFILE%, returned by SHGetKnownFolderIDList and IKnownFolder::GetIDList.
+			///   This flag has no effect on paths returned by SHGetKnownFolderPath and IKnownFolder::GetPath.
+			///   By default, known folder retrieval functions and methods return the aliased path if an alias exists.
+			/// </summary>
+			NoAlias = 0x00001000,
+			/// <summary>
+			///   Stores the full path in the registry without using environment strings.
+			///   If this flag is not set, portions of the path may be represented by environment strings such as %USERPROFILE%.
+			///   This flag can only be used with SHSetKnownFolderPath and IKnownFolder::SetPath.
+			/// </summary>
+			DontUnexpand = 0x00002000,
+			/// <summary>
+			///   Do not verify the folder's existence before attempting to retrieve the path or IDList.
+			///   If this flag is not set, an attempt is made to verify that the folder is truly present at the path.
+			///   If that verification fails due to the folder being absent or inaccessible, the function returns a failure code and no path is returned.
+			///   If the folder is located on a network, the function might take a longer time to execute. Setting this flag can reduce that lag time.
+			/// </summary>
+			DontVerify = 0x00004000,
+			/// <summary>
+			///   Forces the creation of the specified folder if that folder does not already exist. The security provisions predefined for that folder are applied.
+			///   If the folder does not exist and cannot be created, the function returns a failure code and no path is returned.
+			///   This value can be used only with the following functions and methods:
+			///	  <list type="bullet">
+			///     <item>SHGetKnownFolderPath</item>
+			///     <item>SHGetKnownFolderIDList</item>
+			///     <item>IKnownFolder::GetIDList</item>
+			///     <item>IKnownFolder::GetPath</item>
+			///     <item>IKnownFolder::GetShellItem</item>
+			///   </list>
+			/// </summary>
+			Create = 0x00008000,
+			/// <summary>
+			///   Introduced in Windows 7: When running inside an app container, or when providing an app container token, this flag prevents redirection to app container folders.
+			///   Instead, it retrieves the path that would be returned where it not running inside an app container.
+			/// </summary>
+			NoAppContainerRedirection = 0x00010000,
+			/// <summary>
+			///   Introduced in Windows 7. Return only aliased PIDLs. Do not use the file system path.
+			/// </summary>
+			AliasOnly = 0x80000000
+		}
+
+		/// <summary>
+		///   Describes an event that has occurred.
+		/// </summary>
+		[Flags]
+		public enum EventId
+		{
+			/// <summary>
+			///   All events have occurred.
+			/// </summary>
+			AllEvents = unchecked( (int)0x7FFFFFFFL ),
+			/// <summary>
+			///   A file type association has changed.
+			/// </summary>
+			FileTypeAssociationChanged = unchecked( (int)0x08000000L ),
+			/// <summary>
+			///   The attributes of an item or folder have changed.
+			/// </summary>
+			AttributesChanged = unchecked( (int)0x00000800L ),
+			/// <summary>
+			///   A nonfolder item has been created.
+			/// </summary>
+			Created = unchecked( (int)0x00000002L ),
+			/// <summary>
+			///   A nonfolder item has been deleted.
+			/// </summary>
+			Deleted = unchecked( (int)0x00000004L ),
+			/// <summary>
+			///   A drive has been added. 
+			/// </summary>
+			DriveAdded = unchecked( (int)0x00000100L ),
+			/// <summary>
+			///   A drive has been removed.
+			/// </summary>
+			DriveRemoved = unchecked( (int)0x00000080L ),
+			/// <summary>
+			///   The amount of free space on a drive has changed.
+			/// </summary>
+			FreeSpaceChanged = unchecked( (int)0x00040000L ),
+			/// <summary>
+			///   Storage media has been inserted into a drive.
+			/// </summary>
+			MediaInserted = unchecked( (int)0x00000020L ),
+			/// <summary>
+			///   Storage media has been removed from a drive.
+			/// </summary>
+			MediaRemoved = unchecked( (int)0x00000040L ),
+			/// <summary>
+			///   A folder has been created.
+			/// </summary>
+			FolderCreated = unchecked( (int)0x00000008L ),
+			/// <summary>
+			///   A folder on the local computer is being shared via the network.
+			/// </summary>
+			FolderNetworkShared = unchecked( (int)0x00000200L ),
+			/// <summary>
+			///   A folder on the local computer is no longer being shared via the network.
+			/// </summary>
+			FolderNetworkUnshared = unchecked( (int)0x00000400L ),
+			/// <summary>
+			///   The name of a folder has changed.
+			/// </summary>
+			FolderRenamed = unchecked( (int)0x00020000L ),
+			/// <summary>
+			///   The name of a nonfolder item has changed.
+			/// </summary>
+			Renamed = unchecked( (int)0x00000001L ),
+			/// <summary>
+			///   A folder has been removed.
+			/// </summary>
+			FolderRemoved = unchecked( (int)0x00000010L ),
+			/// <summary>
+			///   The computer has disconnected from a server.
+			/// </summary>
+			ServerDisconnected = unchecked( (int)0x00004000L ),
+			/// <summary>
+			///   The contents of an existing folder have changed, but the folder still exists and has not been renamed.
+			/// </summary>
+			FolderContentsChanged = unchecked( (int)0x00001000L ),
+			/// <summary>
+			///   An image in the system image list has changed. 
+			/// </summary>
+			UpdatedImage = unchecked( (int)0x00008000L ),
+			/// <summary>
+			///   An existing item (a folder or a nonfolder) has changed, but the item still exists and has not been renamed.
+			/// </summary>
+			UpdatedItem = unchecked( (int)0x00002000L ),
+			/// <summary>
+			///   Specifies a combination of all of the disk event identifiers.
+			/// </summary>
+			DiskEvents = unchecked( (int)0x0002381FL ),
+			/// <summary>
+			///   Specifies a combination of all of the global event identifiers.
+			/// </summary>
+			GlobalEvents = unchecked( (int)0x0C0581E0L ),
+			/// <summary>
+			///   The specified event occurred as a result of a system interrupt. As this value modifies other event values, it cannot be used alone.
+			/// </summary>
+			Interrupt = unchecked( (int)0x80000000L ),
+		}
+
+		/// <summary>
+		///   Flags that, when combined bitwise with SHCNF_TYPE, indicate the meaning of the item1 and item2 parameters of <see cref="SHChangeNotify" />.
+		/// </summary>
+		[Flags]
+		public enum ChangeNotifyFlags
+		{
+			/// <summary>
+			///   The item1 and item2 parameters are DWORD values.
+			/// </summary>
+			Dword = 3,
+			/// <summary>
+			///   item1 and item2 are the addresses of ITEMIDLIST structures that represent the item(s) affected by the change. Each ITEMIDLIST must be relative to the desktop folder.
+			/// </summary>
+			ItemIdList = 0,
+			/// <summary>
+			///   item1 and item2 are the addresses of null-terminated unicode strings of maximum length MAX_PATH that contain the full path names of the items affected by the change.
+			/// </summary>
+			Path = 5,
+			/// <summary>
+			///   item1 and item2 are the addresses of null-terminated unicode strings that represent the friendly names of the printer(s) affected by the change.
+			/// </summary>
+			Printer = 6,
+			/// <summary>
+			///   The function should not return until the notification has been delivered to all affected components.
+			///   As this flag modifies other data-type flags, it cannot be used by itself.
+			/// </summary>
+			Flush = 0x1000,
+			/// <summary>
+			///   The function should begin delivering notifications to all affected components but should return as soon as the notification process has begun.
+			///   As this flag modifies other data-type flags, it cannot by used by itself. This flag includes <see cref="Flush"/>.
+			/// </summary>
+			FlushNoWait = 0x2000,
+			/// <summary>
+			///   Notify clients registered for all children.
+			/// </summary>
+			NotifyRecursive = 0x10000
+		}
 	}
 }

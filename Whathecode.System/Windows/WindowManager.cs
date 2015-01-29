@@ -234,5 +234,14 @@ namespace Whathecode.System.Windows
 				}
 			}
 		}
+
+		/// <summary>
+		///   Fully refreshes the desktop window.
+		/// </summary>
+		public static void RefreshDesktop()
+		{
+			// TODO: Why does this work?
+			Shell32.SHChangeNotify( Shell32.EventId.FileTypeAssociationChanged, Shell32.ChangeNotifyFlags.FlushNoWait, IntPtr.Zero, IntPtr.Zero );
+		}
 	}
 }

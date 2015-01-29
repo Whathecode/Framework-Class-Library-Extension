@@ -112,6 +112,9 @@ namespace Whathecode.Interop
 		[DllImport( Dll, SetLastError = true )]
 		public static extern IntPtr GetWindow( IntPtr windowHandle, WindowRelationship relationship );
 
+		[DllImport( Dll )]
+		public static extern IntPtr GetDesktopWindow();
+
 		/// <summary>
 		///   Retrieves information about the specified window. The function also retrieves the value at a specified offset into the extra window memory.
 		///   
@@ -477,6 +480,42 @@ namespace Whathecode.Interop
 		public static extern bool SetForegroundWindow( IntPtr windowHandle );
 
 		/// <summary>
+		///   Sends the specified message to a window or windows.
+		///   The <see cref="SendMessage" /> function calls the window procedure for the specified window and does not return until the window procedure has processed the message.
+		///   To send a message and return immediately, use the SendMessageCallback or SendNotifyMessage function.
+		///   To post a message to a thread's message queue and return immediately, use the PostMessage or PostThreadMessage function.
+		/// </summary>
+		/// <param name="windowHandle">
+		///   A handle to the window whose window procedure will receive the message.
+		/// 
+		///   If this parameter is <see cref="BroadcastToAllWindows" />, the message is sent to all top-level windows in the system, including disabled or invisible unowned windows,
+		///   overlapped windows, and pop-up windows; but the message is not sent to child windows.
+		///   Message sending is subject to UIPI. The thread of a process can send messages only to message queues of threads in processes of lesser or equal integrity level.
+		/// </param>
+		/// <param name="message">The message to be sent. For lists of the system-provided messages, see System-Defined Messages.</param>
+		/// <param name="wParam">Additional message-specific information.</param>
+		/// <param name="lParam">Additional message-specific information.</param>
+		/// <returns>The return value specifies the result of the message processing; it depends on the message sent.</returns>
+		/// <remarks>
+		///   When a message is blocked by UIPI the last error, retrieved with GetLastWin32Error, is set to 5 (access denied).
+		///   Applications that need to communicate using <see cref="BroadcastToAllWindows" /> should use the <see cref="RegisterWindowMessage" /> function
+		///   to obtain a unique message for inter-application communication.
+		///   The system only does marshalling for system messages (those in the range 0 to (WM_USER-1)).
+		///   To send other messages (those >= WM_USER) to another process, you must do custom marshalling.
+		///   If the specified window was created by the calling thread, the window procedure is called immediately as a subroutine.
+		///   If the specified window was created by a different thread, the system switches to that thread and calls the appropriate window procedure.
+		///   Messages sent between threads are processed only when the receiving thread executes message retrieval code.
+		///   The sending thread is blocked until the receiving thread processes the message.
+		///   However, the sending thread will process incoming nonqueued messages while waiting for its message to be processed.
+		///   To prevent this, use <see cref="SendMessageTimeout" /> with <see cref="SendMessageTimeoutFlags.Block" /> set.
+		///   For more information on nonqueued messages, see Nonqueued Messages.
+		///   An accessibility application can use <see cref="SendMessage" /> to send WM_APPCOMMAND messages to the shell to launch applications.
+		///   This functionality is not guaranteed to work for other types of applications.
+		/// </remarks>
+		[DllImport( Dll, CharSet = CharSet.Auto, SetLastError = true )]
+		public static extern IntPtr SendMessage( IntPtr windowHandle, uint message, IntPtr wParam, IntPtr lParam );
+
+		/// <summary>
 		///   Sends the specified message to one or more windows.
 		/// </summary>
 		/// <param name="windowHandle">
@@ -507,8 +546,26 @@ namespace Whathecode.Interop
 		///   If GetLastWin32Error returns <see cref="ErrorCode.Timeout" />, then the function timed out.
 		///   Windows 2000: If GetLastWin32Error returns 0, then the function timed out.
 		/// </returns>
-		[DllImport( Dll, SetLastError = true, CharSet = CharSet.Auto )]
+		[DllImport( Dll, CharSet = CharSet.Auto, SetLastError = true )]
 		public static extern IntPtr SendMessageTimeout( IntPtr windowHandle, uint message, IntPtr wParam, IntPtr lParam, SendMessageTimeoutFlags flags, uint timeout, out IntPtr result );
+
+		/// <summary>
+		///   Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+		/// </summary>
+		/// <param name="message">The message to be registered.</param>
+		/// <remarks>
+		///   The <see cref="RegisterWindowMessage" /> function is typically used to register messages for communicating between two cooperating applications.
+		///   If two different applications register the same message string, the applications return the same message value. The message remains registered until the session ends.
+		///   Only use <see cref="RegisterWindowMessage" /> when more than one application must process the same message.
+		///   For sending private messages within a window class, an application can use any integer in the range WM_USER through 0x7FFF.
+		///   (Messages in this range are private to a window class, not to an application. For example, predefined control classes such as BUTTON, EDIT, LISTBOX, and COMBOBOX may use values in this range.)
+		/// </remarks>
+		/// <returns>
+		///   If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.
+		///   If the function fails, the return value is zero. To get extended error information, call GetLastWin32Error.
+		/// </returns>
+		[DllImport( Dll, CharSet = CharSet.Auto, SetLastError = true )]
+		public static extern uint RegisterWindowMessage( string message );
 
 		#endregion // Window Functions.
 
