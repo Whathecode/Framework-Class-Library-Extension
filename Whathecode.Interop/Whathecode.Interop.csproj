@@ -32,8 +32,9 @@
     <CodeAnalysisRuleSet>Whathecode.Interop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AdvApi32.AccessToken.cs" />
     <Compile Include="AdvApi32.cs" />
-    <Compile Include="AdvApi32.Types.cs" />
+    <Compile Include="AdvApi32.Registry.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorCode.cs" />
     <Compile Include="HResult.cs" />
@@ -42,7 +43,8 @@
     <Compile Include="Shell32.cs" />
     <Compile Include="Shell32.Types.cs" />
     <Compile Include="User32.cs" />
-    <Compile Include="User32.Types.cs" />
+    <Compile Include="User32.Input.cs" />
+    <Compile Include="User32.Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
