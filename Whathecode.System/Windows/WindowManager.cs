@@ -46,6 +46,41 @@ namespace Whathecode.System.Windows
 		}
 
 		/// <summary>
+		///   Gets the desktop window in which desktop icons are displayed.
+		/// </summary>
+		/// <returns></returns>
+		public static WindowInfo GetDesktopWindow()
+		{
+			Func<WindowInfo, WindowInfo> findDesktopShell =
+				w => w.GetChildWindows().FirstOrDefault( c => c.GetClassName() == "SHELLDLL_DefView" );
+
+			// Before Windows 7, the desktop window could generally be found as a direct child of the shell.
+			var shellWindow = new WindowInfo( User32.GetShellWindow() );
+			if ( shellWindow == null )
+			{
+				throw new InvalidOperationException( "No Shell process is present." );
+			}
+			var desktop = findDesktopShell( shellWindow );
+			if ( desktop != null )
+			{
+				return desktop;
+			}
+
+			// Windows 7 can have cycling wallpapers enabled, in which case the desktop window can be found in a window with class "WorkerW".
+			var workerWindows = GetWindows().Where( w => w.GetClassName() == "WorkerW" );
+			foreach ( WindowInfo w in workerWindows )
+			{
+				desktop = findDesktopShell( w );
+				if ( desktop != null )
+				{
+					return desktop;
+				}
+			}
+
+			throw new NotSupportedException( "Could not find desktop window where it was expected." );
+		}
+
+		/// <summary>
 		///   Retrieves the window which currently has focus.
 		/// </summary>
 		/// <returns>The <see cref="WindowInfo" /> of the window which currently has focus.</returns>

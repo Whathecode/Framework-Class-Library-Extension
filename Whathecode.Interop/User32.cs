@@ -112,8 +112,20 @@ namespace Whathecode.Interop
 		[DllImport( Dll, SetLastError = true )]
 		public static extern IntPtr GetWindow( IntPtr windowHandle, WindowRelationship relationship );
 
+		/// <summary>
+		///   Retrieves a handle to the desktop window. The desktop window covers the entire screen.
+		///   The desktop window is the area on top of which other windows are painted.
+		/// </summary>
+		/// <returns>A handle to the desktop window.</returns>
 		[DllImport( Dll )]
 		public static extern IntPtr GetDesktopWindow();
+
+		/// <summary>
+		///   Retrieves a handle to the Shell's desktop window.
+		/// </summary>
+		/// <returns>The handle of the Shell's desktop window. If no Shell process is present, the return value is NULL.</returns>
+		[DllImport( Dll )]
+		public static extern IntPtr GetShellWindow();
 
 		/// <summary>
 		///   Retrieves information about the specified window. The function also retrieves the value at a specified offset into the extra window memory.
