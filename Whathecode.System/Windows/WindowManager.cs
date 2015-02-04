@@ -276,7 +276,7 @@ namespace Whathecode.System.Windows
 		public static void RefreshDesktop()
 		{
 			// TODO: Why does this work?
-			Shell32.SHChangeNotify( Shell32.EventId.FileTypeAssociationChanged, Shell32.ChangeNotifyFlags.FlushNoWait, IntPtr.Zero, IntPtr.Zero );
+			Shell32.SHChangeNotify( Shell32.EventId.FileTypeAssociationChanged, Shell32.ChangeNotifyFlags.Flush, IntPtr.Zero, IntPtr.Zero );
 		}
 	}
 }

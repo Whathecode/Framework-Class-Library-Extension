@@ -23,6 +23,10 @@
 		/// </summary>
 		AccessDenied = 0x0005,
 		/// <summary>
+		///   The handle is invalid.
+		/// </summary>
+		InvalidHandle = 0x0006,
+		/// <summary>
 		///   Not enough storage is available to process this command.
 		/// </summary>
 		OutOfMemory = 0x0008,
@@ -42,6 +46,10 @@
 		///   More data is available.
 		/// </summary>
 		MoreData = 0x00EA,
+		/// <summary>
+		///   Attempt to access invalid address.
+		/// </summary>
+		InvalidAddress = 0x01E7,
 		/// <summary>
 		///   No application is associated with the specified file for this operation.
 		/// </summary>

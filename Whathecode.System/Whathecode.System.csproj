@@ -316,6 +316,9 @@
     <Compile Include="Windows\RepositionWindowInfo.cs" />
     <Compile Include="Windows\Threading\DispatcherHelper.cs" />
     <Compile Include="Windows\UnresponsiveWindowsException.cs" />
+    <Compile Include="Windows\Win32Controls\AbstractWin32Control.cs" />
+    <Compile Include="Windows\Win32Controls\ControlMemory.cs" />
+    <Compile Include="Windows\Win32Controls\ListView.cs" />
     <Compile Include="Windows\WindowInfo.cs" />
     <Compile Include="Windows\WindowManager.cs" />
     <Compile Include="Windows\WindowState.cs" />
@@ -357,6 +360,7 @@
       <Name>Whathecode.Interop</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

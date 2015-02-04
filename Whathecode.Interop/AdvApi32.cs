@@ -1,10 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Text;
-
-
-namespace Whathecode.Interop
+﻿namespace Whathecode.Interop
 {
 	/// <summary>
 	///   Contains common AdvApi32.dll definitions and operations.

@@ -5,14 +5,14 @@ using Microsoft.Win32.SafeHandles;
 namespace Whathecode.Interop
 {
 	/// <summary>
-	///   A wrapper class for a token handle.
+	///   A wrapper class for a process handle.
 	/// </summary>
-	public sealed class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
+	public sealed class SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
-		public SafeTokenHandle()
+		public SafeProcessHandle()
 			: base( true ) {}
 
-		public SafeTokenHandle( IntPtr handle )
+		public SafeProcessHandle( IntPtr handle )
 			: base( true )
 		{
 			SetHandle( handle );

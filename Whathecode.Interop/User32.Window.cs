@@ -471,6 +471,29 @@ namespace Whathecode.Interop
 		}
 
 		/// <summary>
+		///   Common messages which can be sent to controls.
+		/// </summary>
+		public enum CommonControlMessage : uint
+		{
+			/// <summary>
+			///   Sets the Unicode character format flag for the control.
+			///   This message enables you to change the character set used by the control at run time rather than having to re-create the control.
+			///   wParam: A value that determines the character set that is used by the control.
+			///   If this value is TRUE, the control will use Unicode characters. If this value is FALSE, the control will use ANSI characters.
+			///   lParam: Must be zero.
+			///   returns: The previous Unicode format flag for the control.
+			/// </summary>
+			SetUnicodeFormat = 0x2005,
+			/// <summary>
+			///   Gets the Unicode character format flag for the control.
+			///	  wParam, lParam: Must be zero.
+			///   returns: Returns the Unicode format flag for the control.
+			///   If this value is nonzero, the control is using Unicode characters. If this value is zero, the control is using ANSI characters.
+			/// </summary>
+			GetUnicodeFormat = 0x2006,
+		}
+
+		/// <summary>
 		///   The message is posted to all top-level windows in the system, including disabled or invisible unowned windows, overlapped windows, and pop-up windows.
 		///   The message is not posted to child windows.
 		/// </summary>
@@ -957,7 +980,7 @@ namespace Whathecode.Interop
 
 		/// <summary>
 		///   Sends the specified message to a window or windows.
-		///   The <see cref="SendMessage" /> function calls the window procedure for the specified window and does not return until the window procedure has processed the message.
+		///   This function calls the window procedure for the specified window and does not return until the window procedure has processed the message.
 		///   To send a message and return immediately, use the SendMessageCallback or SendNotifyMessage function.
 		///   To post a message to a thread's message queue and return immediately, use the PostMessage or PostThreadMessage function.
 		/// </summary>
@@ -985,7 +1008,7 @@ namespace Whathecode.Interop
 		///   However, the sending thread will process incoming nonqueued messages while waiting for its message to be processed.
 		///   To prevent this, use <see cref="SendMessageTimeout" /> with <see cref="SendMessageTimeoutFlags.Block" /> set.
 		///   For more information on nonqueued messages, see Nonqueued Messages.
-		///   An accessibility application can use <see cref="SendMessage" /> to send WM_APPCOMMAND messages to the shell to launch applications.
+		///   An accessibility application can use this function to send WM_APPCOMMAND messages to the shell to launch applications.
 		///   This functionality is not guaranteed to work for other types of applications.
 		/// </remarks>
 		[DllImport( Dll, CharSet = CharSet.Auto, SetLastError = true )]
