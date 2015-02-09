@@ -206,6 +206,12 @@ namespace Whathecode.Interop
 			GetItemState = FirstListViewMessage + 44,
 			/// <summary>
 			///   This message retrieves the text in Unicode of a list-view item or subitem.
+			///   wParam: Index of the list-view item.
+			///   lParam: Pointer to an <see cref="ListViewItem" /> structure. To retrieve the item text, set iSubItem to zero.
+			///   To retrieve the text of a subitem, set SubItemIndex to the subitem's index.
+			///   The Text member points to a buffer that receives the text.
+			///   The TextMax member specifies the number of characters in the buffer.
+			///   returns: The number of characters in the Text member of the <see cref="ListViewItem" /> structure.
 			/// </summary>
 			GetItemText = FirstListViewMessage + 115,
 			/// <summary>
@@ -522,6 +528,222 @@ namespace Whathecode.Interop
 			///   Retrieves the index of an item in a specified list-view control that matches the specified properties and relationship to another item.
 			/// </summary>
 			GetNextItemIndex = FirstListViewMessage + 211
+		}
+
+		/// <summary>
+		///   Specifies or receives the attributes of a list-view item.
+		/// </summary>
+		/// <remarks>
+		///   The <see cref="ListViewItem" /> structure is used with several messages,
+		///   including <see cref="ListViewMessage.GetItem" />, <see cref="ListViewMessage.SetItem" />, <see cref="ListViewMessage.InsertItem" />, and <see cref="ListViewMessage.DeleteItem" />.
+		/// 
+		///   In tile view, the item name is displayed to the right of the icon.
+		///   You can specify additional subitems (corresponding to columns in the details view), to be displayed on lines below the item name.
+		///   The puColumns array contains the indices of subitems to be displayed. Indices should be greater than 0, because subitem 0, the item name, is already displayed.
+		///   Column information can also be set in the LVTILEINFO structure when modifying the list item.
+		/// 
+		///   For example code, see Using List-View Controls.
+		/// </remarks>
+		[StructLayoutAttribute( LayoutKind.Sequential )]
+		public struct ListViewItem
+		{
+			/// <summary>
+			///   Set of flags that specify which members contain data to be set or which members are being requested.
+			/// </summary>
+			public ListViewItemMask Mask;
+			/// <summary>
+			///   Zero-based index of the item to which this structure refers.
+			/// </summary>
+			public int Index;
+			/// <summary>
+			///   One-based index of the subitem to which this structure refers, or zero if this structure refers to an item rather than a subitem.
+			/// </summary>
+			public int SubItemIndex;
+			/// <summary>
+			///   Indicates the item's state, state image, and overlay image. The <see cref="StateMask" /> member indicates the valid bits of this member.
+			/// 
+			///   Bits 0 through 7 of this member contain the item state flags. This can be one or more of the item state values.
+			/// 
+			///   Bits 8 through 11 of this member specify the one-based overlay image index.
+			///   Both the full-sized icon image list and the small icon image list can have overlay images.
+			///   The overlay image is superimposed over the item's icon image. If these bits are zero, the item has no overlay image.
+			///   To isolate these bits, use the <see cref="ListViewItemStates.OverlayMask" /> mask.
+			///   To set the overlay image index in this member, you should use the INDEXTOOVERLAYMASK macro.
+			///   The image list's overlay images are set with the ImageList_SetOverlayImage function.
+			/// 
+			///   Bits 12 through 15 of this member specify the state image index.
+			///   The state image is displayed next to an item's icon to indicate an application-defined state.
+			///   If these bits are zero, the item has no state image. To isolate these bits, use the <see cref="ListViewItemStates.StateImageMask" /> mask.
+			///   To set the state image index, use the INDEXTOSTATEIMAGEMASK macro.
+			///   The state image index specifies the index of the image in the state image list that should be drawn.
+			///   The state image list is specified with the <see cref="ListViewMessage.SetImageList" /> message.
+			/// </summary>
+			public uint State;
+			/// <summary>
+			///   Value specifying which bits of the State member will be retrieved or modified.
+			///   For example, setting this member to LVIS_SELECTED will cause only the item's selection state to be retrieved.
+			/// 
+			///   This member allows you to modify one or more item states without having to retrieve all of the item states first.
+			///   For example, setting this member to LVIS_SELECTED and State to zero will cause the item's selection state to be cleared,
+			///   but none of the other states will be affected.
+			/// 
+			///   To retrieve or modify all of the states, set this member to (UINT)-1.
+			/// 
+			///   You can use the macro ListView_SetItemState both to set and to clear bits.
+			/// </summary>
+			public uint StateMask;
+			/// <summary>
+			///   If the structure specifies item attributes, <see cref="Text" /> is a pointer to a null-terminated string containing the item text.
+			///   When responding to an LVN_GETDISPINFO notification, be sure that this pointer remains valid until after the next notification has been received.
+			/// 
+			///   If the structure receives item attributes, <see cref="Text" /> is a pointer to a buffer that receives the item text.
+			///   Note that although the list-view control allows any length string to be stored as item text, only the first 260 characters are displayed.
+			/// 
+			///   If the value of <see cref="Text" /> is LPSTR_TEXTCALLBACK, the item is a callback item.
+			///   If the callback text changes, you must explicitly set <see cref="Text" /> to LPSTR_TEXTCALLBACK and notify the list-view control of the change
+			///   by sending an <see cref="ListViewMessage.SetItem" /> or <see cref="ListViewMessage.SetItemText" /> message.
+			/// 
+			///   Do not set <see cref="Text" /> to LPSTR_TEXTCALLBACK if the list-view control has the LVS_SORTASCENDING or LVS_SORTDESCENDING style.
+			/// </summary>
+			public IntPtr Text;
+			/// <summary>
+			///   Number of characters in the buffer pointed to by <see cref="Text" />, including the terminating NULL.
+			/// 
+			///   This member is only used when the structure receives item attributes. It is ignored when the structure specifies item attributes.
+			///   For example, <see cref="TextMax" /> is ignored during <see cref="ListViewMessage.SetItem" /> and <see cref="ListViewMessage.InsertItem" />.
+			///   It is read-only during LVN_GETDISPINFO and other LVN_ notifications.
+			/// 
+			///   Note: Never copy more than cchTextMax TCHARs—where cchTextMax includes the terminating NULL—into pszText during an LVN_ notification, otherwise your program can fail.
+			/// </summary>
+			public int TextMax;
+			/// <summary>
+			///   Index of the item's icon in the control's image list. This applies to both the large and small image list.
+			///   If this member is the <see cref="ListViewIdentifiers.ImageCallback"/> value, the parent window is responsible for storing the index.
+			///   In this case, the list-view control sends the parent an LVN_GETDISPINFO notification code to retrieve the index when it needs to display the image.
+			/// </summary>
+			public int ImageIndex;
+			/// <summary>
+			///   Value specific to the item. If you use the <see cref="ListViewMessage.SortItems"/> message,
+			///   the list-view control passes this value to the application-defined comparison function.
+			///   You can also use the <see cref="ListViewMessage.FindItem" /> message to search a list-view control for an item with a specified LParam value.
+			/// </summary>
+			public IntPtr LParam;
+			// TODO: Support later versions of this struct: https://msdn.microsoft.com/en-us/library/windows/desktop/bb774760(v=vs.85).aspx
+			// http://stackoverflow.com/questions/27755305/are-lvitem-fields-pucolumns-and-picolfmt-pointers-or-integers
+		}
+
+		/// <summary>
+		///   Set of flags that specify which members of <see cref="ListViewItemMask" /> contain data to be set or which members are being requested.
+		/// </summary>
+		public enum ListViewItemMask : uint
+		{
+			/// <summary>
+			///   The Text member is valid or must be set.
+			/// </summary>
+			Text = 0x000001,
+			/// <summary>
+			///   The Image member is valid or must be set.
+			/// </summary>
+			Image = 0x000002,
+			/// <summary>
+			///   The LParam member is valid or must be set.
+			/// </summary>
+			LParam = 0x000004,
+			/// <summary>
+			///   The State member is valid or must be set.
+			/// </summary>
+			State = 0x000008,
+			/// <summary>
+			///   The Indent member is valid or must be set.
+			/// </summary>
+			Indent = 0x000010,
+			/// <summary>
+			///   Windows XP and later. The GroupId member is valid or must be set.
+			///   If this flag is not set when an <see cref="ListViewMessage.InsertItem" /> message is sent,
+			///   the value of GroupId is assumed to be <see cref="ListViewIdentifiers.GroupIdCallback" />.
+			/// </summary>
+			GroupId = 0x000100,
+			/// <summary>
+			///   Windows XP and later. The Columns member is valid or must be set.
+			/// </summary>
+			Columns = 0x000200,
+			/// <summary>
+			///   The control will not generate LVN_GETDISPINFO to retrieve text information if it receives an <see cref="ListViewMessage.GetItem" /> message.
+			///   Instead, the text member will contain LPSTR_TEXTCALLBACK.
+			/// </summary>
+			NoRecompute = 0x000800,
+			/// <summary>
+			///   The operating system should store the requested list item information and not ask for it again.
+			///   This flag is used only with the LVN_GETDISPINFO notification code.
+			/// </summary>
+			DisplayInfoSetItem = 0x001000,
+			/// <summary>
+			///   Windows Vista and later.
+			///   The ColumnFormatFlags member is valid or must be set. If this flag is used, the Columns member is valid or must be set.
+			/// </summary>
+			ColumnFormat = 0x010000,
+		}
+
+		/// <summary>
+		///   An item's state value consists of the item's state, an optional overlay mask index, and an optional state image mask index.
+		///   An item's state determines its appearance and functionality. The state can be zero or one or more of the following values.
+		/// </summary>
+		/// <remarks>
+		///   You can use the <see cref="OverlayMask" /> mask to isolate the one-based index of the overlay image.
+		///   You can use the <see cref="StateImageMask" /> mask to isolate the one-based index of the state image.
+		/// </remarks>
+		public enum ListViewItemStates : uint
+		{
+			/// <summary>
+			///   The item has the focus, so it is surrounded by a standard focus rectangle.
+			///   Although more than one item may be selected, only one item can have the focus.
+			/// </summary>
+			Focused = 0x0001,
+			/// <summary>
+			///   The item is selected.
+			///   The appearance of a selected item depends on whether it has the focus and also on the system colors used for selection.
+			/// </summary>
+			Selected = 0x0002,
+			/// <summary>
+			///   The item is marked for a cut-and-paste operation.
+			/// </summary>
+			Cut = 0x0004,
+			/// <summary>
+			///   The item is highlighted as a drag-and-drop target.
+			/// </summary>
+			DropHighlighted = 0x0008,
+			/// <summary>
+			///   Not currently supported.
+			/// </summary>
+			Activating = 0x0020,
+			/// <summary>
+			///   The item's overlay image index is retrieved by a mask.
+			/// </summary>
+			OverlayMask = 0x0F00,
+			/// <summary>
+			///   The item's state image index is retrieved by a mask.
+			/// </summary>
+			StateImageMask = 0xF000
+		}
+
+		/// <summary>
+		///   Predefined list-view control group identifiers.
+		/// </summary>
+		public enum ListViewIdentifiers
+		{
+			ImageCallback = -1,
+			ImageNone = -2,
+			IndentCallback = -1,
+			ChildrenCallback = -1,
+			/// <summary>
+			///   The listview control sends the parent an LVN_GETDISPINFO notification code to retrieve the index of the group.
+			/// </summary>
+			GroupIdCallback = -1,
+			/// <summary>
+			///   The item does not belong to a group.
+			/// </summary>
+			GroupIdNone = -2,
+			ColumnsCallback = -1
 		}
 
 		#endregion

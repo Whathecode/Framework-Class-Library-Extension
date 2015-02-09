@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using Whathecode.Interop;
 using Message = Whathecode.Interop.User32.ListViewMessage;
@@ -65,6 +67,38 @@ namespace Whathecode.System.Windows.Win32Controls
 			WriteToAddress(
 				new User32.Point { X = (int)position.X, Y = (int)position.Y },
 				address => SendMessage( Message.SetItemPosition32, new IntPtr( index ), address ) );
+		}
+
+		/// <summary>
+		///   Retrieves the text of a list-view item.
+		/// </summary>
+		/// <param name="index">Index of the desired item of which to retrieve the text.</param>
+		public string GetItemText( int index )
+		{
+			string text = "";
+			using ( var memory = new ControlMemory( Window, Marshal.SizeOf( typeof( User32.ListViewItem ) ) ) )
+			{
+				// TODO: Any way of knowing the maximum length of item text here?
+				// Trial and error might be needed, trying a bigger buffer when the whole string is not retrieved:
+				// http://forums.codeguru.com/showthread.php?351972-Getting-listView-item-text-length;
+				var stringBuffer = new ControlMemory( Window, Constants.MaximumPathLength * 2 );
+				var itemData = new User32.ListViewItem
+				{
+					TextMax = Constants.MaximumPathLength,
+					Text = stringBuffer.Address
+				};
+				memory.Write( itemData );
+				int length = (int)SendMessage( Message.GetItemText, new IntPtr( index ), memory.Address );
+				itemData = memory.Read<User32.ListViewItem>();
+				if ( length > 0 )
+				{
+					byte[] textBuffer = stringBuffer.Read<byte>( length * 2 );
+					text = Encoding.Unicode.GetString( textBuffer );
+				}
+				stringBuffer.Dispose();
+			}
+
+			return text;
 		}
 	}
 }

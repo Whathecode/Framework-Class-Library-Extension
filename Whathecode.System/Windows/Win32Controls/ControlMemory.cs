@@ -57,8 +57,19 @@ namespace Whathecode.System.Windows.Win32Controls
 		public T Read<T>()
 			where T : struct
 		{
-			uint bytesToRead = (uint)Marshal.SizeOf( typeof( T ) );
-			T[] buffer = new T[ 1 ];
+			return Read<T>( 1 )[ 0 ];
+		}
+
+		/// <summary>
+		///   Read an array of the specified structure from the allocated memory.
+		/// </summary>
+		/// <typeparam name="T">The structure type to read from memory.</typeparam>
+		/// <param name="count">The size of the array.</param>
+		public T[] Read<T>( int count )
+			where T : struct
+		{
+			uint bytesToRead = (uint)( Marshal.SizeOf( typeof( T ) ) * count );
+			T[] buffer = new T[ count ];
 			GCHandle pinnedBuffer = GCHandle.Alloc( buffer, GCHandleType.Pinned );
 			UIntPtr bytesRead;
 			bool success = Kernel32.ReadProcessMemory(
@@ -73,14 +84,19 @@ namespace Whathecode.System.Windows.Win32Controls
 				MarshalHelper.ThrowLastWin32ErrorException();
 			}
 
-			return buffer[ 0 ];
+			return buffer;
 		}
 
-		public void Write<T>( T point )
+		/// <summary>
+		///   Write a specified structure to the allocated memory.
+		/// </summary>
+		/// <typeparam name="T">The structure type to write to memory.</typeparam>
+		/// <param name="structure"></param>
+		public void Write<T>( T structure )
 			where T : struct
 		{
 			uint bytesToWrite = (uint)Marshal.SizeOf( typeof( T ) );
-			T[] buffer = { point };
+			T[] buffer = { structure };
 			GCHandle pinnedBuffer = GCHandle.Alloc( buffer, GCHandleType.Pinned );
 			UIntPtr bytesRead;
 			bool success = Kernel32.WriteProcessMemory(
