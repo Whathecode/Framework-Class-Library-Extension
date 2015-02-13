@@ -111,6 +111,16 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			Properties = new Dictionary<T, DependencyProperty>();
 			_enforceWpfConvention = enforceNamingConventions;
 
+			// All enum values should be different from zero, since they might be used for coercion, hence a 'None' value is required.
+			T none = default( T );
+			bool validValues = EnumHelper<T>.GetValues().All( v => !v.Equals( none ) );
+			if ( !validValues )
+			{
+				throw new InvalidImplementationException(
+					"All enum values of a dependency property factory should be non-zero. Zero is reserved for internal purposes. " +
+					"Specifying the first enum value as '= 1' is a suitable approach." );
+			}
+
 			// Check whether the factory itself is defined as a static field.
 			// TODO: Can part of this logic be moved to ReflectionHelper?
 			if ( checkForStatic )

@@ -22,7 +22,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Attributes
 			[Flags]
 			public enum Property
 			{
-				StartRange,
+				StartRange = 1,
 				EndRange,
 				RangeCoercion
 			}

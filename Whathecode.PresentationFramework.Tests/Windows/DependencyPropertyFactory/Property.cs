@@ -9,7 +9,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 	[Flags]
 	public enum Property
 	{
-		Standard,
+		Standard = 1,
 		/// <summary>
 		///   This should become a read only property.
 		/// </summary>

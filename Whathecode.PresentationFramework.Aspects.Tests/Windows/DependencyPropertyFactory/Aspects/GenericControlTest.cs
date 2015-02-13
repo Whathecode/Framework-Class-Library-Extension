@@ -13,7 +13,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Aspects
 		[Flags]
 		public enum GenericProperties
 		{
-			Generic
+			Generic = 1
 		}
 
 

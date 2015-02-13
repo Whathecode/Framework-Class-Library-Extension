@@ -23,7 +23,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Attributes
 			[Flags]
 			public enum Property
 			{
-				RegexValidation
+				RegexValidation = 1
 			}
 
 
