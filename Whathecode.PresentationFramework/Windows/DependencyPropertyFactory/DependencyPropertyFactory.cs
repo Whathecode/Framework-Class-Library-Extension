@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -256,13 +258,23 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			// Set dependency property parameters.
 			Type propertyType = property.PropertyType;
 			MethodInfo setMethod = property.GetSetMethod();
+			object defaultValue = attribute.DefaultValue ?? propertyType.CreateDefault();
+			if ( defaultValue != null && defaultValue.GetType() != propertyType )
+			{
+				TypeConverter converter = TypeDescriptor.GetConverter( propertyType );
+				if ( converter.CanConvertFrom( defaultValue.GetType() ) )
+				{
+					var context = new TypeDescriptorContext( propertyType );
+					defaultValue = converter.ConvertFrom( context, CultureInfo.CurrentCulture, defaultValue );
+				}
+			}
 			var dependencyPropertyInfo = new DependencyPropertyInfo
 			{
 				IsAttached = false,
 				Name = attribute.Name ?? property.Name,
 				Type = propertyType,
 				// When no default value is set, use the default value.
-				DefaultValue = attribute.DefaultValue ?? propertyType.CreateDefault(),
+				DefaultValue = defaultValue,
 				// By default, readonly when setter is private.
 				ReadOnly = attribute.IsReadOnlySet() ? attribute.IsReadOnly() : (setMethod == null || setMethod.IsPrivate),
 				Id = (T)attribute.GetId()
