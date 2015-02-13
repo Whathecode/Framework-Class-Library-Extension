@@ -31,7 +31,7 @@ namespace Whathecode.System.Xaml
 		[Flags]
 		enum Properties
 		{
-			Observers
+			Observers = 1
 		}
 
 

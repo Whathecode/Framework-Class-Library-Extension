@@ -14,7 +14,7 @@ namespace Whathecode.System.Xaml
 	{
 		enum Properties
 		{
-			Path,
+			Path = 1,
 			Observer
 		}
 

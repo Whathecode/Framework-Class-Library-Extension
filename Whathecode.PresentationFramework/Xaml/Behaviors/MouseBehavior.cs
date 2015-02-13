@@ -78,7 +78,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		[Flags]
 		public enum Properties
 		{
-			LeftMouseUpCommand,
+			LeftMouseUpCommand = 1,
 			LeftMouseUpCommandParameter,
 			RightMouseUpCommand,
 			RightMouseUpCommandParameter,

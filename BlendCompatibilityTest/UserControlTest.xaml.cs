@@ -14,7 +14,7 @@ namespace BlendCompatibilityTest
 		[Flags]
 		public enum Properties
 		{
-			FactoryProperty
+			FactoryProperty = 1
 		}
 
 
