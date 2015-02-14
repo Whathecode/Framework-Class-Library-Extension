@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 
 namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes
@@ -21,7 +22,8 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes
 		public string Name { get; set; }
 
 		/// <summary>
-		///   The default value for the dependency property. Should be of the same type as the property.
+		///   The default value for the dependency property.
+		///   Should be of the same type as the property, or be convertable from a string using a <see cref="TypeConverter" />.
 		/// </summary>
 		public object DefaultValue { get; set; }
 

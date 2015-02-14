@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using Whathecode.System.Algorithm;
 using Whathecode.System.Extensions;
 using Whathecode.System.Operators;
@@ -716,6 +718,51 @@ namespace Whathecode.System.Arithmetic.Range
 			output += Start + ", " + End;
 			output += IsEndIncluded ? "]" : "[";
 			return output;
+		}
+
+		public static Interval<T, TSize> Parse( string interval )
+		{
+			var exception =
+				new ArgumentException( "Incorrectly formatted string, expecting an interval in the format of e.g. \"[0, 1]\".", "interval" );
+
+			// Get groups from formatted interval: e.g. [0, 10] or ]0,0[
+			Match match = Regex.Match( interval, @"^([\[\]])(.+)\s*,\s*(.+)([\[\]])$" );
+			if ( match.Groups.Count != 5 )
+			{
+				throw exception;
+			}
+
+			// Parse retrieved groups.
+			bool isStartIncluded, isEndIncluded;
+			T start, end;
+			try
+			{
+				isStartIncluded = ParseIncluded( match.Groups[ 1 ].Value );
+				var converter = TypeDescriptor.GetConverter( typeof( T ) );
+				start = (T)converter.ConvertFrom( match.Groups[ 2 ].Value );
+				end = (T)converter.ConvertFrom( match.Groups[ 3 ].Value );
+				isEndIncluded = ParseIncluded( match.Groups[ 4 ].Value );
+			}
+			catch ( ArgumentException )
+			{
+				throw exception;
+			}
+
+			return new Interval<T, TSize>( start, isStartIncluded, end, isEndIncluded );
+		}
+
+		static bool ParseIncluded( string input )
+		{
+			char bracket = input[ 0 ];
+			switch ( bracket )
+			{
+				case '[':
+					return true;
+				case ']':
+					return false;
+				default:
+					throw new ArgumentException( "Expecting '[' or ']' to specify interval boundaries.", "input" );
+			}
 		}
 	}
 }
