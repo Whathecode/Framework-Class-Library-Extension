@@ -23,7 +23,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 	/// </summary>
 	/// <typeparam name = "T">A flags enum used to identify the dependency properties.</typeparam>
 	/// <author>Steven Jeuris</author>
-	public class DependencyPropertyFactory<T> : AbstractEnumSpecifiedFactory<T>
+	public partial class DependencyPropertyFactory<T> : AbstractEnumSpecifiedFactory<T>
 	{
 		class DependencyPropertyInfo
 		{

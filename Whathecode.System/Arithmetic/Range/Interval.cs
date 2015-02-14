@@ -155,6 +155,7 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <typeparam name = "TSize">The type used to specify distances in between two values of <see cref="T" />.</typeparam>
 	/// <author>Steven Jeuris</author>
 	[DataContract]
+	[TypeConverter( typeof( IntervalTypeConverter ) )]
 	public class Interval<T, TSize>
 		where T : IComparable<T>
 	{
