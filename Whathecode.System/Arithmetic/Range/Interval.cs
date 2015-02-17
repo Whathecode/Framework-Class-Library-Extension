@@ -141,6 +141,14 @@ namespace Whathecode.System.Arithmetic.Range
 			return new Interval<T>( base.Scale( scale, aroundPercentage ) );
 		}
 
+		/// <summary>
+		///   Returns a reversed version of the current interval, swapping the start position with the end position.
+		/// </summary>
+		public new Interval<T> Reverse()
+		{
+			return new Interval<T>( base.Reverse() );
+		}
+
 		public new object Clone()
 		{
 			return new Interval<T>( Start, IsStartIncluded, End, IsEndIncluded );
@@ -182,33 +190,34 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <summary>
 		///   The start of the interval.
 		/// </summary>
-		public T Start { get { return _start; } }
+		public T Start { get { return IsReversed ? _end : _start; } }
 
 		[DataMember]
 		readonly T _end;
 		/// <summary>
 		///   The end of the interval.
 		/// </summary>
-		public T End { get { return _end; } }
+		public T End { get { return IsReversed ? _start : _end; } }
 
 		[DataMember]
 		readonly bool _isStartIncluded;
 		/// <summary>
 		///   Is the value at the start of the interval included in the interval.
 		/// </summary>
-		public bool IsStartIncluded { get { return _isStartIncluded; } }
+		public bool IsStartIncluded { get { return IsReversed ? _isEndIncluded : _isStartIncluded; } }
 
 		[DataMember]
 		readonly bool _isEndIncluded;
 		/// <summary>
 		///   Is the value at the end of the interval included in the interval.
 		/// </summary>
-		public bool IsEndIncluded { get { return _isEndIncluded; } }
+		public bool IsEndIncluded { get { return IsReversed ? _isStartIncluded : _isEndIncluded; } }
 
 		/// <summary>
 		///   Determines whether the start of the interval lies before or after the end of the interval. true when before, false when behind.
 		/// </summary>
-		public bool IsReversed { get { return _start.CompareTo( _end ) > 0; } }
+		[DataMember]
+		public bool IsReversed { get; private set; }
 
 		/// <summary>
 		///   Get the value in the center of the interval. Rounded to the nearest correct value.
@@ -225,9 +234,7 @@ namespace Whathecode.System.Arithmetic.Range
 		{
 			get
 			{
-				return IsReversed
-					? Operator<T, TSize>.Subtract( Start, End )
-					: Operator<T, TSize>.Subtract( End, Start );
+				return Operator<T, TSize>.Subtract( _end, _start );
 			}
 		}
 
@@ -273,10 +280,13 @@ namespace Whathecode.System.Arithmetic.Range
 				end.CompareTo( start ) != 0 || (end.CompareTo( start ) == 0 && isStartIncluded && isEndIncluded),
 				"Invalid interval arguments. e.g. ]0, 0]" );
 
-			_start = start;
-			_isStartIncluded = isStartIncluded;
-			_end = end;
-			_isEndIncluded = isEndIncluded;
+			IsReversed = start.CompareTo( end ) > 0;
+
+			// Internally always assume non-inversed intervals.
+			_start = IsReversed ? end : start;
+			_isStartIncluded = IsReversed ? isEndIncluded : isStartIncluded;
+			_end = IsReversed ? start : end;
+			_isEndIncluded = IsReversed ? isStartIncluded : isEndIncluded;
 		}
 
 
@@ -317,15 +327,14 @@ namespace Whathecode.System.Arithmetic.Range
 		{			
 			// Use double math for the calculation, and then cast to the desired type.
 			double value = percentage * Convert( Size );
-			double addition = value * (IsReversed ? -1 : 1); // Subtraction is required for a reversed interval.
 
 			// Ensure nearest neighbour rounding for integral types.
 			if ( IsIntegralType )
 			{
-				addition = Math.Round( addition );
+				value = Math.Round( value );
 			}
 
-			return Operator<T, TSize>.AddSize( Start, Convert( addition ) );
+			return Operator<T, TSize>.AddSize( _start, Convert( value ) );
 		}
 
 		/// <summary>
@@ -393,11 +402,11 @@ namespace Whathecode.System.Arithmetic.Range
 		[Pure]
 		public bool LiesInInterval( T value )
 		{
-			int startCompare = value.CompareTo( Start );
-			int endCompare = value.CompareTo( End );
+			int startCompare = value.CompareTo( _start );
+			int endCompare = value.CompareTo( _end );
 
-			return (startCompare > 0 || (startCompare == 0 && IsStartIncluded))
-				&& (endCompare < 0 || (endCompare == 0 && IsEndIncluded));
+			return (startCompare > 0 || (startCompare == 0 && _isStartIncluded))
+				&& (endCompare < 0 || (endCompare == 0 && _isEndIncluded));
 		}
 
 		/// <summary>
@@ -407,11 +416,11 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>True when the intervals intersect, false otherwise.</returns>
 		public bool Intersects( Interval<T, TSize> interval )
 		{
-			int rightOfCompare = interval.Start.CompareTo( End );
-			int leftOfCompare = interval.End.CompareTo( Start );
+			int rightOfCompare = interval._start.CompareTo( _end );
+			int leftOfCompare = interval._end.CompareTo( _start );
 
-			bool liesRightOf = rightOfCompare > 0 || (rightOfCompare == 0 && !(interval.IsStartIncluded && IsEndIncluded));
-			bool liesLeftOf = leftOfCompare < 0 || (leftOfCompare == 0 && !(interval.IsEndIncluded && IsStartIncluded));
+			bool liesRightOf = rightOfCompare > 0 || (rightOfCompare == 0 && !(interval._isStartIncluded && _isEndIncluded));
+			bool liesLeftOf = leftOfCompare < 0 || (leftOfCompare == 0 && !(interval._isEndIncluded && _isStartIncluded));
 
 			return !(liesRightOf || liesLeftOf);
 		}
@@ -424,13 +433,10 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The value limited to the range.</returns>
 		public T Clamp( T value )
 		{
-			T smallest = IsReversed ? End : Start;
-			T biggest = IsReversed ? Start : End;
-
-			return value.CompareTo( smallest ) < 0
-				? smallest
-				: value.CompareTo( biggest ) > 0
-					? biggest
+			return value.CompareTo( _start ) < 0
+				? _start
+				: value.CompareTo( _end ) > 0
+					? _end
 					: value;
 		}
 
@@ -448,17 +454,15 @@ namespace Whathecode.System.Arithmetic.Range
 				return Empty;
 			}
 
-			T smallest = IsReversed ? End : Start;
-			T biggest = IsReversed ? Start : End;
-			T clampSmallest = range.IsReversed ? range.End : range.Start;
-			T clampBiggest = range.IsReversed ? range.Start : range.End;
-			bool thisIsSmaller = smallest.CompareTo( clampSmallest ) <= 0;
-			bool thisIsBigger = biggest.CompareTo( clampBiggest ) >= 0;
-			return new Interval<T, TSize>(
-				thisIsSmaller ? clampSmallest : smallest,
-				thisIsSmaller ? intersection.IsStartIncluded : IsStartIncluded,
-				thisIsBigger ? clampBiggest : biggest,
-				thisIsBigger ? intersection.IsEndIncluded : IsEndIncluded );
+			bool thisIsSmaller = _start.CompareTo( range._start ) <= 0;
+			bool thisIsBigger = _end.CompareTo( range._end ) >= 0;
+			var clamped = new Interval<T, TSize>(
+				thisIsSmaller ? range._start : _start,
+				thisIsSmaller ? intersection._isStartIncluded : _isStartIncluded,
+				thisIsBigger ? range._end : _end,
+				thisIsBigger ? intersection._isEndIncluded : _isEndIncluded );
+
+			return IsReversed ? clamped.Reverse() : clamped;
 		}
 
 		/// <summary>
@@ -470,7 +474,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "after">The interval in which to store the part after the point, if any, null otherwise.</param>
 		public void Split( T atPoint, SplitOption option, out Interval<T, TSize> before, out Interval<T, TSize> after )
 		{
-			if ( atPoint.CompareTo( Start ) < 0 || atPoint.CompareTo( End ) > 0 )
+			if ( atPoint.CompareTo( _start ) < 0 || atPoint.CompareTo( _end ) > 0 )
 			{
 				throw new ArgumentException(
 					"The point specifying where to split the interval does not lie within the interval range.", "atPoint" );
@@ -478,10 +482,10 @@ namespace Whathecode.System.Arithmetic.Range
 
 			// Part before.
 			bool includeInLeft = option.EqualsAny( SplitOption.Left, SplitOption.Both );
-			if ( atPoint.CompareTo( Start ) != 0 || includeInLeft )
+			if ( atPoint.CompareTo( _start ) != 0 || includeInLeft )
 			{
 				before = new Interval<T, TSize>(
-					Start, IsStartIncluded,
+					_start, _isStartIncluded,
 					atPoint,
 					includeInLeft );
 			}
@@ -492,12 +496,12 @@ namespace Whathecode.System.Arithmetic.Range
 
 			// Part after.
 			bool includeInRight = option.EqualsAny( SplitOption.Right, SplitOption.Both );
-			if ( atPoint.CompareTo( End ) != 0 || includeInRight )
+			if ( atPoint.CompareTo( _end ) != 0 || includeInRight )
 			{
 				after = new Interval<T, TSize>(
 					atPoint,
 					includeInRight,
-					End, IsEndIncluded );
+					_end, _isEndIncluded );
 			}
 			else
 			{
@@ -521,26 +525,26 @@ namespace Whathecode.System.Arithmetic.Range
 			}
 			else
 			{
-				bool startInInterval = LiesInInterval( subtract.Start );
-				bool endInInterval = LiesInInterval( subtract.End );
+				bool startInInterval = LiesInInterval( subtract._start );
+				bool endInInterval = LiesInInterval( subtract._end );
 
 				// Add remaining section at the start.   
 				if ( startInInterval )
 				{
-					int startCompare = subtract.Start.CompareTo( Start );
-					if ( startCompare > 0 || (startCompare == 0 && IsStartIncluded && !subtract.IsStartIncluded) )
+					int startCompare = subtract._start.CompareTo( _start );
+					if ( startCompare > 0 || (startCompare == 0 && _isStartIncluded && !subtract._isStartIncluded) )
 					{
-						result.Add( new Interval<T, TSize>( Start, IsStartIncluded, subtract.Start, !subtract.IsStartIncluded ) );
+						result.Add( new Interval<T, TSize>( _start, _isStartIncluded, subtract._start, !subtract._isStartIncluded ) );
 					}
 				}
 
 				// Add remaining section at the back.
 				if ( endInInterval )
 				{
-					int endCompare = subtract.End.CompareTo( End );
-					if ( endCompare < 0 || (endCompare == 0 && IsEndIncluded && !subtract.IsEndIncluded) )
+					int endCompare = subtract._end.CompareTo( _end );
+					if ( endCompare < 0 || (endCompare == 0 && _isEndIncluded && !subtract._isEndIncluded) )
 					{
-						result.Add( new Interval<T, TSize>( subtract.End, !subtract.IsEndIncluded, End, IsEndIncluded ) );
+						result.Add( new Interval<T, TSize>( subtract._end, !subtract._isEndIncluded, _end, _isEndIncluded ) );
 					}
 				}
 			}
@@ -560,23 +564,25 @@ namespace Whathecode.System.Arithmetic.Range
 				return null;
 			}
 
-			int startCompare = Start.CompareTo( interval.Start );
-			int endCompare = End.CompareTo( interval.End );
+			int startCompare = _start.CompareTo( interval._start );
+			int endCompare = _end.CompareTo( interval._end );
 
-			return new Interval<T, TSize>(
-				startCompare > 0 ? Start : interval.Start,
+			var intersection = new Interval<T, TSize>(
+				startCompare > 0 ? _start : interval._start,
 				startCompare == 0
-					? IsStartIncluded && interval.IsStartIncluded // On matching boundary, only include when they both include the boundary.
+					? _isStartIncluded && interval._isStartIncluded // On matching boundary, only include when they both include the boundary.
 					: startCompare > 0
-						? IsStartIncluded
-						: interval.IsStartIncluded, // Otherwise, use the corresponding boundary.
-				endCompare < 0 ? End : interval.End,
+						? _isStartIncluded
+						: interval._isStartIncluded, // Otherwise, use the corresponding boundary.
+				endCompare < 0 ? _end : interval._end,
 				endCompare == 0
-					? IsEndIncluded && interval.IsEndIncluded
+					? _isEndIncluded && interval._isEndIncluded
 					: endCompare < 0
-						? IsEndIncluded
-						: interval.IsEndIncluded
+						? _isEndIncluded
+						: interval._isEndIncluded
 				);
+
+			return IsReversed ? intersection.Reverse() : intersection;
 		}
 
 		public override bool Equals( object obj )
@@ -588,10 +594,11 @@ namespace Whathecode.System.Arithmetic.Range
 				return false;
 			}
 
-			return IsStartIncluded == interval.IsStartIncluded
-				&& IsEndIncluded == interval.IsEndIncluded
-				&& Start.CompareTo( interval.Start ) == 0
-				&& End.CompareTo( interval.End ) == 0;
+			return _isStartIncluded == interval._isStartIncluded
+				&& _isEndIncluded == interval._isEndIncluded
+				&& _start.CompareTo( interval._start ) == 0
+				&& _end.CompareTo( interval._end ) == 0
+				&& IsReversed == interval.IsReversed;
 		}
 
 		public override int GetHashCode()
@@ -599,10 +606,11 @@ namespace Whathecode.System.Arithmetic.Range
 			unchecked
 			{
 				int hash = 17;
-				hash = hash * 23 + Start.GetHashCode();
-				hash = hash * 23 + End.GetHashCode();
-				hash = hash * 23 + IsStartIncluded.GetHashCode();
-				hash = hash * 23 + IsEndIncluded.GetHashCode();
+				hash = hash * 23 + _start.GetHashCode();
+				hash = hash * 23 + _end.GetHashCode();
+				hash = hash * 23 + _isStartIncluded.GetHashCode();
+				hash = hash * 23 + _isEndIncluded.GetHashCode();
+				hash = hash * 23 + IsReversed.GetHashCode();
 				return hash;
 			}
 		}
@@ -650,14 +658,14 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name = "include">Include the value to which is expanded in the interval.</param>
 		public Interval<T, TSize> ExpandTo( T value, bool include )
 		{
-			T start = Start;
-			T end = End;
-			bool isStartIncluded = IsStartIncluded;
-			bool isEndIncluded = IsEndIncluded;
+			T start = _start;
+			T end = _end;
+			bool isStartIncluded = _isStartIncluded;
+			bool isEndIncluded = _isEndIncluded;
 
 			// Modify interval when needed.
-			int startCompare = value.CompareTo( Start );
-			int endCompare = value.CompareTo( End );
+			int startCompare = value.CompareTo( _start );
+			int endCompare = value.CompareTo( _end );
 			if ( startCompare <= 0 )
 			{
 				start = value;
@@ -699,10 +707,20 @@ namespace Whathecode.System.Arithmetic.Range
 			TSize sizeDiff = Operator<TSize>.Subtract( Size, scaledSize ); // > 0 larger, < 0 smaller
 			TSize startAddition = Convert( Convert( sizeDiff ) * aroundPercentage );
 			TSize endSubtraction = Operator<TSize>.Subtract( sizeDiff, startAddition );
-			T start = Operator<T, TSize>.AddSize( Start, startAddition );
-			T end = Operator<T, TSize>.SubtractSize( End, endSubtraction );
+			T start = Operator<T, TSize>.AddSize( _start, startAddition );
+			T end = Operator<T, TSize>.SubtractSize( _end, endSubtraction );
 
-			return new Interval<T, TSize>( start, IsStartIncluded, end, IsEndIncluded );
+			var scaled = new Interval<T, TSize>( start, _isStartIncluded, end, _isEndIncluded );
+
+			return IsReversed ? scaled.Reverse() : scaled;
+		}
+
+		/// <summary>
+		///   Returns a reversed version of the current interval, swapping the start position with the end position.
+		/// </summary>
+		public Interval<T, TSize> Reverse()
+		{
+			return new Interval<T, TSize>( End, IsEndIncluded, Start, IsStartIncluded );
 		}
 
 		#endregion  // Modifiers

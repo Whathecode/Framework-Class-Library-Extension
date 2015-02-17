@@ -330,6 +330,9 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 				StartDate + TimeSpan.FromDays( 20 ),
 				StartDate + TimeSpan.FromDays( 100 )
 				);
+
+			// Reversed interval.
+			IntersectsTestHelper<int, int>( 100, 20, 10, 5, 0 );
 		}
 
 		/// <summary>
@@ -438,6 +441,9 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			ClampIntervalTestHelper( 0, false, 10, false, 0, true, 10, true, new Interval<int, int>( 0, false, 10, false ) );
 			ClampIntervalTestHelper( 0, true, 10, true, 0, false, 10, false, new Interval<int, int>( 0, false, 10, false ) );
 			ClampIntervalTestHelper( 0, false, 10, true, -10, true, 20, true, new Interval<int, int>( 0, false, 10, true ) );
+
+			// Reversed interval.
+			ClampIntervalTestHelper( 10, true, -10, true, 1, true, 8, true, new Interval<int, int>( 9, 1 ) );
 
 			// Types.
 			DateTime halfWay = StartDate + TimeSpan.FromTicks( TimeDifference.Ticks / 2 );
@@ -624,6 +630,9 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			IntersectionTestHelper( 0, false, 10, false, 1, false, 8, false, new Interval<int, int>( 1, false, 9, false ) );
 			IntersectionTestHelper( 0, false, 10, false, 0, true, 5, true, new Interval<int, int>( 0, false, 5, true ) );
 			IntersectionTestHelper( 0, true, 10, false, 10, false, 10, true, null );
+
+			// Inverted interval.
+			IntersectionTestHelper( 10, true, -10, true, 1, true, 8, true, new Interval<int, int>( 9, 1 ) );
 
 			// Types.
 			IntersectionTestHelper(

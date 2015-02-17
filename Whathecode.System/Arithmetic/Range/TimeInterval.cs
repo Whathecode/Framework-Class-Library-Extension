@@ -140,6 +140,14 @@ namespace Whathecode.System.Arithmetic.Range
 			return new TimeInterval( base.Scale( scale, aroundPercentage ) );
 		}
 
+		/// <summary>
+		///   Returns a reversed version of the current interval, swapping the start date with the end date.
+		/// </summary>
+		public new TimeInterval Reverse()
+		{
+			return new TimeInterval( base.Reverse() );
+		}
+
 		public new object Clone()
 		{
 			return new TimeInterval( Start, IsStartIncluded, End, IsEndIncluded );
