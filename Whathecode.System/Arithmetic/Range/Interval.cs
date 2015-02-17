@@ -738,11 +738,11 @@ namespace Whathecode.System.Arithmetic.Range
 			T start, end;
 			try
 			{
-				isStartIncluded = ParseIncluded( match.Groups[ 1 ].Value );
+				isStartIncluded = ParseIncluded( match.Groups[ 1 ].Value, true );
 				var converter = TypeDescriptor.GetConverter( typeof( T ) );
 				start = (T)converter.ConvertFrom( match.Groups[ 2 ].Value );
 				end = (T)converter.ConvertFrom( match.Groups[ 3 ].Value );
-				isEndIncluded = ParseIncluded( match.Groups[ 4 ].Value );
+				isEndIncluded = ParseIncluded( match.Groups[ 4 ].Value, false );
 			}
 			catch ( ArgumentException )
 			{
@@ -752,15 +752,15 @@ namespace Whathecode.System.Arithmetic.Range
 			return new Interval<T, TSize>( start, isStartIncluded, end, isEndIncluded );
 		}
 
-		static bool ParseIncluded( string input )
+		static bool ParseIncluded( string input, bool isStart )
 		{
 			char bracket = input[ 0 ];
 			switch ( bracket )
 			{
 				case '[':
-					return true;
+					return isStart;
 				case ']':
-					return false;
+					return !isStart;
 				default:
 					throw new ArgumentException( "Expecting '[' or ']' to specify interval boundaries.", "input" );
 			}
