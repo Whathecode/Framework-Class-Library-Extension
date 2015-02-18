@@ -31,14 +31,22 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 		[NonSerialized]
 		object _instance;
 
+		/// <summary>
+		///   Keep track of separate factories per type in order to support generic controls.
+		/// </summary>
 		[NonSerialized]
-		static DependencyPropertyFactory<T> _propertyFactory;
+		static readonly Dictionary<Type, DependencyPropertyFactory<T>> PropertyFactories = new Dictionary<Type, DependencyPropertyFactory<T>>();
 
 		[IntroduceMember( Visibility = Visibility.Private )]
 		public DependencyPropertyFactory<T> PropertyFactory
 		{
-			get { return _propertyFactory; }
-			private set { _propertyFactory = value; }
+			get
+			{
+				DependencyPropertyFactory<T> factory;
+				PropertyFactories.TryGetValue( _instance.GetType(), out factory );
+				return factory;
+			}
+			private set { PropertyFactories[ _instance.GetType() ] = value; }
 		}
 
 		readonly List<DependencyPropertyAspect<T>> _propertyAspects = new List<DependencyPropertyAspect<T>>();
@@ -78,9 +86,9 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 			}
 		}
 
-		public static DependencyProperty GetDependencyProperty( T property )
+		public DependencyProperty GetDependencyProperty( T property )
 		{
-			return _propertyFactory[ property ];
+			return PropertyFactories[ GetType() ][ property ];
 		}
 	}
 }
