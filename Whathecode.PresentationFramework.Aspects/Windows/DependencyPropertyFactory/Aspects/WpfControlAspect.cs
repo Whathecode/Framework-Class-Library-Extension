@@ -86,9 +86,9 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 			}
 		}
 
-		public DependencyProperty GetDependencyProperty( T property )
+		public static DependencyProperty GetDependencyProperty( Type type, T property )
 		{
-			return PropertyFactories[ GetType() ][ property ];
+			return PropertyFactories[ type ][ property ];
 		}
 	}
 }
