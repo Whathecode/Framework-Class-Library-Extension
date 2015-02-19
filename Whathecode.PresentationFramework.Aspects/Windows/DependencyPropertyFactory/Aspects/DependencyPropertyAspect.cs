@@ -11,18 +11,12 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 	///   It creates the correct calls to the dependency property factory.
 	/// </summary>
 	[Serializable]
-	public class DependencyPropertyAspect<T> : ILocationInterceptionAspect
+	public class DependencyPropertyAspect<T> : IInstanceScopedAspect, ILocationInterceptionAspect
 	{
 		readonly T _property;
 
 		[NonSerialized]
-		DependencyPropertyFactory<T> _factory;
-
-		public DependencyPropertyFactory<T> Factory
-		{
-			get { return _factory; }
-			set { _factory = value; }
-		}
+		object _instance;
 
 
 		public DependencyPropertyAspect( T property )
@@ -31,16 +25,31 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 		}
 
 
+		public object CreateInstance( AdviceArgs adviceArgs )
+		{
+			var newAspect = (DependencyPropertyAspect<T>)MemberwiseClone();
+			newAspect._instance = adviceArgs.Instance;
+
+			return newAspect;
+		}
+
+		public void RuntimeInitializeInstance()
+		{
+			// Nothing to do.
+		}
+
 		public void RuntimeInitialize( LocationInfo locationInfo ) {}
 
 		public void OnGetValue( LocationInterceptionArgs args )
 		{
-			args.Value = Factory.GetValue( args.Instance as DependencyObject, _property );
+			DependencyPropertyFactory<T> factory = WpfControlAspect<T>.PropertyFactories[ _instance.GetType() ];
+			args.Value = factory.GetValue( args.Instance as DependencyObject, _property );
 		}
 
 		public void OnSetValue( LocationInterceptionArgs args )
 		{
-			Factory.SetValue( args.Instance as DependencyObject, _property, args.Value );
+			DependencyPropertyFactory<T> factory = WpfControlAspect<T>.PropertyFactories[ _instance.GetType() ];
+			factory.SetValue( args.Instance as DependencyObject, _property, args.Value );
 		}
 	}
 }

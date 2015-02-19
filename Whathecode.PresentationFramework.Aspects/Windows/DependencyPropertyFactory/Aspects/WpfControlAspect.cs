@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using PostSharp.Aspects;
@@ -35,7 +36,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 		///   Keep track of separate factories per type in order to support generic controls.
 		/// </summary>
 		[NonSerialized]
-		static readonly Dictionary<Type, DependencyPropertyFactory<T>> PropertyFactories = new Dictionary<Type, DependencyPropertyFactory<T>>();
+		internal static readonly Dictionary<Type, DependencyPropertyFactory<T>> PropertyFactories = new Dictionary<Type, DependencyPropertyFactory<T>>();
 
 		[IntroduceMember( Visibility = Visibility.Private )]
 		public DependencyPropertyFactory<T> PropertyFactory
@@ -48,8 +49,6 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 			}
 			private set { PropertyFactories[ _instance.GetType() ] = value; }
 		}
-
-		readonly List<DependencyPropertyAspect<T>> _propertyAspects = new List<DependencyPropertyAspect<T>>();
 
 
 		public object CreateInstance( AdviceArgs adviceArgs )
@@ -65,7 +64,6 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 			if ( PropertyFactory == null )
 			{
 				PropertyFactory = new ConcreteDependencyPropertyFactory( _instance.GetType() );
-				_propertyAspects.ForEach( p => p.Factory = PropertyFactory );
 			}
 		}
 
@@ -76,14 +74,9 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Aspects
 			Dictionary<MemberInfo, DependencyPropertyAttribute[]> attributedProperties
 				= targetType.GetAttributedMembers<DependencyPropertyAttribute>( MemberTypes.Property );
 
-			foreach ( var member in attributedProperties )
-			{
-				var attribute = member.Value[ 0 ];
-				var propertyAspect = new DependencyPropertyAspect<T>( (T)attribute.GetId() );
-				_propertyAspects.Add( propertyAspect );
-
-				yield return new AspectInstance( member.Key, propertyAspect );
-			}
+			return from member in attributedProperties
+				   let attribute = member.Value[ 0 ] let propertyAspect = new DependencyPropertyAspect<T>( (T)attribute.GetId() )
+				   select new AspectInstance( member.Key, propertyAspect );
 		}
 
 		public static DependencyProperty GetDependencyProperty( Type type, T property )
