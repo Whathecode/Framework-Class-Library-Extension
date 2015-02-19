@@ -23,8 +23,8 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Attributes
 			public enum Property
 			{
 				StartRange = 1,
-				EndRange,
-				RangeCoercion
+				EndRange = 1 << 1,
+				RangeCoercion = 1 << 2
 			}
 
 

@@ -13,12 +13,12 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 		/// <summary>
 		///   This should become a read only property.
 		/// </summary>
-		ReadOnly,
+		ReadOnly = 1 << 1,
 		/// <summary>
 		///   This property should have callbacks assigned to it.
 		/// </summary>
-		Callback,
-		Minimum,
-		Maximum
+		Callback = 1 << 2,
+		Minimum = 1 << 3,
+		Maximum = 1 << 4
 	}
 }
