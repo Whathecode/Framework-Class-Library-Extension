@@ -1,5 +1,4 @@
-﻿using System;
-using Whathecode.System.Windows.DependencyPropertyFactory.Aspects;
+﻿using Whathecode.System.Windows.DependencyPropertyFactory.Aspects;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
 
 
@@ -11,10 +10,9 @@ namespace BlendCompatibilityTest
 	[WpfControl( typeof( Properties ) )]
 	public partial class AspectUserControlTest
 	{
-		[Flags]
 		public enum Properties
 		{
-			AspectProperty
+			AspectProperty = 1
 		}
 
 
