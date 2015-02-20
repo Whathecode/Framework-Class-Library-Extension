@@ -63,7 +63,9 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			// Test for expected start, end and size.
 			var empty = Interval<T, TSize>.Empty;
 			Assert.AreEqual( minValue, empty.Start );
+			Assert.IsFalse( empty.IsStartIncluded);
 			Assert.AreEqual( minValue, empty.End );
+			Assert.IsFalse( empty.IsEndIncluded);
 			Assert.AreEqual( size, empty.Size );
 
 			// Test that reference stays the same.
@@ -81,6 +83,12 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		{
 			IsReversedTestHelper( 0, 10 );
 			IsReversedTestHelper( DateTime.MinValue, TimeSpan.FromDays( 1 ) );
+
+			// Empty and single intervals.
+			var empty = Interval<double, double>.Empty;
+			Assert.IsFalse( empty.IsReversed );
+			var single = new Interval<double, double>( 0, 0 );
+			Assert.IsFalse( single.IsReversed );
 		}
 
 		static void IsReversedTestHelper<T, TSize>( T value, TSize addition )
@@ -104,6 +112,12 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			CenterTestHelper( 0, 5 );
 			CenterTestHelper( 0.0, 5.0 );
 			CenterTestHelper( DateTime.MinValue, TimeSpan.FromDays( 1 ) );
+
+			// Single value.
+			CenterTestHelper( 0, 0 );
+
+			// Reversed.
+			CenterTestHelper( 0, -10 );
 		}
 
 		static void CenterTestHelper<T, TSize>( T start, TSize addition )
@@ -127,6 +141,12 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			SizeTestHelper( 0, 10, 10 );
 			SizeTestHelper( 5, 10, 5 );
 			SizeTestHelper( StartDate, EndDate, TimeDifference );
+
+			// Single value.
+			SizeTestHelper( 0, 0, 0 );
+
+			// Reversed.
+			SizeTestHelper( 10, 5, 5 );
 		}
 
 		public void SizeTestHelper<T, TSize>( T start, T end, TSize size )
@@ -146,6 +166,19 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		{
 			GetValueAtTestHelper( 0, 10, 100, 0.1 );
 			GetValueAtTestHelper( StartDate, TimeSpan.FromHours( 1 ), EndDate, 1.0 / 24 );
+
+			// Single value.
+			GetValueAtTestHelper( 0, 0, 0, 0.3 );
+
+			// Reversed.
+			GetValueAtTestHelper( 10, -5, 0, 0.5 );
+
+			// Outside of interval.
+			var interval = new Interval<double, double>( 0, 100 );
+			double outsideRight = interval.GetValueAt( 1.5 );
+			Assert.AreEqual( 150, outsideRight );
+			double outsideLeft = interval.GetValueAt( -0.5 );
+			Assert.AreEqual( -50, outsideLeft );
 		}
 
 		public void GetValueAtTestHelper<T, TSize>( T start, TSize addition, T end, double percentage )
@@ -176,11 +209,10 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			var aMinusB = SubtractSize( a, b );
 			var aPlusB = AddSize( a, b );
 
-			// Single range.
+			// Single value.
 			var single = new Interval<T, TSize>( a, a );
 			Assert.AreEqual( 1.0, single.GetPercentageFor( a ) );
-			Assert.AreEqual( 0.0, single.GetPercentageFor( aMinusB ) );
-
+			Assert.AreEqual( -1.0, single.GetPercentageFor( aMinusB ) );
 
 			// Normal ranges. ( start < end )
 			var right = new Interval<T, TSize>( a, aPlusB );
@@ -191,7 +223,6 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			var reversedRight = new Interval<T, TSize>( aPlusB, a );
 			var reversedLeft = new Interval<T, TSize>( a, aMinusB );
 			var reversedBig = new Interval<T, TSize>( aPlusB, aMinusB );
-
 
 			// Should lie at start.
 			Assert.AreEqual( 0.0, right.GetPercentageFor( a ) );
@@ -249,6 +280,11 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			MapHelper( 10, -10, 0.0, 10.0, 5, 5 ); // Reversed ranges.
 			MapHelper( 0, 10, 100.0, -100.0, 5, 50 );
 			MapHelper( 0, 10, new DateTime( 2014, 12, 1 ), TimeSpan.FromDays( 1 ), 5, new DateTime( 2014, 12, 1, 12, 0, 0 ) );
+
+			// Single value.
+			MapHelper( 0, 0, 0, 10, 0, 10 );
+			MapHelper( 0, 10, 0, 0, 5, 0 );
+			MapHelper( 0, 0, 0, 10, -50, -10 ); // -1.0 for empty intervals when not in range.
 		}
 
 		// ReSharper disable UnusedParameter.Local
@@ -283,6 +319,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			LiesInIntervalTestHelper( 0, 10, 5, 11 );
 			LiesInIntervalTestHelper( 0.5, 10.0, 5, 12 );
 			LiesInIntervalTestHelper( StartDate, TimeSpan.FromDays( 1 ), StartDate + TimeSpan.FromHours( 1 ), StartDate - TimeSpan.FromHours( 1 ) );
+			LiesInIntervalTestHelper( 5, -10, 0, -6 ); // Reversed.
 
 			// Border of the interval.
 			var border = new Interval<int, int>( 0, true, 10, false );
@@ -333,6 +370,15 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 
 			// Reversed interval.
 			IntersectsTestHelper<int, int>( 100, 20, 10, 5, 0 );
+
+			// Single value.
+			var single = new Interval<double, double>( 0, true, 0, true );
+			Assert.IsTrue( single.Intersects( new Interval<double, double>( -10, true, 10, true ) ) );
+			Assert.IsFalse( single.Intersects( new Interval<double, double>( 0, false, 10, true ) ) );
+
+			// Empty. (Although interval is empty, the interval itself still intersects.)
+			Assert.IsTrue( Interval<double, double>.Empty.Intersects( new Interval<double, double>( -10, true, 10, true ) ) );
+			Assert.IsTrue( new Interval<double, double>( -10, true, 10, true ).Intersects( Interval<double, double>.Empty ) );
 		}
 
 		/// <summary>
@@ -445,6 +491,13 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			// Reversed interval.
 			ClampIntervalTestHelper( 10, true, -10, true, 1, true, 8, true, new Interval<int, int>( 9, 1 ) );
 
+			// Empty.
+			ClampIntervalTestHelper( -10, true, 10, true, 0, false, 0, false, Interval<int, int>.Empty );
+
+			// No intersection.
+			ClampIntervalTestHelper( 0, true, 10, true, 11, true, 20, true, Interval<int, int>.Empty );
+			ClampIntervalTestHelper( 0, true, 10, true, 10, false, 20, true, Interval<int, int>.Empty );
+
 			// Types.
 			DateTime halfWay = StartDate + TimeSpan.FromTicks( TimeDifference.Ticks / 2 );
 			ClampIntervalTestHelper(
@@ -484,6 +537,11 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			SplitTestHelper( 0, 10, 0, SplitOption.Both, new Interval<int, int>( 0, 0 ), new Interval<int, int>( 0, 10 ) );
 			SplitTestHelper( 0, 10, 0, SplitOption.Left, new Interval<int, int>( 0, 0 ), new Interval<int, int>( 0, false, 10, true ) );
 			SplitTestHelper( 0, 10, 0, SplitOption.Right, null, new Interval<int, int>( 0, true, 10, true ) );
+
+			// Reversed intervals.
+			SplitTestHelper( 10, -10, 5, SplitOption.Both, new Interval<int, int>( 10, 5 ), new Interval<int, int>( 5, 0 ) );
+			SplitTestHelper( 10, -10, 5, SplitOption.Left, new Interval<int, int>( 10, 5 ), new Interval<int, int>( 5, false, 0, true ) );
+			SplitTestHelper( 10, -10, 5, SplitOption.Right, new Interval<int, int>( 10, true, 5, false ), new Interval<int, int>( 5, 0 ) );
 
 			// Types.
 			DateTime halfWay = StartDate + TimeSpan.FromTicks( TimeDifference.Ticks / 2 );
@@ -527,6 +585,15 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 				StartDate + TimeSpan.FromDays( 10 ),
 				StartDate + TimeSpan.FromDays( 20 ),
 				StartDate + TimeSpan.FromDays( 100 ) );
+
+			// Reversed.
+			SubtractTestHelper<int, int>( 100, 20, 10, 5, 0 );
+
+			// Subtracting an empty interval does not change the original interval.
+			var interval = new Interval<int, int>( -10, 10 );
+			var result = interval.Subtract( Interval<int, int>.Empty );
+			Assert.AreEqual( 1, result.Count );
+			Assert.AreEqual( interval, result[ 0 ] );
 		}
 
 		/// <summary>
@@ -556,12 +623,15 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			Subtract( bcExcluded, cd, bcExcluded ); // Right.
 
 			// Entirely overlapping intervals.
-			Subtract( ab, ab, new List<Interval<T, TSize>>() ); // Identical. 
+			Subtract( ab, ab, new List<Interval<T, TSize>>() ); // Identical.
+			var bb = new Interval<T, TSize>( b, true, b, true );
+			var cc = new Interval<T, TSize>( c, true, c, true );
 			Subtract( bc, bcExcluded,
 				new List<Interval<T, TSize>>
 				{
-					new Interval<T, TSize>( b, true, b, true ),
-					new Interval<T, TSize>( c, true, c, true )
+					// Single intervals are not initialized as reversed, but reversion is maintained of the original interval.
+					bc.IsReversed ? bb.Reverse() : bb,
+					bc.IsReversed ? cc.Reverse() : cc
 				}
 				); // Identical except borders.           
 			Subtract( bc, ad, new List<Interval<T, TSize>>() ); // Inside.
@@ -634,6 +704,10 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			// Inverted interval.
 			IntersectionTestHelper( 10, true, -10, true, 1, true, 8, true, new Interval<int, int>( 9, 1 ) );
 
+			// Empty interval.
+			IntersectionTestHelper( -5, true, 10, true, 1, false, 0, false, new Interval<int, int>( 1, false, 1, false ) );
+			IntersectionTestHelper( -5, true, 10, true, 11, false, 0, false, null );
+
 			// Types.
 			IntersectionTestHelper(
 				new DateTime( 2014, 12, 1 ), true, TimeSpan.FromDays( 1 ), true,
@@ -663,21 +737,29 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		{
 			// Extend no change/left/right.
 			ExpandToTestHelper( 0, true, 10, true, 5, new Interval<int, int>( 0, 10 ) );
-			ExpandToTestHelper( 0, true, 10, true, 11, new Interval<int, int>( 0, 11 ) );
 			ExpandToTestHelper( 0, true, 10, true, -1, new Interval<int, int>( -1, 10 ) );
+			ExpandToTestHelper( 0, true, 10, true, 11, new Interval<int, int>( 0, 11 ) );
 
 			// Extend excluded intervals.
 			ExpandToTestHelper( 0, true, 10, false, 10, new Interval<int, int>( 0, 10 ) );
 			ExpandToTestHelper( 0, false, 10, true, 0, new Interval<int, int>( 0, 10 ) );
 
-			// Extend but don't exclude.
+			// Extend but don't include.
 			Interval<int, int> excluded = NewInterval( 0, 10, true, false );
 			Assert.AreEqual( new Interval<int, int>( 0, true, 20, false ), excluded.ExpandTo( 20, false ) );
 			Assert.AreEqual( excluded, excluded.ExpandTo( 10, false ) );
 
-			// Types.
+			// Different types.
 			DateTime extended = StartDate + TimeSpan.FromTicks( TimeDifference.Ticks * 2 );
 			ExpandToTestHelper( StartDate, true, TimeDifference, true, extended, new Interval<DateTime, TimeSpan>( StartDate, extended ) );
+
+			// Reversed interval.
+			ExpandToTestHelper( 10, true, -10, true, -1, new Interval<int, int>( 10, true, -1, true ) );
+			ExpandToTestHelper( 10, true, -10, true, 11, new Interval<int, int>( 11, true, 0, true ) );
+
+			// Empty.
+			ExpandToTestHelper( 0, false, 0, false, 0, new Interval<int, int>( 0, true, 0, true ) );
+			ExpandToTestHelper( 0, false, 0, false, 1, new Interval<int, int>( 0, false, 1, true ) );
 		}
 
 		static void ExpandToTestHelper<T, TSize>(
@@ -710,6 +792,9 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 
 			// Reversed intervals.
 			MoveTestHelper( 10, true, -10, true, 10, new Interval<int, int>( 20, 10 ) );
+
+			// Empty.
+			MoveTestHelper( 0, false, 0, false, 1, new Interval<int, int>( 1, false, 1, false ) );
 
 			// Types.
 			MoveTestHelper(
@@ -757,6 +842,13 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			ScaleTestHelper(
 				new DateTime( 2014, 12, 1 ), TimeSpan.FromDays( 1 ), 0.5, 0.5,
 				new Interval<DateTime,TimeSpan>( new DateTime( 2014, 12, 1, 6, 0, 0 ), new DateTime( 2014, 12, 1, 18, 0, 0 ) ) );
+
+			// Reversed intervals.
+			ScaleTestHelper( 100, -100, 0.5, 0.5, new Interval<int, int>( 75, 25 ) );
+
+			// Single value and empty intervals.
+			ScaleTestHelper( 0, 0, 2, 0, new Interval<int, int>( 0, 0 ) );
+			Assert.AreEqual( Interval<int, int>.Empty.Scale( 2, 0 ), Interval<int, int>.Empty );
 		}
 
 		static void ScaleTestHelper<T, TSize>( T start, TSize addition, double scale, double aroundPercentage, Interval<T, TSize> scaled )
@@ -767,6 +859,47 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 		}
 
 		#endregion // Scale Tests
+
+
+		#region Reverse Tests
+
+		[TestMethod]
+		public void ReverseTest()
+		{
+			ReverseTestHelper( 0, true, 100, false );
+			ReverseTestHelper( new DateTime( 2015, 1, 1 ), false, TimeSpan.FromDays( 1 ), true );
+
+			// Single value/empty interval.
+			ReverseTestHelper( 0, true, 0, false );
+			ReverseTestHelper( 0, false, 0, false );
+			ReverseTestHelper( 0, true, 0, true );
+		}
+
+		static void ReverseTestHelper<T, TSize>( T start, bool isStartIncluded, TSize addition, bool isEndIncluded )
+			where T : IComparable<T>
+		{
+			Interval<T, TSize> interval = NewInterval( start, addition, isStartIncluded, isEndIncluded );
+			T small = interval.Start;
+			T big = interval.End;
+			bool smallIncluded = interval.IsStartIncluded;
+			bool bigIncluded = interval.IsEndIncluded;
+
+			interval = interval.Reverse();
+			Assert.IsTrue( interval.IsReversed );
+			Assert.AreEqual( small, interval.End );
+			Assert.AreEqual( smallIncluded, interval.IsEndIncluded );
+			Assert.AreEqual( big, interval.Start );
+			Assert.AreEqual( bigIncluded, interval.IsStartIncluded );
+
+			interval = interval.Reverse();
+			Assert.IsFalse( interval.IsReversed );
+			Assert.AreEqual( small, interval.Start );
+			Assert.AreEqual( smallIncluded, interval.IsStartIncluded );
+			Assert.AreEqual( big, interval.End );
+			Assert.AreEqual( bigIncluded, interval.IsEndIncluded );
+		}
+
+		#endregion // Reverse Tests
 
 
 		static Interval<T, TSize> NewInterval<T, TSize>( T start, TSize addition, bool startIncluded = true, bool endIncluded = true )

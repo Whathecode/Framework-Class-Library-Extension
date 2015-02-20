@@ -318,7 +318,7 @@ namespace Whathecode.System.Arithmetic.Range
 		#region Get operations.
 
 		/// <summary>
-		///   Get the value at a given percentage within the interval, or on it's borders. Rounding to nearest occurs when needed.
+		///   Get the value at a given percentage within (0.0 - 1.0) or outside (&lt; 0.0, &gt; 1.0) of the interval. Rounding to nearest neighbour occurs when needed.
 		///   TODO: Would it be cleaner not to use a double for percentage, but a generic Percentage type?
 		/// </summary>
 		/// <param name = "percentage">The percentage in the range of which to return the value.</param>
@@ -338,7 +338,8 @@ namespace Whathecode.System.Arithmetic.Range
 		}
 
 		/// <summary>
-		///   Get a percentage how far inside (or outside) the interval a certain value lies.
+		///   Get a percentage how far inside (0.0 - 1.0) or outside (&lt; 0.0, &gt; 1.0) the interval a certain value lies.
+		///   For single intervals, '1.0' is returned when inside the interval, '-1.0' otherwise.
 		/// </summary>
 		/// <param name = "position">The position value to get the percentage for.</param>
 		/// <returns>The percentage indicating how far inside (or outside) the interval the given value lies.</returns>
@@ -349,7 +350,7 @@ namespace Whathecode.System.Arithmetic.Range
 			// When size is zero, return 1.0 when in interval.
 			if ( size == 0 )
 			{
-				return LiesInInterval( position ) ? 1.0 : 0.0;
+				return LiesInInterval( position ) ? 1.0 : -1.0;
 			}
 
 			var positionRange = new Interval<T, TSize>( Start, position );
@@ -484,8 +485,8 @@ namespace Whathecode.System.Arithmetic.Range
 			bool includeInLeft = option.EqualsAny( SplitOption.Left, SplitOption.Both );
 			if ( atPoint.CompareTo( _start ) != 0 || includeInLeft )
 			{
-				before = new Interval<T, TSize>(
-					_start, _isStartIncluded,
+				before = new Interval<T, TSize>( 
+					Start, IsStartIncluded,
 					atPoint,
 					includeInLeft );
 			}
@@ -498,10 +499,10 @@ namespace Whathecode.System.Arithmetic.Range
 			bool includeInRight = option.EqualsAny( SplitOption.Right, SplitOption.Both );
 			if ( atPoint.CompareTo( _end ) != 0 || includeInRight )
 			{
-				after = new Interval<T, TSize>(
+				after = new Interval<T, TSize>( 
 					atPoint,
 					includeInRight,
-					_end, _isEndIncluded );
+					End, IsEndIncluded );
 			}
 			else
 			{
@@ -516,6 +517,13 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The resulting intervals after subtraction.</returns>
 		public List<Interval<T, TSize>> Subtract( Interval<T, TSize> subtract )
 		{
+			// Subtracting empty intervals never changes the original interval.
+			double size = ConvertSizeToDouble( subtract.Size );
+			if ( size == 0 && !subtract._isStartIncluded && !subtract._isEndIncluded )
+			{
+				return new List<Interval<T, TSize>> { this };
+			}
+
 			var result = new List<Interval<T, TSize>>();
 
 			if ( !Intersects( subtract ) )
@@ -534,7 +542,12 @@ namespace Whathecode.System.Arithmetic.Range
 					int startCompare = subtract._start.CompareTo( _start );
 					if ( startCompare > 0 || (startCompare == 0 && _isStartIncluded && !subtract._isStartIncluded) )
 					{
-						result.Add( new Interval<T, TSize>( _start, _isStartIncluded, subtract._start, !subtract._isStartIncluded ) );
+						var start = new Interval<T, TSize>( _start, _isStartIncluded, subtract._start, !subtract._isStartIncluded );
+						if ( IsReversed )
+						{
+							start = start.Reverse();
+						}
+						result.Add( start );
 					}
 				}
 
@@ -544,11 +557,20 @@ namespace Whathecode.System.Arithmetic.Range
 					int endCompare = subtract._end.CompareTo( _end );
 					if ( endCompare < 0 || (endCompare == 0 && _isEndIncluded && !subtract._isEndIncluded) )
 					{
-						result.Add( new Interval<T, TSize>( subtract._end, !subtract._isEndIncluded, _end, _isEndIncluded ) );
+						var back = new Interval<T, TSize>( subtract._end, !subtract._isEndIncluded, _end, _isEndIncluded );
+						if ( IsReversed )
+						{
+							back = back.Reverse();
+						}
+						result.Add( back );
 					}
 				}
 			}
 
+			if ( IsReversed )
+			{
+				result.Reverse();
+			}
 			return result;
 		}
 
@@ -677,7 +699,8 @@ namespace Whathecode.System.Arithmetic.Range
 				isEndIncluded |= include;
 			}
 
-			return new Interval<T, TSize>( start, isStartIncluded, end, isEndIncluded );
+			var extended = new Interval<T, TSize>( start, isStartIncluded, end, isEndIncluded );
+			return IsReversed ? extended.Reverse() : extended;
 		}
 
 		/// <summary>
@@ -720,7 +743,10 @@ namespace Whathecode.System.Arithmetic.Range
 		/// </summary>
 		public Interval<T, TSize> Reverse()
 		{
-			return new Interval<T, TSize>( End, IsEndIncluded, Start, IsStartIncluded );
+			var interval = (Interval<T, TSize>)Clone();
+			interval.IsReversed = !IsReversed;
+
+			return interval;
 		}
 
 		#endregion  // Modifiers
@@ -728,7 +754,8 @@ namespace Whathecode.System.Arithmetic.Range
 
 		public object Clone()
 		{
-			return new Interval<T, TSize>( Start, IsStartIncluded, End, IsEndIncluded );
+			var interval = new Interval<T, TSize>( _start, _isStartIncluded, _end, _isEndIncluded ) { IsReversed = IsReversed };
+			return interval;
 		}
 
 		public override string ToString()
