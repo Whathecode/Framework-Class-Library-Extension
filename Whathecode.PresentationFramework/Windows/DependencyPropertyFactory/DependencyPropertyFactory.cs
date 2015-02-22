@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using Whathecode.System.Extensions;
 using Whathecode.System.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
@@ -108,19 +109,25 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 		protected DependencyPropertyFactory( Type ownerType, bool enforceNamingConventions, bool checkForStatic )
 			: base( ownerType, true )
 		{
-			Contract.Requires( typeof( T ).IsFlagsEnum() && (typeof( T ).IsPublic || typeof( T ).IsNestedPublic) );
+			Contract.Requires( typeof( T ).IsPublic || typeof( T ).IsNestedPublic );
 
 			Properties = new Dictionary<T, DependencyProperty>();
 			_enforceWpfConvention = enforceNamingConventions;
 
-			// All enum values should be different from zero, since they might be used for coercion, hence a 'None' value is required.
-			T none = default( T );
-			bool validValues = EnumHelper<T>.GetValues().All( v => !v.Equals( none ) );
-			if ( !validValues )
+			// When coercion is used, all enum values should be independent flag values, different from 0.
+			if ( MatchingAttributes.Any( a => a.Key.GetAttributes<CoercionHandlerAttribute>().Length > 0 ) )
 			{
-				throw new InvalidImplementationException(
-					"All enum values of a dependency property factory should be non-zero. Zero is reserved for internal purposes. " +
-					"Specifying the first enum value as '= 1' is a suitable approach." );
+				T none = default( T );
+				Type enumType = typeof( T );
+				bool correctImplementation =
+					enumType.IsFlagsEnum()
+					&& EnumHelper<T>.GetValues().All( v => EnumHelper<T>.GetFlaggedValues( v ).Count() == 1 && !v.Equals( none ) );
+				if ( !correctImplementation )
+				{
+					string message = String.Format(
+						"In order to use coercion, each enum value of {0} should be an individual flag value, different from 0.", enumType );
+					throw new InvalidImplementationException( message );
+				}
 			}
 
 			// Check whether the factory itself is defined as a static field.

@@ -24,19 +24,6 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes.Coercio
 		protected static DependencyPropertyFactory<TEnum> Factory;
 
 
-		static AbstractControlCoercion()
-		{
-			Type enumType = typeof( TEnum );
-
-			bool correctImplementation = enumType.IsFlagsEnum()
-				&& EnumHelper<TEnum>.GetValues().All( v => EnumHelper<TEnum>.GetFlaggedValues( v ).Count() == 1 );
-
-			if ( !correctImplementation )
-			{
-				throw new InvalidImplementationException( "In order to use coercion, each dependency property should be an individual flag value." );
-			}
-		}
-
 		protected AbstractControlCoercion( TEnum dependentProperties )
 		{
 			DependentProperties = dependentProperties;
