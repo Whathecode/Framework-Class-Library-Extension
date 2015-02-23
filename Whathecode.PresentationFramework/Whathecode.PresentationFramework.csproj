@@ -142,6 +142,7 @@
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Coercion\IControlCoercion.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Coercion\RangeCoercionAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Coercion\RedirectedControlCoercion.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\Attributes\IDefaultValueProvider.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\Validators\ValidationHandlerAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\DependencyPropertyAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\DependencyPropertyChangedAttribute.cs" />

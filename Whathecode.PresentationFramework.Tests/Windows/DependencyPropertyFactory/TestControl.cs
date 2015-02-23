@@ -23,6 +23,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 		public static readonly DependencyProperty CallbackProperty = PropertyFactory[ Property.Callback ];
 		public static readonly DependencyProperty MinimumProperty = PropertyFactory[ Property.Minimum ];
 		public static readonly DependencyProperty MaximumProperty = PropertyFactory[ Property.Maximum ];
+		public static readonly DependencyProperty DefaultValueProviderProperty = PropertyFactory[ Property.DefaultValueProvider ];
 #pragma warning restore 169
 
 		[DependencyProperty( Property.Standard, DefaultValue = 100 )]
@@ -60,6 +61,13 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 		{
 			get { return (int)PropertyFactory.GetValue( this, Property.Maximum ); }
 			set { PropertyFactory.SetValue( this, Property.Maximum, value ); }
+		}
+
+		[DependencyProperty( Property.DefaultValueProvider, DefaultValueProvider = typeof( TestDefaultValueProvider ) )]
+		public int DefaultValueProvider
+		{
+			get { return (int)PropertyFactory.GetValue( this, Property.DefaultValueProvider ); }
+			set { PropertyFactory.SetValue( this, Property.DefaultValueProvider, value ); }
 		}
 
 

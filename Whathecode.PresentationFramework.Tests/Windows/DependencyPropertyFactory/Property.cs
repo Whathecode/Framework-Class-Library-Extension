@@ -19,6 +19,7 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 		/// </summary>
 		Callback = 1 << 2,
 		Minimum = 1 << 3,
-		Maximum = 1 << 4
+		Maximum = 1 << 4,
+		DefaultValueProvider = 1 << 5
 	}
 }

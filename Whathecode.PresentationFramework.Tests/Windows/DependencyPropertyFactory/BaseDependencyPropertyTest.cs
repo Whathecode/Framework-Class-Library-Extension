@@ -60,7 +60,8 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 			{ Property.ReadOnly, true },
 			{ Property.Callback, "test" },
 			{ Property.Minimum, 50 },
-			{ Property.Maximum, 150 }
+			{ Property.Maximum, 150 },
+			{ Property.DefaultValueProvider, 10 }
 		};
 
 		static readonly Property[] CoercedProperties = { Property.Maximum };
@@ -98,7 +99,20 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory
 			Assert.IsTrue( SetValues.Count == EnumHelper<Property>.GetValues().Count() );
 
 			// Get default values from the attributes applied to the properties.
-			_initializeValues = _propertyAttributes.ToDictionary( p => (Property)p.Value.GetId(), p => p.Value.DefaultValue );
+			_initializeValues = _propertyAttributes.ToDictionary(
+				p => (Property)p.Value.GetId(),
+				p =>
+				{
+					if ( p.Value.DefaultValueProvider == null )
+					{
+						return p.Value.DefaultValue;
+					}
+					else
+					{
+						var provider = (IDefaultValueProvider<Property>)Activator.CreateInstance( p.Value.DefaultValueProvider );
+						return provider.GetDefaultValue( (Property)p.Value.GetId(), p.Key.PropertyType );
+					}
+				} );
 
 			// Create getters and setters for the CLR properties.
 			_propertyGetters = _propertyAttributes.ToDictionary(

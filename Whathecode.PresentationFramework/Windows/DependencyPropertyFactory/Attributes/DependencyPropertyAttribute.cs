@@ -9,7 +9,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes
 	///   specifies how the dependency property should be created by the <see cref = "DependencyPropertyFactory" />.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	[AttributeUsage( AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false )]
+	[AttributeUsage( AttributeTargets.Property | AttributeTargets.Method )]
 	public class DependencyPropertyAttribute : AbstractDependencyPropertyAttribute
 	{
 		readonly bool _readOnly;
@@ -26,6 +26,11 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes
 		///   Should be of the same type as the property, or be convertable from a string using a <see cref="TypeConverter" />.
 		/// </summary>
 		public object DefaultValue { get; set; }
+
+		/// <summary>
+		///   The type of a <see cref="IDefaultValueProvider{TProperty}" /> which can provide default values for passed types.
+		/// </summary>
+		public Type DefaultValueProvider { get; set; }
 
 		/// <summary>
 		///   When set to true, the first time the value is set,

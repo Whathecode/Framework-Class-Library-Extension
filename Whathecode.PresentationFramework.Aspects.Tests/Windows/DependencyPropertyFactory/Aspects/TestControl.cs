@@ -32,6 +32,9 @@ namespace Whathecode.Tests.System.Windows.DependencyPropertyFactory.Aspects
 		[CoercionHandler( typeof( CoerceValidation ), Property.Minimum )]
 		public int Maximum { get; set; }
 
+		[DependencyProperty( Property.DefaultValueProvider, DefaultValueProvider = typeof( TestDefaultValueProvider ) )]
+		public int DefaultValueProvider { get; set; }
+
 
 		// ReSharper disable UnusedMember.Local
 		[DependencyPropertyChanged( Property.Callback )]

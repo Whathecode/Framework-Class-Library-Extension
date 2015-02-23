@@ -123,6 +123,7 @@
     <Compile Include="Windows\DependencyPropertyFactory\GenericControlTest.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Property.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\TestControl.cs" />
+    <Compile Include="Windows\DependencyPropertyFactory\TestDefaultValueProvider.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\XamlControl.xaml.cs">
       <DependentUpon>XamlControl.xaml</DependentUpon>
     </Compile>

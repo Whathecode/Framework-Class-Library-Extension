@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using Whathecode.System.Extensions;
 using Whathecode.System.Reflection;
 using Whathecode.System.Reflection.Extensions;
 using Whathecode.System.Windows.DependencyPropertyFactory.Attributes;
@@ -265,7 +264,16 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			// Set dependency property parameters.
 			Type propertyType = property.PropertyType;
 			MethodInfo setMethod = property.GetSetMethod();
-			object defaultValue = attribute.DefaultValue ?? propertyType.CreateDefault();
+			object defaultValue;
+			if ( attribute.DefaultValueProvider != null )
+			{
+				var defaultValueProvider = (IDefaultValueProvider<T>)Activator.CreateInstance( attribute.DefaultValueProvider );
+				defaultValue = defaultValueProvider.GetDefaultValue( (T)attribute.GetId(), property.PropertyType );
+			}
+			else
+			{
+				defaultValue = attribute.DefaultValue ?? propertyType.CreateDefault();
+			}
 			if ( defaultValue != null && defaultValue.GetType() != propertyType )
 			{
 				TypeConverter converter = TypeDescriptor.GetConverter( propertyType );
