@@ -30,7 +30,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			public bool IsAttached;
 			public string Name;
 			public Type Type;
-			public object DefaultValue;
+			public FrameworkPropertyMetadata MetaData;
 			public bool ReadOnly;
 			public T Id;
 		}
@@ -195,13 +195,13 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					if ( setter != null && getter.Name.Substring( GetPrefix.Length ) == setter.Name.Substring( SetPrefix.Length ) )
 					{
 						// Extract settings.
-						var attributes = attachedProperty.Select( a => a.Attribute );
+						var attributes = attachedProperty.Select( a => a.Attribute ).ToArray();
 						var id = (T)attachedProperty.First().Attribute.GetId();						
 						// TODO: Allow checking whether or not the default value is set or not.
 						var defaultValues =
-							attributes.Where( a => a.DefaultValue != null ).Select( a => a.DefaultValue );
+							attributes.Where( a => a.DefaultValue != null ).Select( a => a.DefaultValue ).ToArray();
 						var readOnlySettings =
-							attributes.Where( a => a.IsReadOnlySet() ).Select( a => a.IsReadOnlySet() ? a.IsReadOnly() : new bool?() );
+							attributes.Where( a => a.IsReadOnlySet() ).Select( a => a.IsReadOnlySet() ? a.IsReadOnly() : new bool?() ).ToArray();
 						if ( !defaultValues.AllEqual() || !readOnlySettings.AllEqual() )
 						{
 							throw new InvalidImplementationException(
@@ -283,13 +283,23 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					defaultValue = converter.ConvertFrom( context, CultureInfo.CurrentCulture, defaultValue );
 				}
 			}
+			var metaData = new FrameworkPropertyMetadata
+			{
+				DefaultValue = defaultValue,
+				AffectsArrange = attribute.AffectsArrange,
+				AffectsMeasure = attribute.AffectsMeasure,
+				AffectsParentArrange = attribute.AffectsParentArrange,
+				AffectsParentMeasure = attribute.AffectsParentMeasure,
+				AffectsRender = attribute.AffectsRender,
+				SubPropertiesDoNotAffectRender = attribute.SubPropertiesDoNotAffectRender
+			};
 			var dependencyPropertyInfo = new DependencyPropertyInfo
 			{
 				IsAttached = false,
 				Name = attribute.Name ?? property.Name,
 				Type = propertyType,
 				// When no default value is set, use the default value.
-				DefaultValue = defaultValue,
+				MetaData = metaData,
 				// By default, readonly when setter is private.
 				ReadOnly = attribute.IsReadOnlySet() ? attribute.IsReadOnly() : (setMethod == null || setMethod.IsPrivate),
 				Id = (T)attribute.GetId()
@@ -305,13 +315,17 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			// TODO: Enforce naming conventions.
 
 			Type propertyType = getter.ReturnType;
+			var metaData = new FrameworkPropertyMetadata
+			{
+				// When no default value is set, use the default value.
+				DefaultValue = defaultValue ?? propertyType.CreateDefault()
+			};
 			return new DependencyPropertyInfo
 			{
 				IsAttached = true,
 				Name = getter.Name.Substring( GetPrefix.Length ),
 				Type = propertyType,
-				// When no default value is set, use the default value.
-				DefaultValue = defaultValue ?? propertyType.CreateDefault(),
+				MetaData = metaData,
 				// By default, readonly when no setter available.
 				ReadOnly = isReadOnly ?? setter == null,
 				Id = id
@@ -372,20 +386,26 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 				}
 			}
 
+			// Apply callbacks to meta data.
+			info.MetaData.PropertyChangedCallback = changedCallback;
+			info.MetaData.CoerceValueCallback = coerceCallback;
+
 			// Create property.
 			if ( info.ReadOnly )
 			{
 				CreateReadOnlyDependencyProperty(
 					info.IsAttached,
-					info.Id, info.Name, info.Type, info.DefaultValue,
-					changedCallback, coerceCallback, validateValueCallback );
+					info.Id, info.Name, info.Type,
+					info.MetaData,
+					validateValueCallback );
 			}
 			else
 			{
 				CreateDependencyProperty(
 					info.IsAttached,
-					info.Id, info.Name, info.Type, info.DefaultValue,
-					changedCallback, coerceCallback, validateValueCallback );
+					info.Id, info.Name, info.Type,
+					info.MetaData,
+					validateValueCallback );
 			}
 		}
 
@@ -415,9 +435,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			T identifier,
 			string name,
 			Type propertyType,
-			object defaultValue,
-			PropertyChangedCallback changedCallback,
-			CoerceValueCallback coerceCallback,
+			FrameworkPropertyMetadata metaData,
 			ValidateValueCallback validateValueCallback )
 		{
 			DependencyProperty property;
@@ -427,7 +445,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					name,
 					propertyType,
 					OwnerType,
-					new PropertyMetadata( defaultValue, changedCallback, coerceCallback ),
+					metaData,
 					validateValueCallback );
 			}
 			else
@@ -436,7 +454,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					name,
 					propertyType,
 					OwnerType,
-					new PropertyMetadata( defaultValue, changedCallback, coerceCallback ),
+					metaData,
 					validateValueCallback );
 			}
 
@@ -448,9 +466,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 			T identifier,
 			string name,
 			Type propertyType,
-			object defaultValue,
-			PropertyChangedCallback changedCallback,
-			CoerceValueCallback coerceCallback,
+			FrameworkPropertyMetadata metaData,
 			ValidateValueCallback validateValueCallback )
 		{
 			DependencyPropertyKey propertyKey;
@@ -460,7 +476,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					name,
 					propertyType,
 					OwnerType,
-					new PropertyMetadata( defaultValue, changedCallback, coerceCallback ),
+					metaData,
 					validateValueCallback );
 			}
 			else
@@ -469,7 +485,7 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory
 					name,
 					propertyType,
 					OwnerType,
-					new PropertyMetadata( defaultValue, changedCallback, coerceCallback ),
+					metaData,
 					validateValueCallback );
 			}
 			_readOnlyProperties.Add( identifier, propertyKey );

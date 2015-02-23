@@ -38,6 +38,42 @@ namespace Whathecode.System.Windows.DependencyPropertyFactory.Attributes
 		/// </summary>
 		public bool ForceChangedCallbackFirstTime { get; set; }
 
+		/// <summary>
+		///   Gets or sets a value that indicates whether a dependency property potentially affects the arrange pass during layout engine operations.
+		///   true if the dependency property on which this metadata exists potentially affects the arrange pass; otherwise, false. The default is false.
+		/// </summary>
+		public bool AffectsArrange { get; set; }
+
+		/// <summary>
+		///   Gets or sets a value that indicates whether a dependency property potentially affects the measure pass during layout engine operations.
+		///   true if the dependency property on which this metadata exists potentially affects the measure pass; otherwise, false. The default is false.
+		/// </summary>
+		public bool AffectsMeasure { get; set; }
+
+		/// <summary>
+		///   Gets or sets a value that indicates whether a dependency property potentially affects the arrange pass of its parent element's layout during layout engine operations.
+		///   true if the dependency property on which this metadata exists potentially affects the arrange pass specifically on its parent element; otherwise, false. The default is false.
+		/// </summary>
+		public bool AffectsParentArrange { get; set; }
+
+		/// <summary>
+		///   Gets or sets a value that indicates whether a dependency property potentially affects the measure pass of its parent element's layout during layout engine operations.
+		///   true if the dependency property on which this metadata exists potentially affects the measure pass specifically on its parent element; otherwise, false.The default is false. 
+		/// </summary>
+		public bool AffectsParentMeasure { get; set; }
+
+		/// <summary>
+		///   Gets or sets a value that indicates whether a dependency property potentially affects the general layout in some way that does not specifically influence arrangement or measurement, but would require a redraw.
+		///   true if the dependency property on which this metadata exists affects rendering; otherwise, false. The default is false.
+		/// </summary>
+		public bool AffectsRender { get; set; }
+
+		/// <summary>
+		///   Gets or sets a value that indicates whether sub-properties of the dependency property do not affect the rendering of the containing object.
+		///   true if changes to sub-property values do not affect rendering if changed; otherwise, false. The default is false.
+		/// </summary>
+		public bool SubPropertiesDoNotAffectRender { get; set; }
+
 
 		/// <summary>
 		///   Create a new attribute which gives information about the dependency property to create for a given property.
