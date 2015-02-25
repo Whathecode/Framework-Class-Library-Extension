@@ -643,13 +643,32 @@ namespace Whathecode.System.Arithmetic.Range
 		#region Enumeration
 
 		/// <summary>
+		///   Get values for each step within the interval.
+		/// </summary>
+		/// <param name="step">The step size between each value.</param>
+		public IEnumerable<T> GetValues( TSize step )
+		{
+			return new IntervalEnumerator<T, TSize>( this, step );
+		}
+
+		/// <summary>
+		///   Get values for each step within the interval, anchored to multiples of a specified anchor value.
+		/// </summary>
+		/// <param name="step">The step size between each value.</param>
+		/// <param name="anchor">The value to which multiples of step are anchored.</param>
+		public IEnumerable<T> GetValues( TSize step, T anchor )
+		{
+			return new IntervalEnumerator<T, TSize>( this, step, anchor );
+		}
+
+		/// <summary>
 		///   Execute an action each step in an interval.
 		/// </summary>
 		/// <param name = "step">The size of the steps.</param>
 		/// <param name = "stepAction">The operation to execute.</param>
 		public void EveryStepOf( TSize step, Action<T> stepAction )
 		{
-			foreach ( var i in new IntervalEnumerator<T, TSize>( this, step ) )
+			foreach ( var i in GetValues( step ) )
 			{
 				stepAction( i );
 			}
