@@ -136,6 +136,7 @@
     <Compile Include="Windows\Data\InverseBooleanConverter.cs" />
     <Compile Include="Windows\Data\IValueConverter.cs" />
     <Compile Include="Windows\Data\SingleConditionConverter.cs" />
+    <Compile Include="Windows\Data\SingleStringDynamicFormatConverter.cs" />
     <Compile Include="Windows\Data\SingleStringFormatConverter.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyAttribute.cs" />
     <Compile Include="Windows\DependencyPropertyFactory\Attributes\AbstractDependencyPropertyCallbackAttribute.cs" />
