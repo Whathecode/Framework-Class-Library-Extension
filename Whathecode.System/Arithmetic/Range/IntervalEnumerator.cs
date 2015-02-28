@@ -80,6 +80,11 @@ namespace Whathecode.System.Arithmetic.Range
 
 		protected override bool HasMoreElements( int enumeratedAlready, TMath previous )
 		{
+			if ( Interval<TMath, TSize>.ConvertSizeToDouble( _step ) == 0 && enumeratedAlready == 1 )
+			{
+				return false;
+			}
+
 			return _interval.LiesInInterval( Operator<TMath, TSize>.AddSize( previous, _step ) );
 		}
 

@@ -44,6 +44,9 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 			// Single and empty interval.
 			StepTestHelper( 0, true, 0, true, 1, new [] { 0 } );
 			StepTestHelper( 0, false, 0, true, 1, new int[] {} );
+
+			// Step size of 0.
+			StepTestHelper( 0, true, 5, true, 0, new [] { 0 } );
 		}
 
 		static void StepTestHelper<T, TSize>( T start, bool startIncluded, T end, bool endIncluded, TSize stepSize, T[] expected )
