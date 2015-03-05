@@ -119,6 +119,20 @@
   <ItemGroup>
     <Compile Include="Arithmetic\Interpolation\TypeProvider\Windows\Media\Media3D\Vector3DInterpolationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\Controls\AbstractAxesLabelCollection.cs" />
+    <Compile Include="Windows\Controls\AbstractAxesLabelFactory.cs" />
+    <Compile Include="Windows\Controls\AbstractRegularXLabelFactory.cs" />
+    <Compile Include="Windows\Controls\AbstractXAxisLabelFactory.cs" />
+    <Compile Include="Windows\Controls\AxesIntervals.cs" />
+    <Compile Include="Windows\Controls\AxesLabelFactories.cs" />
+    <Compile Include="Windows\Controls\AxesPanel.cs" />
+    <Compile Include="Windows\Controls\AxesPanelBinding.cs" />
+    <Compile Include="Windows\Controls\Axis.cs" />
+    <Compile Include="Windows\Controls\AxisAlignment.cs" />
+    <Compile Include="Windows\Controls\Internal\EmptyIntervalProvider.cs" />
+    <Compile Include="Windows\Controls\Internal\VisibleIntervalCoercion.cs" />
+    <Compile Include="Windows\Controls\PlanePanel.cs" />
+    <Compile Include="Windows\Controls\TimePanel.cs" />
     <Compile Include="Windows\Data\AbstractBindingDecoratorExtension.cs" />
     <Compile Include="Windows\Data\AbstractComparisonMarkupExtension.cs" />
     <Compile Include="Windows\Data\AbstractConditionMarkupExtension.cs" />
