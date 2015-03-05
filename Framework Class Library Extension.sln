@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whathecode.Microsoft", "Wha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whathecode.System.Management", "Whathecode.System.Management\Whathecode.System.Management.csproj", "{68E68CFB-7A0B-4527-B44E-61A6870B9376}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AxesPanelsTest", "AxesPanelsTest\AxesPanelsTest.csproj", "{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +233,14 @@ Global
 		{68E68CFB-7A0B-4527-B44E-61A6870B9376}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68E68CFB-7A0B-4527-B44E-61A6870B9376}.Release|x64.ActiveCfg = Release|Any CPU
 		{68E68CFB-7A0B-4527-B44E-61A6870B9376}.Release|x86.ActiveCfg = Release|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Release|x64.ActiveCfg = Release|Any CPU
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -251,5 +261,6 @@ Global
 		{67217589-B234-4998-A446-F33116FFB63C} = {8545E471-7D78-434C-B336-A22512E232F4}
 		{AC87707B-DC1B-4E00-B252-5F807711C8EB} = {049E1AF0-78B1-4EE6-B081-1F1004E1B01D}
 		{68E68CFB-7A0B-4527-B44E-61A6870B9376} = {8545E471-7D78-434C-B336-A22512E232F4}
+		{66FE75EB-F83F-46BF-BB59-43ACF9CA6DE9} = {8A97C423-CA46-4074-B36C-4626236EBA97}
 	EndGlobalSection
 EndGlobal

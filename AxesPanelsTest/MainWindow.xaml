@@ -1,0 +1,38 @@
+﻿<Window x:Class="AxesPanelsTest.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:wtc="clr-namespace:Whathecode.System.Windows.Controls;assembly=Whathecode.PresentationFramework"
+		DataContext="{Binding RelativeSource={RelativeSource Self}}"
+		Title="AxesPanels Demo"
+		Height="400">
+	
+	<wtc:TimePanel
+		x:Name="Timeline"
+		VisibleIntervalX="[Dec 2014, Jan 2016]"
+		VisibleIntervalY="[100, 0]"
+		Background="#303030">
+
+		<wtc:PlanePanel
+			x:Name="Winter"
+			Height="100"
+			VisibleIntervalX="[0, 100]"
+			VisibleIntervalY="[0, 100]"
+			wtc:TimePanel.IntervalX="[Dec 29 2014, Mar 19 2015]"
+			wtc:TimePanel.Y="50"
+			wtc:TimePanel.AlignmentY="Center"
+			Background="White">
+			
+			<Label>Winter</Label>
+			<Label
+				wtc:PlanePanel.X="50"
+				wtc:PlanePanel.Y="50"
+				wtc:PlanePanel.AlignmentX="Center"
+				wtc:PlanePanel.AlignmentY="Center"
+				Content="*"
+				FontSize="60"/>
+			
+		</wtc:PlanePanel>
+
+	</wtc:TimePanel>
+
+</Window>
