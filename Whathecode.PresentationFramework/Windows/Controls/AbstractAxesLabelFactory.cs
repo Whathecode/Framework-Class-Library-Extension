@@ -72,7 +72,6 @@ namespace Whathecode.System.Windows.Controls
 				}
 			}
 			toRemove.ForEach( r => _visibleLabels.Remove( r ) );
-			toUpdate.ForEach( u => UpdateLabel( u, visible, panelSize ) );
 
 			// Position new labels.
 			var toInitialize = new List<PositionedElement>();
@@ -97,7 +96,10 @@ namespace Whathecode.System.Windows.Controls
 				_visibleLabels.Add( positioned );
 				toInitialize.Add( positioned );
 			}
+
+			// Only update and initialize labels at end, so that _visibleLabels is up to date.
 			toInitialize.ForEach( i => InitializeLabel( i, visible, panelSize ) );
+			toUpdate.ForEach( u => UpdateLabel( u, visible, panelSize ) );
 		}
 
 		/// <summary>
