@@ -17,12 +17,12 @@ namespace Whathecode.System.Windows.Controls.Internal
 		readonly string _convertToIntervalMethod = "ConvertToInterval";
 		readonly string _convertToInternalSizeMethod;
 
-		object _context;
-		Func<object> _getMaxima;
-		Func<object> _getMinimumSize;
-		Func<object, Interval<double>> _convertToInternalInterval;
-		Func<Interval<double>, object> _convertToInterval;
-		Func<object, double> _convertToInternalSize; 
+		// Open instance delegates are used intentionally, since holding on to the context within this converter causes memory leaks.
+		Func<object, object> _getMaxima;
+		Func<object, object> _getMinimumSize;
+		Func<object, object, Interval<double>> _convertToInternalInterval;
+		Func<object, Interval<double>, object> _convertToInterval;
+		Func<object, object, double> _convertToInternalSize; 
 		
 		public AxesPanelBinding DependentProperties
 		{
@@ -50,33 +50,32 @@ namespace Whathecode.System.Windows.Controls.Internal
 			}
 
 			// Initialize functions to access the panel.
-			if ( context != _context )
+			if ( _getMaxima == null )
 			{
-				_context = context;
-				Type type = _context.GetType();
+				Type type = context.GetType();
 
 				// Allow accessing properties.
 				MethodInfo getMaxima = type.GetProperty( "Maxima" + _axisName ).GetGetMethod();
-				_getMaxima = DelegateHelper.CreateDelegate<Func<object>>( getMaxima, _context );
+				_getMaxima = DelegateHelper.CreateOpenInstanceDelegate<Func<object, object>>( getMaxima, DelegateHelper.CreateOptions.Downcasting );
 				MethodInfo getMinimumSize = type.GetProperty( "MinimumSize" + _axisName ).GetGetMethod();
-				_getMinimumSize = DelegateHelper.CreateDelegate<Func<object>>( getMinimumSize, _context, DelegateHelper.CreateOptions.Downcasting );
+				_getMinimumSize = DelegateHelper.CreateOpenInstanceDelegate<Func<object, object>>( getMinimumSize, DelegateHelper.CreateOptions.Downcasting );
 
 				// Allow accessing protected conversion functions.
-				MethodInfo convertToInternalInterval = type.GetMethod( _convertToInternalIntervalMethod, System.Reflection.ReflectionHelper.InstanceMembers );
+				MethodInfo convertToInternalInterval = type.GetMethod( _convertToInternalIntervalMethod, Reflection.ReflectionHelper.InstanceMembers );
 				_convertToInternalInterval =
-					DelegateHelper.CreateDelegate<Func<object, Interval<double>>>( convertToInternalInterval, _context, DelegateHelper.CreateOptions.Downcasting );
-				MethodInfo convertToInterval = type.GetMethod( _convertToIntervalMethod, System.Reflection.ReflectionHelper.InstanceMembers );
+					DelegateHelper.CreateOpenInstanceDelegate<Func<object, object, Interval<double>>>( convertToInternalInterval, DelegateHelper.CreateOptions.Downcasting );
+				MethodInfo convertToInterval = type.GetMethod( _convertToIntervalMethod, Reflection.ReflectionHelper.InstanceMembers );
 				_convertToInterval =
-					DelegateHelper.CreateDelegate<Func<Interval<double>, object>>( convertToInterval, _context, DelegateHelper.CreateOptions.Downcasting );
-				MethodInfo convertToInternalSize = type.GetMethod( _convertToInternalSizeMethod, System.Reflection.ReflectionHelper.InstanceMembers );
+					DelegateHelper.CreateOpenInstanceDelegate<Func<object, Interval<double>, object>>( convertToInterval, DelegateHelper.CreateOptions.Downcasting );
+				MethodInfo convertToInternalSize = type.GetMethod( _convertToInternalSizeMethod, Reflection.ReflectionHelper.InstanceMembers );
 				_convertToInternalSize =
-					DelegateHelper.CreateDelegate<Func<object, double>>( convertToInternalSize, _context, DelegateHelper.CreateOptions.Downcasting );
+					DelegateHelper.CreateOpenInstanceDelegate<Func<object, object, double>>( convertToInternalSize, DelegateHelper.CreateOptions.Downcasting );
 			}
 
 			// Limit size of the desired interval.
-			Interval<double> setInterval = _convertToInternalInterval( value );
-			object bleh = _getMinimumSize();
-			double minimumSize = _convertToInternalSize( bleh );
+			Interval<double> setInterval = _convertToInternalInterval( context, value );
+			object min = _getMinimumSize( context );
+			double minimumSize = _convertToInternalSize( context, min );
 			double tooSmallRatio = minimumSize / setInterval.Size;
 			if ( tooSmallRatio > 1 )
 			{
@@ -84,9 +83,9 @@ namespace Whathecode.System.Windows.Controls.Internal
 			}
 
 			// Limit how far the time line goes.
-			Interval<double> limitInterval = _convertToInternalInterval( _getMaxima() );
+			Interval<double> limitInterval = _convertToInternalInterval( context, _getMaxima( context ) );
 			Interval<double> limited = setInterval.Clamp( limitInterval );
-			return _convertToInterval( limited );
+			return _convertToInterval( context, limited );
 		}
 	}
 }

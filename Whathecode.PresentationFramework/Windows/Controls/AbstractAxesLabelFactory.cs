@@ -127,10 +127,13 @@ namespace Whathecode.System.Windows.Controls
 
 		public override void LabelResized( FrameworkElement label, AxesIntervals<TX, TXSize, TY, TYSize> visible, Size panelSize )
 		{
-			// TODO: Can this be handled locally within this class, rather than relying on a callback from AbstractAxesLabelCollection?
+			// TODO: Can this be handled locally within this class, rather than relying on a callback from AxesPanel?
 			//       Main problems seems to be 'visible' and 'panelSize' are needed to update.
-			var positioned = _visibleLabels.First( v => v.Element == label );
-			UpdateLabel( positioned, visible, panelSize );
+			var positioned = _visibleLabels.FirstOrDefault( v => v.Element == label );
+			if ( positioned != null )
+			{
+				UpdateLabel( positioned, visible, panelSize );
+			}
 		}
 	}
 }

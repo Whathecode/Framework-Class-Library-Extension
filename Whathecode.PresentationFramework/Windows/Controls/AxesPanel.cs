@@ -266,11 +266,30 @@ namespace Whathecode.System.Windows.Controls
 		protected AxesPanel()
 		{
 			SizeChanged += ( sender, args ) => UpdateFactoriesVisibleInterval();
+			Unloaded += ( sender, args ) =>
+			{
+				if ( !IsItemsHost )
+				{
+					// Remove label factory labels.
+					LabelFactories.CollectionChanged -= OnLabelFactoriesChanged;
+					foreach ( var factory in LabelFactories )
+					{
+						factory.CollectionChanged -= OnLabelsChanged;
+						factory.ForEach( RemoveLabel );
+					}
+				}
+			};
 		}
 
 
 		protected override Size MeasureOverride( Size availableSize )
 		{
+			// This panel needs a requested size in order for its children to be able to be positioned.
+			if ( double.IsInfinity( availableSize.Width ) || double.IsInfinity( availableSize.Height ) )
+			{
+				return Size.Empty;
+			}
+
 			// Allow children to take up as much room as they want.
 			foreach ( UIElement child in Children )
 			{
