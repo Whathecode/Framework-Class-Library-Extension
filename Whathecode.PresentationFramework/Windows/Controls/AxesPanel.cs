@@ -312,8 +312,8 @@ namespace Whathecode.System.Windows.Controls
 					}
 				}
 
-				// Measure desired size within the available space.
-				child.Measure( availableSize );
+				// Child elements are given as much space as they want.
+				child.Measure( new Size( double.PositiveInfinity, double.PositiveInfinity ) );
 			}
 
 			// The idea behind this panel is to display the specified plane area in the available size.
