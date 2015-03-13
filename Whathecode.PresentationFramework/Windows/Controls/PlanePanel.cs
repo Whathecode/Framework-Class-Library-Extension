@@ -20,6 +20,10 @@ namespace Whathecode.System.Windows.Controls
 			MaximaYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( new Interval<double, double>( double.MinValue, double.MaxValue ) ) );
 			VisibleIntervalXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( new Interval<double, double>( 0, 100 ) ) );
 			VisibleIntervalYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( new Interval<double, double>( 0, 100 ) ) );
+			MinimumSizeXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( double.MinValue ) );
+			MaximumSizeXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( double.MaxValue ) );
+			MinimumSizeYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( double.MinValue ) );
+			MaximumSizeYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( double.MaxValue ) );
 		}
 
 

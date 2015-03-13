@@ -22,7 +22,10 @@ namespace Whathecode.System.Windows.Controls
 			TimeSpan span = TimeSpan.FromHours( 12 );
 			VisibleIntervalXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( new Interval<DateTime, TimeSpan>( now - span, now + span ) ) );
 			VisibleIntervalYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( new Interval<double, double>( 0, 100 ) ) );
-			MinimumSizeXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( TimeSpan.FromSeconds( 1 ) ) );
+			MinimumSizeXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( TimeSpan.MinValue ) );
+			MaximumSizeXProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( TimeSpan.MaxValue ) );
+			MinimumSizeYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( double.MinValue ) );
+			MaximumSizeYProperty.OverrideMetadata( type, new FrameworkPropertyMetadata( double.MaxValue ) );
 
 			// Set conversion functions for datetime intervals.
 			Interval<DateTime, TimeSpan>.ConvertDoubleToSize = d => new TimeSpan( (long)Math.Round( d ) );
