@@ -184,6 +184,7 @@
     <Compile Include="Windows\Markup\AbstractDependencyPropertyBindingExtension.cs" />
     <Compile Include="Windows\Markup\AbstractMarkupExtension.cs" />
     <Compile Include="Windows\Media\Extensions\Extensions.Color.cs" />
+    <Compile Include="Windows\Media\Extensions\Extensions.DependencyObject.cs" />
     <Compile Include="Windows\Media\Extensions\Extensions.TranslateTransform3D.cs" />
     <Compile Include="Windows\Media\Extensions\Extensions.Vector3D.cs" />
     <Compile Include="Windows\Media\Media3D\Matrix3DHelper.cs" />
