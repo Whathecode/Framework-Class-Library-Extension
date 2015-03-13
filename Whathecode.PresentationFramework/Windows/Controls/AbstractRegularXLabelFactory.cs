@@ -10,7 +10,9 @@ namespace Whathecode.System.Windows.Controls
 	/// </summary>
 	public abstract class AbstractRegularXLabelFactory<TX, TXSize, TY, TYSize> : AbstractXAxisLabelFactory<TX, TXSize, TY, TYSize>
 		where TX : IComparable<TX>
+		where TXSize : IComparable<TXSize>
 		where TY : IComparable<TY>
+		where TYSize : IComparable<TYSize>
 	{
 		/// <summary>
 		///   An anchor value which should contain a label, and from which other labels are spaced multiples of <see cref="StepSize" /> away from.

@@ -23,7 +23,10 @@ namespace Whathecode.System.Windows.Controls
 	/// <typeparam name = "TY">The type which determines the Y-axis.</typeparam>
 	/// <typeparam name = "TYSize">The type used to specify distances in between two values of <see cref="TY" />.</typeparam>
 	abstract public class AxesPanel<TX, TXSize, TY, TYSize> : Panel
-		where TX : IComparable<TX> where TY : IComparable<TY>
+		where TX : IComparable<TX>
+		where TXSize : IComparable<TXSize>
+		where TY : IComparable<TY>
+		where TYSize : IComparable<TYSize>
 	{
 		static readonly Type Type = typeof( AxesPanel<TX, TXSize, TY, TYSize> );
 		public static readonly DependencyPropertyFactory<AxesPanelBinding> PropertyFactory 
@@ -376,13 +379,17 @@ namespace Whathecode.System.Windows.Controls
 			{
 				foreach ( var factory in LabelFactories.Reverse() ) // Factories need to be updated in reverse order, since the later ones have precedence.
 				{
-					factory.VisibleIntervalChanged( new AxesIntervals<TX, TXSize, TY, TYSize>( VisibleIntervalX, VisibleIntervalY ), new Size( ActualWidth, ActualHeight ) );
+					factory.VisibleIntervalChanged(
+						new AxesIntervals<TX, TXSize, TY, TYSize>( VisibleIntervalX, VisibleIntervalY ),
+						new AxesIntervals<TX, TXSize, TY, TYSize>( MaximaX, MaximaY ),
+						new Size( ActualWidth, ActualHeight ) );
 				}
 			}
 		}
 
 		double IntervalSize<T, TSize>( Interval<T, TSize> visible, TSize desiredSize, double visiblePixels )
 			where T : IComparable<T>
+			where TSize : IComparable<TSize>
 		{
 			double intervalSize = Interval<T, TSize>.ConvertSizeToDouble( visible.Size );
 			double desired = Interval<T, TSize>.ConvertSizeToDouble( desiredSize );
@@ -392,6 +399,7 @@ namespace Whathecode.System.Windows.Controls
 
 		double PositionInInterval<T, TSize>( Interval<T, TSize> interval, double panelSize, double elementSize, T value, AxisAlignment alignment )
 			where T : IComparable<T>
+			where TSize : IComparable<TSize>
 		{
 			double percentage = interval.GetPercentageFor( value );
 			double position = percentage * panelSize;

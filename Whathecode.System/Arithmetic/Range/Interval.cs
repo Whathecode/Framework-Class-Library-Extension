@@ -166,6 +166,7 @@ namespace Whathecode.System.Arithmetic.Range
 	[TypeConverter( typeof( IntervalTypeConverter ) )]
 	public class Interval<T, TSize>
 		where T : IComparable<T>
+		where TSize : IComparable<TSize>
 	{
 		// ReSharper disable StaticFieldInGenericType
 		readonly static bool IsIntegralType;
@@ -391,6 +392,7 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <returns>The value, mapped to the given range.</returns>
 		public TOther Map<TOther, TOtherSize>( T value, Interval<TOther, TOtherSize> range )
 			where TOther : IComparable<TOther>
+			where TOtherSize : IComparable<TOtherSize>
 		{
 			return range.GetValueAt( GetPercentageFor( value ) );
 		}
@@ -745,15 +747,43 @@ namespace Whathecode.System.Arithmetic.Range
 		/// <param name="aroundPercentage">The percentage inside the interval around which to scale.</param>
 		public Interval<T, TSize> Scale( double scale, double aroundPercentage = 0.5 )
 		{
+			return Scale( scale, null, aroundPercentage );
+		}
+
+		/// <summary>
+		///   Returns a scaled version of the current interval, but prevents the interval from exceeding the values specified in a passed limit.
+		///   This is useful to prevent <see cref="ArgumentOutOfRangeException" /> during calculations for certain types.
+		/// </summary>
+		/// <param name="scale">
+		///   Percentage to scale the interval up or down.
+		///   Smaller than 1.0 to scale down, larger to scale up.
+		/// </param>
+		/// <param name="limit">The limit which the interval snaps to when scaling exceeds it.</param>
+		/// <param name="aroundPercentage">The percentage inside the interval around which to scale.</param>
+		public Interval<T, TSize> Scale( double scale, Interval<T, TSize> limit, double aroundPercentage = 0.5 )
+		{
 			TSize scaledSize = Convert( Convert( Size ) * scale );
 			TSize sizeDiff = Operator<TSize>.Subtract( Size, scaledSize ); // > 0 larger, < 0 smaller
+
 			TSize startAddition = Convert( Convert( sizeDiff ) * aroundPercentage );
+			bool startExceeded = false;
+			if ( limit != null )
+			{
+				TSize maxStartSubtraction = Operator<T, TSize>.Subtract( limit.Start, Start );
+				startExceeded = scale > 1 && startAddition.CompareTo( maxStartSubtraction ) < 0;	
+			}
+			T start = startExceeded ? limit.Start : Operator<T, TSize>.AddSize( _start, startAddition );
+
 			TSize endSubtraction = Operator<TSize>.Subtract( sizeDiff, startAddition );
-			T start = Operator<T, TSize>.AddSize( _start, startAddition );
-			T end = Operator<T, TSize>.SubtractSize( _end, endSubtraction );
+			bool endExceeded = false;
+			if ( limit != null )
+			{
+				TSize maxEndAddition = Operator<T, TSize>.Subtract( End, limit.End );
+				endExceeded = scale > 1 && maxEndAddition.CompareTo( endSubtraction ) > 0;
+			}
+			T end = endExceeded ? limit.End : Operator<T, TSize>.SubtractSize( _end, endSubtraction );
 
 			var scaled = new Interval<T, TSize>( start, _isStartIncluded, end, _isEndIncluded );
-
 			return IsReversed ? scaled.Reverse() : scaled;
 		}
 

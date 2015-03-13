@@ -14,7 +14,9 @@ namespace Whathecode.System.Windows.Controls
 	/// </summary>
 	public abstract class AbstractAxesLabelFactory<TX, TXSize, TY, TYSize> : AbstractAxesLabelCollection<TX, TXSize, TY, TYSize>
 		where TX : IComparable<TX>
+		where TXSize : IComparable<TXSize>
 		where TY : IComparable<TY>
+		where TYSize : IComparable<TYSize>
 	{
 		protected class PositionedElement
 		{
@@ -38,7 +40,10 @@ namespace Whathecode.System.Windows.Controls
 		readonly Stack<FrameworkElement> _availableLabels = new Stack<FrameworkElement>(); 
 
 
-		public override void VisibleIntervalChanged( AxesIntervals<TX, TXSize, TY, TYSize> visible, Size panelSize )
+		public override void VisibleIntervalChanged(
+			AxesIntervals<TX, TXSize, TY, TYSize> visible,
+			AxesIntervals<TX, TXSize, TY, TYSize> limits,
+			Size panelSize )
 		{
 			// Create extended intervals.
 			Interval<TX, TXSize> intervalX = visible.IntervalX;
@@ -50,7 +55,9 @@ namespace Whathecode.System.Windows.Controls
 			var extendedY = Operator<TYSize>.Add( intervalY.Size, additionalY );
 			double scaleX = Interval<TX, TXSize>.ConvertSizeToDouble( extendedX ) / Interval<TX, TXSize>.ConvertSizeToDouble( intervalX.Size );
 			double scaleY = Interval<TY, TYSize>.ConvertSizeToDouble( extendedY ) / Interval<TY, TYSize>.ConvertSizeToDouble( intervalY.Size );
-			var extendedIntervals = new AxesIntervals<TX, TXSize, TY, TYSize>( intervalX.Scale( scaleX ), intervalY.Scale( scaleY ) );
+			Interval<TX, TXSize> scaledX = intervalX.Scale( scaleX, limits.IntervalX );
+			Interval<TY, TYSize> scaledY = intervalY.Scale( scaleY, limits.IntervalY );
+			var extendedIntervals = new AxesIntervals<TX, TXSize, TY, TYSize>( scaledX, scaledY );
 
 			var toPosition = new HashSet<Tuple<TX, TY>>( GetPositions( extendedIntervals, panelSize ) );
 

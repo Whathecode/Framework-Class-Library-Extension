@@ -13,7 +13,9 @@ namespace Whathecode.System.Windows.Controls
 	/// <typeparam name="TYSize">The type of the size between values along the y-axis.</typeparam>
 	public class AxesLabelFactories<TX, TXSize, TY, TYSize> : ObservableCollection<AbstractAxesLabelCollection<TX, TXSize, TY, TYSize>>
 		where TX : IComparable<TX>
+		where TXSize : IComparable<TXSize>
 		where TY : IComparable<TY>
+		where TYSize : IComparable<TYSize>
 	{
 	}
 }

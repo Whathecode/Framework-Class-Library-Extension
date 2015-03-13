@@ -51,6 +51,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 
 		static void StepTestHelper<T, TSize>( T start, bool startIncluded, T end, bool endIncluded, TSize stepSize, T[] expected )
 			where T : IComparable<T>
+			where TSize : IComparable<TSize>
 		{
 			var enumerator = new IntervalEnumerator<T, TSize>(
 				new Interval<T, TSize>( start, startIncluded, end, endIncluded ),
@@ -76,6 +77,7 @@ namespace Whathecode.Tests.System.Arithmetic.Range
 
 		static void StepAnchorTestHelper<T, TSize>( T start, T end, TSize stepSize, T anchor, T[] expected )
 			where T : IComparable<T>
+			where TSize : IComparable<TSize>
 		{
 			var enumerator = new IntervalEnumerator<T, TSize>( new Interval<T, TSize>( start, end ), stepSize, anchor );
 			var test = enumerator.ToArray();

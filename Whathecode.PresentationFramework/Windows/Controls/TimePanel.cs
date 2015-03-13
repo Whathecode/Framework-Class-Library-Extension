@@ -37,7 +37,14 @@ namespace Whathecode.System.Windows.Controls
 
 		protected override DateTime ConvertToIntervalXValue( double value )
 		{
-			return new DateTime( (long)value );
+			// Prevent bigger values than the maximum.
+			long ticks = (long)value;
+			if ( ticks > DateTime.MaxValue.Ticks )
+			{
+				ticks = DateTime.MaxValue.Ticks;
+			}
+
+			return new DateTime( ticks );
 		}
 
 		protected override double ConvertFromIntervalYValue( double value )

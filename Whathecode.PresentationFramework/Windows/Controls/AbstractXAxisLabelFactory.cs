@@ -13,7 +13,9 @@ namespace Whathecode.System.Windows.Controls
 	/// </summary>
 	public abstract class AbstractXAxisLabelFactory<TX, TXSize, TY, TYSize> : AbstractAxesLabelFactory<TX, TXSize, TY, TYSize>
 		where TX : IComparable<TX>
+		where TXSize : IComparable<TXSize>
 		where TY : IComparable<TY>
+		where TYSize : IComparable<TYSize>
 	{
 		/// <summary>
 		///   The maximum size along the x-axis of labels provided by this factory.

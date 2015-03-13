@@ -13,6 +13,7 @@ namespace Whathecode.System.Arithmetic.Range
 	/// <author>Steven Jeuris</author>
 	public class IntervalEnumerator<TMath, TSize> : AbstractEnumerator<TMath>
 		where TMath : IComparable<TMath>
+		where TSize : IComparable<TSize>
 	{
 		readonly Interval<TMath, TSize> _interval;
 		readonly TSize _step;

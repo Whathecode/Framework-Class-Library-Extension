@@ -12,7 +12,9 @@ namespace Whathecode.System.Windows.Controls
 	/// </summary>
 	public abstract class AbstractAxesLabelCollection<TX, TXSize, TY, TYSize> : ObservableCollection<FrameworkElement>
 		where TX : IComparable<TX>
+		where TXSize : IComparable<TXSize>
 		where TY : IComparable<TY>
+		where TYSize : IComparable<TYSize>
 	{
 		/// <summary>
 		///   Labels within collections with the same assigned <see cref="OverrideGroup" /> override each other in case they are positioned at the same location.
@@ -25,8 +27,12 @@ namespace Whathecode.System.Windows.Controls
 		///   Called whenever either the visible interval has changed, or the size within which it is presented has changed.
 		/// </summary>
 		/// <param name="visible">The visible interval.</param>
+		/// <param name="limits">The maximum ranges within which all values must lie.</param>
 		/// <param name="panelSize">The size within which the intervals are presented.</param>
-		public abstract void VisibleIntervalChanged( AxesIntervals<TX, TXSize, TY, TYSize> visible, Size panelSize );
+		public abstract void VisibleIntervalChanged(
+			AxesIntervals<TX, TXSize, TY, TYSize> visible,
+			AxesIntervals<TX, TXSize, TY, TYSize> limits,
+			Size panelSize );
 
 		/// <summary>
 		///   Called whenever a label added by the collection was resized.
