@@ -41,7 +41,9 @@ namespace Whathecode.System.Windows.Controls
 		public static readonly DependencyProperty MaximaXProperty = PropertyFactory[ AxesPanelBinding.MaximaX ];
 		public static readonly DependencyProperty MaximaYProperty = PropertyFactory[ AxesPanelBinding.MaximaY ];
 		public static readonly DependencyProperty MinimumSizeXProperty = PropertyFactory[ AxesPanelBinding.MinimumSizeX ];
+		public static readonly DependencyProperty MaximumSizeXProperty = PropertyFactory[ AxesPanelBinding.MaximumSizeX ];
 		public static readonly DependencyProperty MinimumSizeYProperty = PropertyFactory[ AxesPanelBinding.MinimumSizeY ];
+		public static readonly DependencyProperty MaximumSizeYProperty = PropertyFactory[ AxesPanelBinding.MaximumSizeY ];
 		public static readonly DependencyProperty VisibleIntervalXProperty = PropertyFactory[ AxesPanelBinding.VisibleIntervalX ];
 		public static readonly DependencyProperty VisibleIntervalYProperty = PropertyFactory[ AxesPanelBinding.VisibleIntervalY ];
 		public static readonly DependencyProperty LabelFactoriesProperty = PropertyFactory[ AxesPanelBinding.LabelFactories ];
@@ -79,6 +81,16 @@ namespace Whathecode.System.Windows.Controls
 		}
 
 		/// <summary>
+		///   The maximum size of <see cref="VisibleIntervalX" />.
+		/// </summary>
+		[DependencyProperty( AxesPanelBinding.MaximumSizeX )]
+		public TXSize MaximumSizeX
+		{
+			get { return (TXSize)PropertyFactory.GetValue( this, AxesPanelBinding.MaximumSizeX ); }
+			set { PropertyFactory.SetValue( this, AxesPanelBinding.MaximumSizeX, value ); }
+		}
+
+		/// <summary>
 		///   The minimum size of <see cref="VisibleIntervalY" />.
 		/// </summary>
 		[DependencyProperty( AxesPanelBinding.MinimumSizeY )]
@@ -86,6 +98,16 @@ namespace Whathecode.System.Windows.Controls
 		{
 			get { return (TYSize)PropertyFactory.GetValue( this, AxesPanelBinding.MinimumSizeY ); }
 			set { PropertyFactory.SetValue( this, AxesPanelBinding.MinimumSizeY, value ); }
+		}
+
+		/// <summary>
+		///   The maximum size of <see cref="VisibleIntervalY" />.
+		/// </summary>
+		[DependencyProperty( AxesPanelBinding.MaximumSizeY )]
+		public TYSize MaximumSizeY
+		{
+			get { return (TYSize)PropertyFactory.GetValue( this, AxesPanelBinding.MaximumSizeY ); }
+			set { PropertyFactory.SetValue( this, AxesPanelBinding.MaximumSizeY, value ); }
 		}
 
 		/// <summary>

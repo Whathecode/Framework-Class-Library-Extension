@@ -20,6 +20,7 @@ namespace Whathecode.System.Windows.Controls.Internal
 		// Open instance delegates are used intentionally, since holding on to the context within this converter causes memory leaks.
 		Func<object, object> _getMaxima;
 		Func<object, object> _getMinimumSize;
+		Func<object, object> _getMaximumSize;
 		Func<object, object, Interval<double>> _convertToInternalInterval;
 		Func<object, Interval<double>, object> _convertToInterval;
 		Func<object, object, double> _convertToInternalSize; 
@@ -34,8 +35,8 @@ namespace Whathecode.System.Windows.Controls.Internal
 		{
 			_axisName = axis == Axis.X ? "X" : "Y";
 			_dependentProperties = axis == Axis.X
-				? AxesPanelBinding.MaximaX | AxesPanelBinding.MinimumSizeX
-				: AxesPanelBinding.MaximaY | AxesPanelBinding.MinimumSizeY;
+				? AxesPanelBinding.MaximaX | AxesPanelBinding.MinimumSizeX | AxesPanelBinding.MaximumSizeX
+				: AxesPanelBinding.MaximaY | AxesPanelBinding.MinimumSizeY | AxesPanelBinding.MinimumSizeY;
 			_convertToInternalIntervalMethod += _axisName;
 			_convertToIntervalMethod += _axisName;
 			_convertToInternalSizeMethod = "ConvertFrom" + _axisName + "SizeValue";
@@ -59,6 +60,8 @@ namespace Whathecode.System.Windows.Controls.Internal
 				_getMaxima = DelegateHelper.CreateOpenInstanceDelegate<Func<object, object>>( getMaxima, DelegateHelper.CreateOptions.Downcasting );
 				MethodInfo getMinimumSize = type.GetProperty( "MinimumSize" + _axisName ).GetGetMethod();
 				_getMinimumSize = DelegateHelper.CreateOpenInstanceDelegate<Func<object, object>>( getMinimumSize, DelegateHelper.CreateOptions.Downcasting );
+				MethodInfo getMaximumSize = type.GetProperty( "MaximumSize" + _axisName ).GetGetMethod();
+				_getMaximumSize = DelegateHelper.CreateOpenInstanceDelegate<Func<object, object>>( getMaximumSize, DelegateHelper.CreateOptions.Downcasting );
 
 				// Allow accessing protected conversion functions.
 				MethodInfo convertToInternalInterval = type.GetMethod( _convertToInternalIntervalMethod, Reflection.ReflectionHelper.InstanceMembers );
@@ -80,6 +83,13 @@ namespace Whathecode.System.Windows.Controls.Internal
 			if ( tooSmallRatio > 1 )
 			{
 				setInterval = setInterval.Scale( tooSmallRatio );
+			}
+			object max = _getMaximumSize( context );
+			double maximumSize = _convertToInternalSize( context, max );
+			double tooBigRatio = maximumSize / setInterval.Size;
+			if ( tooBigRatio < 1 )
+			{
+				setInterval = setInterval.Scale( tooBigRatio );
 			}
 
 			// Limit how far the time line goes.
