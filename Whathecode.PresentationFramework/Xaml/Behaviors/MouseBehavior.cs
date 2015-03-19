@@ -75,6 +75,12 @@ namespace Whathecode.System.Xaml.Behaviors
 			Stop
 		}
 
+		public struct MoveState
+		{
+			public Point PreviousPosition;
+			public double DistanceDragged;
+		}
+
 		[Flags]
 		public enum Properties
 		{
@@ -127,8 +133,7 @@ namespace Whathecode.System.Xaml.Behaviors
 		static readonly Dictionary<object, ClickDragInfo> LeftClickDragInfo = new Dictionary<object, ClickDragInfo>();
 		static readonly Dictionary<object, ClickDragInfo> RightClickDragInfo = new Dictionary<object, ClickDragInfo>();
 
-		static Point _previousPosition;
-		static double _distanceDragged;
+		static readonly Dictionary<object, MoveState> MoveStates = new Dictionary<object, MoveState>();
 
 
 		// ReSharper disable UnusedMember.Local
@@ -570,8 +575,11 @@ namespace Whathecode.System.Xaml.Behaviors
 			}
 
 			Point newPosition = mouseState.Position.Relative;
-			_distanceDragged += _previousPosition.DistanceTo( newPosition );
-			_previousPosition = newPosition;
+			MoveState moveState;
+			MoveStates.TryGetValue( element, out moveState );
+			moveState.DistanceDragged += moveState.PreviousPosition.DistanceTo( newPosition );
+			moveState.PreviousPosition = newPosition;
+			MoveStates[ element ] = moveState;
 
 			e.Handled = true;
 		}
@@ -631,8 +639,11 @@ namespace Whathecode.System.Xaml.Behaviors
 					clickInfo.Add( sender, info );
 				}
 			}
-			_previousPosition = mouseState.Position.Relative;
-			_distanceDragged = 0;
+			MoveState moveState;
+			MoveStates.TryGetValue( element, out moveState );
+			moveState.PreviousPosition = mouseState.Position.Relative;
+			moveState.DistanceDragged = 0;
+			MoveStates[ element ] = moveState;
 
 			// Trigger click drag commands.
 			ICommand clickDragCommand = isLeftButton ? GetLeftClickDragCommand( element ) : GetRightClickDragCommand( element );
@@ -683,7 +694,8 @@ namespace Whathecode.System.Xaml.Behaviors
 			}
 
 			// Trigger click commands.
-			if ( _distanceDragged < MaxClickDragDistance )
+			MoveState moveState = MoveStates[ element ];
+			if ( moveState.DistanceDragged < MaxClickDragDistance )
 			{
 				ClickDragInfo clickInfo;
 				ICommand leftClickCommand = GetLeftClickCommand( element );
@@ -699,6 +711,7 @@ namespace Whathecode.System.Xaml.Behaviors
 			}
 			LeftClickInfo.Clear();
 			RightClickInfo.Clear();
+			MoveStates.Clear();
 
 			// Trigger click drag commands.
 			ICommand clickDragCommand = isLeftButton ? GetLeftClickDragCommand( element ) : GetRightClickDragCommand( element );

@@ -10,7 +10,7 @@ namespace Whathecode.Interop
 	///   TODO: Clean up remaining original documentation, converting it to the wrapper's equivalents.
 	/// </summary>
 	/// <author>Steven Jeuris</author>
-	public static partial class Shell32
+	public static class Shell32
 	{
 		const string Dll = "Shell32.dll";
 
