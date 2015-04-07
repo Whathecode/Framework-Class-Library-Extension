@@ -19,11 +19,13 @@ namespace Whathecode.System.Windows.Data
 
 		/// <summary>
 		///   The value to return in case the boolean is true.
+		///   In case <see cref="Type" /> is not specified and this is set to null, true will be returned by default.
 		/// </summary>
 		public object IfTrue { get; set; }
 
 		/// <summary>
 		///   The value to return in case the boolean is false.
+		///   In case <see cref="Type" /> is not specified and this is set to null, false will be returned by default.
 		/// </summary>
 		public object IfFalse { get; set; }
 
@@ -40,6 +42,13 @@ namespace Whathecode.System.Windows.Data
 				TypeConverter typeConverter = TypeDescriptor.GetConverter( Type );
 				ifTrue = typeConverter.ConvertFrom( IfTrue );
 				ifFalse = typeConverter.ConvertFrom( IfFalse );
+			}
+
+			// In case no type is specified and true and false aren't specified, use 'true' and 'false' as default return values.
+			if ( ( Type == null || Type == typeof( bool ) ) && IfTrue == null && IfFalse == null )
+			{
+				ifTrue = true;
+				ifFalse = false;
 			}
 
 			object conditionConverter = CreateConditionConverter( Type ?? typeof( object ) );
