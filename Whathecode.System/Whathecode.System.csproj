@@ -216,6 +216,7 @@
     <Compile Include="Arithmetic\Range\TimeInterval.cs" />
     <Compile Include="Arithmetic\RateOfChange.cs" />
     <Compile Include="Collections\Generic\LoopList.cs" />
+    <Compile Include="Collections\Generic\Tree.cs" />
     <Compile Include="ComponentModel\NotifyPropertyFactory\Attributes\NotifyPropertyChangedAttribute.cs" />
     <Compile Include="ComponentModel\RedirectTypeConverter.cs" />
     <Compile Include="DateTimePart.cs" />
