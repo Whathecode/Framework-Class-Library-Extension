@@ -34,6 +34,12 @@ namespace Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting
 			Assert.Fail( "Expected exception \"" + type + "\" was not thrown." );
 		}
 
+        /// <summary>
+        ///   Verify whether a passed object can be garbage collected.
+        ///   Assertion fails when the object could not be garbage collected.
+        /// </summary>
+        /// <typeparam name="TObject">The type of the object to attempt to garbage collect.</typeparam>
+        /// <param name="@object">The object which to attempt to garbage collect.</param>
 		public static void IsGarbageCollected<TObject>( ref TObject @object )
 			where TObject : class
 		{
@@ -41,6 +47,13 @@ namespace Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting
 			IsGarbageCollected( ref @object, emptyAction );
 		}
 
+        /// <summary>
+        ///   Verify whether a passed object can be garbage collected after the execution of an operation.
+        ///   Assertion fails when the object could not be garbage collected.
+        /// </summary>
+        /// <typeparam name="TObject">The type of the object to attempt to garbage collect.</typeparam>
+        /// <param name="@object">The object which to attempt to garbage collect.</param>
+        /// <param name="useObject">The operation to be performed using the object.</param>
 		public static void IsGarbageCollected<TObject>( ref TObject @object, Action<TObject> useObject )
 			where TObject : class
 		{

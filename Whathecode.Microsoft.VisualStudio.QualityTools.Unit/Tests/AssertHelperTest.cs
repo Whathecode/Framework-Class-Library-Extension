@@ -57,11 +57,13 @@ namespace Whathecode.Microsoft.VisualStudio.TestTools.UnitTesting.Tests
 			object referenceCopy = hookedEvent;
 			#pragma warning restore 168
 			AssertHelper.ThrowsException<AssertFailedException>( () => AssertHelper.IsGarbageCollected( ref hookedEvent ) );
+            GC.KeepAlive( referenceCopy ); // Needed so the tests pass in Release configurations.
 
 			// Still attached as event.
 			Publisher publisher = new Publisher();
 			Subscriber subscriber = new Subscriber( publisher );
 			AssertHelper.ThrowsException<AssertFailedException>( () => AssertHelper.IsGarbageCollected( ref subscriber ) );
-		}
+            GC.KeepAlive( publisher ); // Needed so the tests pass in Release configurations.
+        }
 	}
 }
