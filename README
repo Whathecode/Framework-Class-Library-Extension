@@ -1,3 +1,6 @@
+THIS LIBRARY WILL BECOME DEPRECATED AND IS SUCCEEDED BY A .NET CORE LIBRARY:
+https://github.com/Whathecode/.NET-Standard-Library-Extension
+
 The Framework Class Library Extension project contains highly reuseable classes I find to be missing in .NET's FCL. Since some of the implementations I blog about start to use a lot of code from this library, I decided to make it public so people can just access the entire library instead of small separate code samples. It was becoming a burden posting all dependent code for my code samples.
 
 Assemblies from the original FCL are followed as much as possible:
